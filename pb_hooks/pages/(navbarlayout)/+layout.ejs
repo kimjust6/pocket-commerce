@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" data-theme="yellowdark" x-data="shell()">
+
+<head>
+    <%- include('head') %> <%- include('theme-init') %> <%- include('alpine-setup') %> <%- include('shell-init') %> <%-
+                        include('custom-styles') %>
+</head>
+
+<body class="bg-transparent text-zinc-900 dark:text-zinc-100">
+    <div class="relative min-h-screen flex flex-col">
+        <div x-on:click.outside="navOpen = false">
+            <%- include('header') %> <%- include('mobile-menu') %>
+        </div>
+
+        <main class="relative flex-grow transition-all duration-200"
+            :style="{ 'padding-top': headerVisible ? '3.3rem' : '0' }"><%- slot %></main>
+
+        <% if (!locals.data.list) { %>
+            <%- include('footer') %>
+                <% } %>
+    </div>
+    <%- include('../_private/link-fixer') %>
+</body>
+
+</html>
