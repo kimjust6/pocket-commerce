@@ -1,0 +1,261 @@
+<script server>
+    // Store variables to pass to the view
+    let error = null;
+    let success = null;
+    let seed = "";
+    let seedIndex = 0;
+    
+    let account = "";
+    let balance = "0";
+    let pending = "0";
+
+const isPost = request.method === 'POST';
+
+try {
+    const runSync = (method, args) => {
+        const scriptPath = $filepath.join(__hooks, '..', 'scripts', 'banano-runner.js');
+        let resJson;
+        try {
+            resJson = $os.cmd("node", scriptPath, method, JSON.stringify(args || [])).output();
+        } catch(osErr) {
+            throw new Error("OS Command failed: " + (osErr.message || String(osErr)));
+        }
+        
+        // Goja returns []byte from OS cmd output, which maps to a JS Array of bytes.
+        let jsonStr = "";
+        try {
+            if (Array.isArray(resJson) || (typeof resJson === 'object' && resJson.length !== undefined)) {
+                for (let i = 0; i < resJson.length; i++) {
+                    jsonStr += String.fromCharCode(resJson[i]);
+                }
+            } else {
+                jsonStr = String(resJson);
+            }
+        } catch(castErr) {
+            throw new Error("Failed to convert byte array to string: " + castErr.message);
+        }
+
+        if (!jsonStr || jsonStr === "<nil>" || jsonStr === "") {
+            throw new Error("Empty response from banano-runner. No output. Is Node installed?");
+        }
+        
+        try {
+            const parsed = JSON.parse(jsonStr);
+            if (!parsed.success) {
+                throw new Error(parsed.error);
+            }
+            return parsed.result;
+        } catch (parseErr) {
+            throw new Error("Failed to parse node output: " + String(resJson) + ". Error: " + parseErr.message);
+        }
+    };
+
+    const banano = {
+        getAccountInfo: (account) => runSync("getAccountInfo", [account]),
+        getBananoAccount: (seed, seedIndex = 0) => runSync("getBananoAccount", [seed, seedIndex]),
+        receiveBananos: (seed, seedIndex = 0) => runSync("receiveBananos", [seed, seedIndex, 'ban_1ka1ium4pfue3uxtntqsboa8egcw864xqdbc85vc5z33x5ne52pfcqigp5cb']),
+        sendBanano: (seed, seedIndex = 0, destAccount, amountRaw) => runSync("sendBanano", [seed, seedIndex, destAccount, amountRaw]),
+        getRawFromDecimal: (decimalAmount) => runSync("getRawFromDecimal", [decimalAmount]),
+        getDecimalFromRaw: (rawAmount) => runSync("getDecimalFromRaw", [rawAmount])
+    };
+
+    if (isPost) {
+        const _body = body();
+        const action = _body.action;
+
+        account = _body.account || "";
+        seed = _body.seed || "";
+        seedIndex = parseInt(_body.seedIndex) || 0;
+
+        if (action === 'check') {
+            if (account.startsWith('ban_')) {
+                const info = banano.getAccountInfo(account);
+                if (!info.error) {
+                    balance = banano.getDecimalFromRaw(info.balance || "0");
+                    pending = banano.getDecimalFromRaw(info.pending || "0");
+                    success = "Balance checked successfully.";
+                } else {
+                    if (info.error === 'Account not found') {
+                        success = "Account is unopened.";
+                    } else {
+                        error = info.error;
+                    }
+                }
+            } else {
+                error = "Invalid wallet address. Must start with ban_";
+            }
+        } 
+        else if (action === 'receive' || action === 'send') {
+            if (seed.length === 64) {
+                // Determine account from the provided seed
+                account = banano.getBananoAccount(seed, seedIndex);
+
+                if (action === 'receive') {
+                    banano.receiveBananos(seed, seedIndex);
+                    const info = banano.getAccountInfo(account);
+                    if (!info.error) {
+                        balance = banano.getDecimalFromRaw(info.balance || "0");
+                        pending = banano.getDecimalFromRaw(info.pending || "0");
+                    }
+                    success = "Receive attempt complete. Checked balance.";
+                } 
+                else if (action === 'send') {
+                    const destination = _body.destination;
+                    const amountRaw = banano.getRawFromDecimal(_body.amount || "0");
+                    
+                    if (!destination) throw new Error("Destination address required.");
+                    if (amountRaw === "0") throw new Error("Positive amount required.");
+
+                    const sendResult = banano.sendBanano(seed, seedIndex, destination, amountRaw);
+                    if (sendResult) {
+                       success = `Sent successfully! Block Hash: ${sendResult}`;
+                    } else {
+                       throw new Error("Failed to send transaction.");
+                    }
+
+                    const info = banano.getAccountInfo(account);
+                    if (!info.error) {
+                        balance = banano.getDecimalFromRaw(info.balance || "0");
+                        pending = banano.getDecimalFromRaw(info.pending || "0");
+                    }
+                }
+            } else {
+                error = "Invalid seed length. It must be a 64-character hex string.";
+            }
+        }
+    }
+} catch (e) {
+    error = "Script Error: " + (e.message || String(e));
+}
+
+</script>
+
+<div class="container mx-auto p-4 max-w-4xl pt-10 min-h-[calc(100vh-64px)]">
+    <h1 class="text-4xl font-bold mb-8 text-primary">Banano Wallet Tester</h1>
+
+    <% if (error) { %>
+        <div class="alert alert-error shadow-lg mb-6 text-error-content max-w-xl mx-auto rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span class="break-words w-full"><%= error %></span>
+        </div>
+    <% } %>
+
+    <% if (success) { %>
+        <div class="alert alert-success shadow-lg mb-6 text-success-content max-w-xl mx-auto rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current-content shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span class="break-words w-full"><%= success %></span>
+        </div>
+    <% } %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Left Column -->
+        <div class="flex flex-col gap-8">
+            <div class="card bg-base-200 border border-base-300 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">Check Balance</h2>
+                    
+                    <form method="POST" class="space-y-4">
+                        <input type="hidden" name="action" value="check">
+                        
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">Wallet Address</span></label>
+                            <input type="text" name="account" placeholder="ban_..." value="<%= account %>" class="input input-bordered w-full font-mono font-medium" required/>
+                        </div>
+                        
+                        <button class="btn btn-primary w-full mt-4">Lookup Balance</button>
+                    </form>
+                </div>
+            </div>
+
+            <% if (account) { %>
+                <div class="card bg-base-100 border border-base-300 shadow-xl relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 blur-sm z-0"></div>
+                    <div class="card-body relative z-10">
+                        <h2 class="card-title text-xl mb-4">Account Overview</h2>
+                        
+                        <div class="stats stats-vertical lg:stats-horizontal shadow bg-base-200 text-base-content border border-base-content/10 mb-4 w-full">
+                            <div class="stat p-4">
+                                <div class="stat-title">Balance</div>
+                                <div class="stat-value text-xl md:text-2xl text-primary"><%= balance %></div>
+                                <div class="stat-desc">BAN</div>
+                            </div>
+                            <div class="stat p-4">
+                                <div class="stat-title text-warning">Pending</div>
+                                <div class="stat-value text-xl md:text-2xl text-warning"><%= pending %></div>
+                                <div class="stat-desc">BAN</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-base-200 p-3 rounded-lg border border-base-300">
+                            <span class="text-xs opacity-70 block mb-1">Address:</span>
+                            <span class="font-mono text-xs break-all font-semibold text-secondary"><%= account %></span>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Right Column: Wallet Actions -->
+        <div>
+            <div class="card bg-base-200 border border-base-300 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-xl mb-4">Transact</h2>
+                    
+                    <div class="flex flex-col gap-6 w-full">
+                        
+                        <!-- Common Transact Inputs -->
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">Seed (64 hex characters)</span></label>
+                            <input type="password" id="transactSeed" value="<%= seed %>" placeholder="e.g. 0A1B2C..." class="input input-bordered input-sm w-full font-mono" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">Seed Index</span></label>
+                            <input type="number" id="transactIndex" value="<%= seedIndex %>" min="0" class="input input-bordered input-sm w-full" />
+                        </div>
+
+                        <!-- Receive Button Form -->
+                        <form method="POST" class="w-full relative" onsubmit="this.seed.value = document.getElementById('transactSeed').value; this.seedIndex.value = document.getElementById('transactIndex').value;">
+                            <input type="hidden" name="action" value="receive">
+                            <input type="hidden" name="seed" value="">
+                            <input type="hidden" name="seedIndex" value="">
+                            
+                            <button class="btn btn-success w-full font-bold shadow-md shadow-success/20">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Receive Pending
+                            </button>
+                            <label class="label pb-0"><span class="label-text-alt text-base-content/50">Requires matching seed to sign the transaction.</span></label>
+                        </form>
+
+                        <div class="divider my-0"></div>
+                        
+                        <!-- Send Form -->
+                        <form method="POST" class="w-full space-y-3" onsubmit="this.seed.value = document.getElementById('transactSeed').value; this.seedIndex.value = document.getElementById('transactIndex').value;">
+                            <input type="hidden" name="action" value="send">
+                            <input type="hidden" name="seed" value="">
+                            <input type="hidden" name="seedIndex" value="">
+                            
+                            <div class="form-control">
+                                <label class="label"><span class="label-text">Recipient Address</span></label>
+                                <input type="text" name="destination" placeholder="ban_..." class="input input-bordered input-sm w-full font-mono" required/>
+                            </div>
+                            <div class="form-control">
+                                <label class="label"><span class="label-text">Amount (BAN)</span></label>
+                                <input type="number" step="0.000001" name="amount" placeholder="0.00" class="input input-bordered input-sm w-full font-mono" required/>
+                            </div>
+
+                            <button class="btn btn-primary btn-outline w-full mt-3 font-bold border-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Send from Seed
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

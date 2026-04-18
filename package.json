@@ -43,6 +43,7 @@
         "vitest": "^4.0.18"
     },
     "dependencies": {
+        "@bananocoin/bananojs": "^2.10.10",
         "baseline-browser-mapping": "^2.9.17",
         "caniuse-lite": "^1.0.30001765",
         "pocketbase": "^0.26.5",
