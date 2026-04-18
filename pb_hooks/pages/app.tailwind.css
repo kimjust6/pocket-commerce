@@ -65,16 +65,64 @@
     }
 
     .gallery-image {
-        @apply aspect-square w-full object-cover rounded-btn cursor-pointer hover:opacity-80 transition-all duration-200 active:scale-95 sm:hover:scale-105 shadow-md ring-1 ring-base-content/10;
+        @apply aspect-square w-full object-cover rounded-btn cursor-pointer transition-all duration-100 border-2 border-black dark:border-white bg-base-100;
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    }
+    .gallery-image:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    }
+    .gallery-image:active {
+        transform: scale(0.95);
+        box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    }
+    .dark .gallery-image {
+        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+    }
+    .dark .gallery-image:hover {
+        box-shadow: 6px 6px 0px 0px rgba(255,255,255,1);
+    }
+    .dark .gallery-image:active {
+        box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
     }
 
     .venue-photo {
-        @apply w-full object-cover rounded-btn shadow-md ring-1 ring-base-content/10;
+        @apply w-full object-cover rounded-btn border-2 border-black dark:border-white;
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    }
+    .dark .venue-photo {
+        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
     }
 
     .poi-item {
-        @apply flex items-center gap-2 sm:gap-3 lg:gap-4 xl:gap-5 text-sm lg:text-lg xl:text-xl text-base-content py-2 px-3 lg:py-4 lg:px-5 hover:bg-base-200 rounded-btn transition-colors duration-200;
+        @apply flex items-center gap-2 sm:gap-3 lg:gap-4 xl:gap-5 text-sm lg:text-lg xl:text-xl text-base-content py-2 px-3 lg:py-4 lg:px-5 hover:bg-primary hover:text-primary-content border-2 border-transparent hover:border-black dark:hover:border-white rounded-btn transition-all duration-100;
     }
+    .poi-item:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    }
+    .dark .poi-item:hover {
+        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+    }
+
+    /* Neo-Brutalism Global Overrides */
+    .btn, .card, .input, .textarea, .select, .badge, .alert, .stats {
+        @apply border-2 border-black dark:border-white !important;
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
+        transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+    }
+    .dark .btn, .dark .card, .dark .input, .dark .textarea, .dark .select, .dark .badge, .dark .alert, .dark .stats {
+        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1) !important;
+    }
+
+    .btn:active {
+        transform: translate(2px, 2px) !important;
+        box-shadow: 2px 2px 0px 0px rgba(0,0,0,1) !important;
+    }
+    .dark .btn:active {
+        box-shadow: 2px 2px 0px 0px rgba(255,255,255,1) !important;
+    }
+
 }
 
 @layer utilities {
