@@ -107,7 +107,7 @@
 }
 
 /*
-! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -625,7 +625,7 @@ html {
 }
 
 :root {
-  --p: 75.3513% 0.138989 232.66148;
+  --p: 82.6759% 0.108229 306.3827;
   --inc: 14.2748% 0.028676 254.624021;
   --suc: 16.007% 0.036412 151.711031;
   --wac: 18.1049% 0.033137 98.110831;
@@ -657,7 +657,7 @@ html {
 }
 
 [data-theme=neobrutalism] {
-  --p: 75.3513% 0.138989 232.66148;
+  --p: 82.6759% 0.108229 306.3827;
   --inc: 14.2748% 0.028676 254.624021;
   --suc: 16.007% 0.036412 151.711031;
   --wac: 18.1049% 0.033137 98.110831;
@@ -689,7 +689,7 @@ html {
 }
 
 [data-theme=neobrutalismdark] {
-  --p: 75.3513% 0.138989 232.66148;
+  --p: 82.6759% 0.108229 306.3827;
   --inc: 14.2748% 0.028676 254.624021;
   --suc: 16.007% 0.036412 151.711031;
   --wac: 18.1049% 0.033137 98.110831;
@@ -2782,18 +2782,6 @@ html::-webkit-scrollbar,
   align-items: center;
 }
 
-.progress {
-  position: relative;
-  width: 100%;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  overflow: hidden;
-  height: 0.5rem;
-  border-radius: var(--rounded-box, 1rem);
-  background-color: var(--fallback-bc,oklch(var(--bc)/0.2));
-}
-
 .radio {
   flex-shrink: 0;
   --chkbg: var(--bc);
@@ -3903,49 +3891,6 @@ html::-webkit-scrollbar,
   0% {
     opacity: 0;
   }
-}
-
-.progress::-moz-progress-bar {
-  border-radius: var(--rounded-box, 1rem);
-  background-color: currentColor;
-}
-
-.progress:indeterminate {
-  --progress-color: var(--fallback-bc,oklch(var(--bc)/1));
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--progress-color) -1%,
-    var(--progress-color) 10%,
-    transparent 10%,
-    transparent 90%
-  );
-  background-size: 200%;
-  background-position-x: 15%;
-  animation: progress-loading 5s ease-in-out infinite;
-}
-
-.progress::-webkit-progress-bar {
-  border-radius: var(--rounded-box, 1rem);
-  background-color: transparent;
-}
-
-.progress::-webkit-progress-value {
-  border-radius: var(--rounded-box, 1rem);
-  background-color: currentColor;
-}
-
-.progress:indeterminate::-moz-progress-bar {
-  background-color: transparent;
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--progress-color) -1%,
-    var(--progress-color) 10%,
-    transparent 10%,
-    transparent 90%
-  );
-  background-size: 200%;
-  background-position-x: 15%;
-  animation: progress-loading 5s ease-in-out infinite;
 }
 
 @keyframes progress-loading {
@@ -5618,6 +5563,10 @@ html::-webkit-scrollbar,
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -6010,12 +5959,6 @@ html::-webkit-scrollbar,
   background-image: linear-gradient(to top, var(--tw-gradient-stops));
 }
 
-.from-accent\/40 {
-  --tw-gradient-from: var(--fallback-a,oklch(var(--a)/0.4)) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
 .from-base-100 {
   --tw-gradient-from: var(--fallback-b1,oklch(var(--b1)/1)) var(--tw-gradient-from-position);
   --tw-gradient-to: var(--fallback-b1,oklch(var(--b1)/0)) var(--tw-gradient-to-position);
@@ -6037,12 +5980,6 @@ html::-webkit-scrollbar,
 .from-base-content {
   --tw-gradient-from: var(--fallback-bc,oklch(var(--bc)/1)) var(--tw-gradient-from-position);
   --tw-gradient-to: var(--fallback-bc,oklch(var(--bc)/0)) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.from-black\/80 {
-  --tw-gradient-from: rgb(0 0 0 / 0.8) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -6088,12 +6025,6 @@ html::-webkit-scrollbar,
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.from-secondary\/40 {
-  --tw-gradient-from: var(--fallback-s,oklch(var(--s)/0.4)) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
 .from-white {
   --tw-gradient-from: #fff var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
@@ -6125,6 +6056,11 @@ html::-webkit-scrollbar,
   --tw-gradient-stops: var(--tw-gradient-from), rgb(0 0 0 / 0.5) var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 
+.via-black\/60 {
+  --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(0 0 0 / 0.6) var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
 .via-transparent {
   --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), transparent var(--tw-gradient-via-position), var(--tw-gradient-to);
@@ -6133,10 +6069,6 @@ html::-webkit-scrollbar,
 .via-white {
   --tw-gradient-to: rgb(255 255 255 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), #fff var(--tw-gradient-via-position), var(--tw-gradient-to);
-}
-
-.to-accent\/40 {
-  --tw-gradient-to: var(--fallback-a,oklch(var(--a)/0.4)) var(--tw-gradient-to-position);
 }
 
 .to-base-100\/40 {
@@ -6157,10 +6089,6 @@ html::-webkit-scrollbar,
 
 .to-primary\/20 {
   --tw-gradient-to: var(--fallback-p,oklch(var(--p)/0.2)) var(--tw-gradient-to-position);
-}
-
-.to-primary\/40 {
-  --tw-gradient-to: var(--fallback-p,oklch(var(--p)/0.4)) var(--tw-gradient-to-position);
 }
 
 .to-secondary {
@@ -6531,10 +6459,6 @@ html::-webkit-scrollbar,
 .text-base-content {
   --tw-text-opacity: 1;
   color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity, 1)));
-}
-
-.text-base-content\/20 {
-  color: var(--fallback-bc,oklch(var(--bc)/0.2));
 }
 
 .text-base-content\/30 {
@@ -7360,8 +7284,8 @@ html::-webkit-scrollbar,
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .sm\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .sm\:flex-row {
@@ -7436,8 +7360,8 @@ html::-webkit-scrollbar,
     gap: 3rem;
   }
 
-  .md\:gap-4 {
-    gap: 1rem;
+  .md\:gap-6 {
+    gap: 1.5rem;
   }
 
   .md\:p-10 {

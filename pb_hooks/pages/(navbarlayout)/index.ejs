@@ -1,10 +1,10 @@
-﻿<!-- Hero Section with Dark Gradient Background -->
+<!-- Hero Section with Dark Gradient Background -->
 <div class="min-h-screen" id="home">
     <!-- Hero -->
     <div class="hero relative min-h-[80vh] overflow-hidden bg-gradient-to-b from-base-200 via-base-100">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <!-- Subtle Film Reel Pattern -->
+            <!-- Subtle Grid Pattern -->
             <div
                 class="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px]">
             </div>
@@ -22,44 +22,44 @@
                 <h1
                     class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight text-shadow-lg">
                     <span class="text-base-content ">
-                        <span class="text-primary italic">Track</span> films you've watched.
+                        <span class="text-primary italic">Discover</span> unique cards.
                     </span>
                     <div class="text-base-content ">
-                        Share films you <span class="text-primary italic">love.</span>
+                        Find the perfect <span class="text-primary italic">greeting.</span>
                     </div>
                 </h1>
 
                 <!-- Tagline -->
                 <span
                     class="text-lg md:text-xl text-base-content/60 mb-10 leading-relaxed max-w-2xl mx-auto italic text-left items-start">
-                    Log, rate, and review. Create lists and share your taste with friends.
+                    Shop hilariously punny birthday cards and unique greetings for every occasion.
                 </span>
 
                 <!-- CTA Buttons -->
                 <div class="flex flex-col justify-start gap-4 sm:flex-row pt-8">
-                    <a href="/login"
+                    <a href="/shop"
                         class="btn btn-primary btn-lg gap-2 shadow-lg transition-all duration-300 hover:scale-105">
-                        Get Started — It's Free
+                        Shop Now
                     </a>
                     <a href="#features"
                         class="btn btn-ghost btn-lg gap-2 border border-base-content/20 transition-all duration-300 hover:border-base-content/40">
-                        Learn More
+                        View Collections
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recently Watched Section -->
+    <!-- New Arrivals Section -->
     <section class="bg-base-100 px-4 py-16">
         <div class="mx-auto max-w-6xl">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold">Recently Watched</h2>
-                    <p class="text-base-content/60 mt-1">What the community is watching right now</p>
+                    <h2 class="text-2xl md:text-3xl font-bold">New Arrivals</h2>
+                    <p class="text-base-content/60 mt-1">The latest additions to our store</p>
                 </div>
-                <a href="/movies/search" class="btn btn-ghost btn-sm gap-1">
-                    Search Movies
+                <a href="/shop" class="btn btn-ghost btn-sm gap-1">
+                    View All Products
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -67,55 +67,46 @@
                 </a>
             </div>
 
-            <!-- Movie Posters Grid -->
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 md:gap-4">
-                <% if (data.recentMovies && data.recentMovies.length> 0) { %>
-                    <% data.recentMovies.forEach(movie=> { %>
-                        <a href="/movies/<%= movie.tmdb_id %>" class="group cursor-pointer block">
+            <!-- Products Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 md:gap-6">
+                <% if (data.recentCards && data.recentCards.length > 0) { %>
+                    <% data.recentCards.forEach(card => { %>
+                        <a href="/shop/<%= card.id %>" class="group cursor-pointer block">
                             <div
                                 class="aspect-[2/3] rounded-lg bg-base-200 overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl relative">
-                                <% if (movie.poster_path) { %>
-                                    <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>"
-                                        alt="<%= movie.title %>" class="w-full h-full object-cover">
-                                    <% } else { %>
-                                        <div class="absolute inset-0 flex items-center justify-center bg-base-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="h-10 w-10 text-base-content/20" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                    d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-                                            </svg>
-                                        </div>
-                                        <% } %>
-                                            <div
-                                                class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <p class="text-white text-xs font-medium truncate">
-                                                    <%= movie.title %>
-                                                </p>
-                                            </div>
+                                <img src="<%= card.image %>"
+                                    alt="<%= card.title %>" class="w-full h-full object-cover">
+                                <div
+                                    class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-100 transition-opacity flex flex-col justify-end">
+                                    <p class="text-white text-sm font-medium truncate mb-1">
+                                        <%= card.title %>
+                                    </p>
+                                    <p class="text-primary text-xs font-bold">
+                                        <%= card.price %>
+                                    </p>
+                                </div>
                             </div>
                         </a>
                         <% }); %>
                             <% } else { %>
-                                <!-- Fallback if no movies -->
                                 <div class="col-span-full text-center py-10 text-base-content/50">
-                                    <p>No recently watched movies yet.</p>
+                                    <p>No products available yet.</p>
                                 </div>
                                 <% } %>
             </div>
         </div>
     </section>
 
-    <!-- Featured Lists & Recent Activity Section -->
+    <!-- Curated Collections & Trending Now Section -->
     <section class="bg-base-200/50 px-4 py-16">
         <div class="mx-auto max-w-6xl">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                <!-- Featured Lists -->
+                <!-- Curated Collections -->
                 <div>
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl md:text-2xl font-bold">Featured Lists</h2>
-                        <a href="/watchlists" class="btn btn-ghost btn-sm gap-1">
-                            View All Lists
+                        <h2 class="text-xl md:text-2xl font-bold">Curated Collections</h2>
+                        <a href="/collections" class="btn btn-ghost btn-sm gap-1">
+                            View All Collections
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -123,51 +114,35 @@
                             </svg>
                         </a>
                     </div>
-                    <p class="text-base-content/60 mb-6 -mt-4">Curated collections from the community</p>
+                    <p class="text-base-content/60 mb-6 -mt-4">Hand-picked selections for every occasion</p>
 
                     <div class="space-y-4">
-                        <% if (data.topLists && data.topLists.length> 0) { %>
-                            <% data.topLists.forEach(list=> { %>
-                                <a href="/watchlists/<%= list.id %>"
+                        <% if (data.topCollections && data.topCollections.length > 0) { %>
+                            <% data.topCollections.forEach(collection => { %>
+                                <a href="/collections/<%= collection.id %>"
                                     class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group">
                                     <div class="card-body p-4 flex-row items-center gap-4">
                                         <div class="flex -space-x-2">
-                                            <% if (list.posters.length> 0) { %>
-                                                <% list.posters.forEach(poster=> { %>
-                                                    <img src="https://image.tmdb.org/t/p/w92<%= poster %>"
+                                            <% if (collection.images && collection.images.length > 0) { %>
+                                                <% collection.images.forEach(img => { %>
+                                                    <img src="<%= img %>"
                                                         class="w-10 h-14 rounded object-cover border-2 border-base-100">
                                                     <% }); %>
-                                                        <% for (let i=list.posters.length; i < 3; i++) { %>
-                                                            <div
-                                                                class="w-10 h-14 rounded bg-gradient-to-br from-primary/40 to-secondary/40 border-2 border-base-100">
-                                                            </div>
-                                                            <% } %>
-                                                                <% } else { %>
-                                                                    <div
-                                                                        class="w-10 h-14 rounded bg-gradient-to-br from-primary/40 to-secondary/40">
-                                                                    </div>
-                                                                    <div
-                                                                        class="w-10 h-14 rounded bg-gradient-to-br from-secondary/40 to-accent/40">
-                                                                    </div>
-                                                                    <div
-                                                                        class="w-10 h-14 rounded bg-gradient-to-br from-accent/40 to-primary/40">
-                                                                    </div>
-                                                                    <% } %>
+                                            <% } else { %>
+                                                <div class="w-10 h-14 rounded bg-gradient-to-br from-primary/40 to-secondary/40"></div>
+                                            <% } %>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <h3
                                                 class="font-semibold group-hover:text-primary transition-colors truncate">
-                                                <%= list.title %>
+                                                <%= collection.title %>
                                             </h3>
                                             <p class="text-sm text-base-content/60">
-                                                <%= list.description %>
+                                                <%= collection.description %>
                                             </p>
-                                            <% if (list.description) { %>
-                                                <p class="text-xs text-base-content/50 truncate mt-1">
-                                                    <%= list.count %>
-                                                        <%= list.count===1 ? 'film' : 'films' %>
-                                                </p>
-                                                <% } %>
+                                            <p class="text-xs text-base-content/50 truncate mt-1">
+                                                <%= collection.count %> items
+                                            </p>
                                         </div>
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="h-5 w-5 text-base-content/30 group-hover:text-primary transition-colors"
@@ -180,30 +155,22 @@
                                 <% }); %>
                                     <% } else { %>
                                         <div class="text-center py-10 text-base-content/50">
-                                            <p>No lists yet.</p>
+                                            <p>No collections yet.</p>
                                         </div>
                                         <% } %>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
+                <!-- Trending Reviews -->
                 <div>
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl md:text-2xl font-bold">Recent Activity</h2>
-                        <!-- <a href="#" class="btn btn-ghost btn-sm gap-1">
-                            View All
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </a> -->
+                        <h2 class="text-xl md:text-2xl font-bold">Customer Reviews</h2>
                     </div>
 
                     <div class="space-y-4">
-                        <% if (data.recentActivity && data.recentActivity.length> 0) { %>
+                        <% if (data.recentReviews && data.recentReviews.length > 0) { %>
                             <% const colors=['primary', 'secondary' , 'accent' , 'info' ]; %>
-                                <% data.recentActivity.forEach((activity, index)=> { %>
+                                <% data.recentReviews.forEach((review, index) => { %>
                                     <div class="card bg-base-100 shadow-md">
                                         <div class="card-body p-4">
                                             <div class="flex items-start gap-3">
@@ -211,44 +178,29 @@
                                                     <div
                                                         class="bg-<%= colors[index % 4] %> text-<%= colors[index % 4] %>-content rounded-full w-10">
                                                         <span class="text-sm font-bold">
-                                                            <%= activity.userInitials || 'U' %>
+                                                            <%= review.userInitials || 'U' %>
                                                         </span>
                                                     </div>
                                                 </div>
                                                 <div class="flex-1 min-w-0">
                                                     <p class="text-sm">
-                                                        <% if (activity.type==='add' ) { %>
-                                                            <span class="text-base-content/60">A movie was added to
-                                                            </span>
-                                                            <a href="/watchlists/<%= activity.listId %>"
-                                                                class="font-semibold hover:text-primary">
-                                                                <%= activity.listTitle %>
-                                                            </a>
-                                                            <span class="text-base-content/60">: </span>
-                                                            <a href="/movies/<%= activity.movieId %>"
-                                                                class="font-semibold text-primary hover:underline">
-                                                                <%= activity.movieTitle %>
-                                                            </a>
-                                                            <% } else { %>
-                                                                <span class="font-semibold">
-                                                                    <%= activity.userName %>
-                                                                </span>
-                                                                <span class="text-base-content/60">
-                                                                    <%= activity.type==='review' ? 'reviewed' : 'rated'
-                                                                        %>
-                                                                </span>
-                                                                <a href="/movies/<%= activity.movieId %>"
-                                                                    class="font-semibold text-primary hover:underline">
-                                                                    <%= activity.movieTitle %>
-                                                                </a>
-                                                                <% } %>
+                                                        <span class="font-semibold">
+                                                            <%= review.userName %>
+                                                        </span>
+                                                        <span class="text-base-content/60">
+                                                            <%= review.type === 'review' ? 'reviewed' : 'rated' %>
+                                                        </span>
+                                                        <a href="#"
+                                                            class="font-semibold text-primary hover:underline">
+                                                            <%= review.cardTitle %>
+                                                        </a>
                                                     </p>
-                                                    <% if (activity.review) { %>
+                                                    <% if (review.review) { %>
                                                         <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
-                                                            <%= activity.review %>
+                                                            "<%= review.review %>"
                                                         </p>
                                                         <% } %>
-                                                            <% if (activity.rating> 0) { %>
+                                                            <% if (review.rating > 0) { %>
                                                                 <div class="flex items-center gap-1 mt-2">
                                                                     <div class="rating rating-sm rating-half">
                                                                         <input type="radio" name="rating-<%= index %>"
@@ -257,13 +209,11 @@
                                                                             <input type="radio"
                                                                                 name="rating-<%= index %>"
                                                                                 class="mask mask-star-2 mask-half-1 bg-warning"
-                                                                                disabled <%=activity.rating===(i - 0.5)
-                                                                                ? 'checked' : '' %> />
+                                                                                disabled <%= review.rating === (i - 0.5) ? 'checked' : '' %> />
                                                                             <input type="radio"
                                                                                 name="rating-<%= index %>"
                                                                                 class="mask mask-star-2 mask-half-2 bg-warning"
-                                                                                disabled <%=activity.rating===i
-                                                                                ? 'checked' : '' %> />
+                                                                                disabled <%= review.rating === i ? 'checked' : '' %> />
                                                                             <% } %>
                                                                     </div>
                                                                 </div>
@@ -275,7 +225,7 @@
                                     <% }); %>
                                         <% } else { %>
                                             <div class="text-center py-10 text-base-content/50">
-                                                <p>No recent activity yet.</p>
+                                                <p>No recent reviews yet.</p>
                                             </div>
                                             <% } %>
                     </div>
@@ -289,114 +239,112 @@
         <div class="mx-auto max-w-6xl">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                    Everything you need to track your film journey
+                    Everything you need to send a smile
                 </h2>
                 <p class="text-lg text-base-content/60 max-w-2xl mx-auto">
-                    More than just a watchlist. A complete toolkit for the modern cinephile.
+                    More than just a store. We provide the highest quality cards for your loved ones.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Feature Card 1: Log Your Watches -->
+                <!-- Feature Card 1 -->
                 <div class="card bg-base-200/50 hover:bg-base-200 transition-all duration-300">
                     <div class="card-body">
                         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                             </svg>
                         </div>
-                        <h3 class="card-title text-lg">Log Your Watches</h3>
+                        <h3 class="card-title text-lg">Premium Packaging</h3>
                         <p class="text-base-content/60">
-                            Keep a detailed diary of every film you watch with ratings, reviews, and viewing dates.
+                            Every order is securely packaged to ensure your cards arrive in pristine condition.
                         </p>
                     </div>
                 </div>
 
-                <!-- Feature Card 2: Create Lists -->
+                <!-- Feature Card 2 -->
                 <div class="card bg-base-200/50 hover:bg-base-200 transition-all duration-300">
                     <div class="card-body">
                         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
-                        <h3 class="card-title text-lg">Create Lists</h3>
+                        <h3 class="card-title text-lg">Fast Shipping</h3>
                         <p class="text-base-content/60">
-                            Organize films into custom lists. Top 10s, genres, moods, or anything you can imagine.
+                            Get your cards faster with our expedited worldwide shipping options.
                         </p>
                     </div>
                 </div>
 
-                <!-- Feature Card 3: Follow Friends -->
+                <!-- Feature Card 3 -->
                 <div class="card bg-base-200/50 hover:bg-base-200 transition-all duration-300">
                     <div class="card-body">
                         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <h3 class="card-title text-lg">Follow Friends</h3>
+                        <h3 class="card-title text-lg">Locally Printed</h3>
                         <p class="text-base-content/60">
-                            See what friends are watching and discover new films through their activity.
+                            All our cards are printed locally on high-quality, sustainable paper.
                         </p>
                     </div>
                 </div>
 
-                <!-- Feature Card 4: Track Your Stats -->
+                <!-- Feature Card 4 -->
                 <div class="card bg-base-200/50 hover:bg-base-200 transition-all duration-300">
                     <div class="card-body">
                         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-info/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-info" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 class="card-title text-lg">Track Your Stats</h3>
+                        <h3 class="card-title text-lg">Secure Checkout</h3>
                         <p class="text-base-content/60">
-                            View insights on your watching habits, favorite genres, and yearly progress.
+                            Your payment information is always encrypted and protected.
                         </p>
                     </div>
                 </div>
 
-                <!-- Feature Card 5: Get Recommendations -->
+                <!-- Feature Card 5 -->
                 <div class="card bg-base-200/50 hover:bg-base-200 transition-all duration-300">
                     <div class="card-body">
                         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-success/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-success" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                             </svg>
                         </div>
-                        <h3 class="card-title text-lg">Get Recommendations</h3>
+                        <h3 class="card-title text-lg">Rewards Program</h3>
                         <p class="text-base-content/60">
-                            Receive personalized suggestions based on your taste and viewing history.
+                            Earn points with every purchase and unlock exclusive discounts and early access.
                         </p>
                     </div>
                 </div>
 
-                <!-- Feature Card 6: Share Your Taste -->
+                <!-- Feature Card 6 -->
                 <div class="card bg-base-200/50 hover:bg-base-200 transition-all duration-300">
                     <div class="card-body">
                         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                             </svg>
                         </div>
-                        <h3 class="card-title text-lg">Share Your Taste</h3>
+                        <h3 class="card-title text-lg">Community Loved</h3>
                         <p class="text-base-content/60">
-                            Export lists, share reviews on social media, and show off your film knowledge.
+                            Join thousands of happy customers spreading joy with our unique cards.
                         </p>
                     </div>
                 </div>
@@ -407,19 +355,18 @@
     <!-- CTA Section -->
     <section class="bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10 px-4 py-20">
         <div class="mx-auto max-w-3xl text-center">
-            <h2 class="mb-4 text-3xl md:text-4xl font-bold">Start your film journey today</h2>
+            <h2 class="mb-4 text-3xl md:text-4xl font-bold">Start spreading joy today</h2>
             <p class="mb-8 text-lg text-base-content/60">
-                Join to start tracking your film journey with over 1,200,000 films to track, rate, and share.
+                Create an account to track your orders, save your favorite cards, and earn reward points.
             </p>
             <a href="/login"
                 class="btn btn-primary btn-lg gap-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-primary/25">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                Get Started — It's Free
+                Sign Up Now
             </a>
         </div>
     </section>

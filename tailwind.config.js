@@ -13,7 +13,7 @@ export default {
         themes: [
             {
                 neobrutalism: {
-                    "primary": "#38BDF8",           // Cyan
+                    "primary": "#D8B4FE",           // Lilac
                     "primary-content": "#000000",
                     "secondary": "#A78BFA",         // Purple
                     "secondary-content": "#000000",
@@ -38,7 +38,7 @@ export default {
                     "--tab-radius": "0.125rem",
                 },
                 neobrutalismdark: {
-                    "primary": "#38BDF8",           // Cyan
+                    "primary": "#D8B4FE",           // Lilac
                     "primary-content": "#000000",
                     "secondary": "#A78BFA",         // Purple
                     "secondary-content": "#000000",
