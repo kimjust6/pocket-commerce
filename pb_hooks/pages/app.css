@@ -4154,6 +4154,10 @@ html::-webkit-scrollbar,
   top: 33.333333%;
 }
 
+.top-\[4\.05rem\] {
+  top: 4.05rem;
+}
+
 .z-0 {
   z-index: 0;
 }
@@ -5064,6 +5068,10 @@ html::-webkit-scrollbar,
   padding-top: 1rem;
 }
 
+.text-left {
+  text-align: left;
+}
+
 .text-center {
   text-align: center;
 }
@@ -5618,6 +5626,10 @@ html::-webkit-scrollbar,
   .lg\:stats-horizontal:where([dir="rtl"], [dir="rtl"] *) {
     --tw-divide-x-reverse: 1;
   }
+}
+
+.last\:border-b-0:last-child {
+  border-bottom-width: 0px;
 }
 
 .hover\:-translate-x-2:hover {

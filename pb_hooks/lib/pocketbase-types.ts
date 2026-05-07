@@ -5,21 +5,27 @@
 import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
-export enum Collections {
-	Authorigins = "_authOrigins",
-	Externalauths = "_externalAuths",
-	Mfas = "_mfas",
-	Otps = "_otps",
-	Superusers = "_superusers",
-	Genre = "genre",
-	ListUser = "list_user",
-	Lists = "lists",
-	Movies = "movies",
-	MoviesGenres = "movies_genres",
-	Users = "users",
-	WatchHistoryUser = "watch_history_user",
-	WatchedHistory = "watched_history",
-}
+export const Collections = {
+	Authorigins: "_authOrigins",
+	Externalauths: "_externalAuths",
+	Mfas: "_mfas",
+	Otps: "_otps",
+	Superusers: "_superusers",
+	Addresses: "addresses",
+	CartItems: "cart_items",
+	Carts: "carts",
+	Categories: "categories",
+	Coupons: "coupons",
+	OrderItems: "order_items",
+	Orders: "orders",
+	Payments: "payments",
+	ProductVariants: "product_variants",
+	Products: "products",
+	Reviews: "reviews",
+	Shipments: "shipments",
+	Users: "users",
+} as const
+export type Collections = typeof Collections[keyof typeof Collections]
 
 // Alias types for improved usability
 export type IsoDateString = string
@@ -99,60 +105,167 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
-export type GenreRecord = {
-	created: IsoAutoDateString
-	genre_id?: string
+export type AddressesRecord = {
+	city: string
+	country: string
 	id: string
-	name?: string
-	updated: IsoAutoDateString
+	is_default?: boolean
+	state?: string
+	street: string
+	user: RecordIdString
+	zip: string
 }
 
-export type ListUserRecord = {
-	created: IsoAutoDateString
+export type CartItemsRecord = {
+	cart: RecordIdString
 	id: string
-	invited_user?: RecordIdString
-	list?: RecordIdString
-	updated: IsoAutoDateString
-	user_permission?: string
+	quantity: number
+	variant: RecordIdString
 }
 
-export type ListsRecord = {
-	created: IsoAutoDateString
+export type CartsRecord = {
+	id: string
+	session_id?: string
+	user?: RecordIdString
+}
+
+export type CategoriesRecord = {
+	id: string
+	image?: FileNameString
+	name: string
+	parent?: RecordIdString
+	slug: string
+}
+
+export const CouponsTypeOptions = {
+	"percent": "percent",
+	"fixed": "fixed",
+} as const
+export type CouponsTypeOptions = typeof CouponsTypeOptions[keyof typeof CouponsTypeOptions]
+export type CouponsRecord = {
+	code: string
+	expires_at?: IsoDateString
+	id: string
+	is_active?: boolean
+	max_uses?: number
+	min_order?: number
+	type: CouponsTypeOptions
+	used_count?: number
+	value: number
+}
+
+export type OrderItemsRecord = {
+	id: string
+	order: RecordIdString
+	product_name: string
+	quantity: number
+	total_price: number
+	unit_price: number
+	variant?: RecordIdString
+	variant_label?: string
+}
+
+export const OrdersStatusOptions = {
+	"pending": "pending",
+	"paid": "paid",
+	"processing": "processing",
+	"shipped": "shipped",
+	"delivered": "delivered",
+	"cancelled": "cancelled",
+	"refunded": "refunded",
+} as const
+export type OrdersStatusOptions = typeof OrdersStatusOptions[keyof typeof OrdersStatusOptions]
+export type OrdersRecord<Tshipping_address = unknown> = {
+	coupon?: RecordIdString
+	discount?: number
+	id: string
+	notes?: string
+	shipping_address?: null | Tshipping_address
+	shipping_cost?: number
+	status: OrdersStatusOptions
+	subtotal: number
+	tax?: number
+	total: number
+	user: RecordIdString
+}
+
+export const PaymentsProviderOptions = {
+	"stripe": "stripe",
+	"paypal": "paypal",
+	"manual": "manual",
+	"other": "other",
+} as const
+export type PaymentsProviderOptions = typeof PaymentsProviderOptions[keyof typeof PaymentsProviderOptions]
+
+export const PaymentsStatusOptions = {
+	"pending": "pending",
+	"paid": "paid",
+	"failed": "failed",
+	"refunded": "refunded",
+} as const
+export type PaymentsStatusOptions = typeof PaymentsStatusOptions[keyof typeof PaymentsStatusOptions]
+export type PaymentsRecord = {
+	amount: number
+	id: string
+	order: RecordIdString
+	provider: PaymentsProviderOptions
+	provider_tx_id?: string
+	status: PaymentsStatusOptions
+}
+
+export type ProductVariantsRecord<Tattributes = unknown> = {
+	attributes?: null | Tattributes
+	compare_at_price?: number
+	id: string
+	price: number
+	product: RecordIdString
+	sku: string
+	stock: number
+	weight?: number
+}
+
+export const ProductsStatusOptions = {
+	"active": "active",
+	"draft": "draft",
+	"archived": "archived",
+} as const
+export type ProductsStatusOptions = typeof ProductsStatusOptions[keyof typeof ProductsStatusOptions]
+export type ProductsRecord = {
+	category?: RecordIdString
 	description?: string
 	id: string
-	is_deleted?: boolean
-	is_private?: boolean
-	list_title?: string
-	owner?: RecordIdString
-	updated: IsoAutoDateString
+	images?: FileNameString[]
+	name: string
+	slug: string
+	status: ProductsStatusOptions
 }
 
-export type MoviesRecord = {
-	adult?: boolean
-	backdrop_path?: string
-	created: IsoAutoDateString
-	homepage?: string
+export type ReviewsRecord = {
+	body?: string
 	id: string
-	imdb_id?: string
-	original_language?: string
-	original_title?: string
-	overview?: string
-	poster_path?: string
-	release_date?: IsoDateString
-	runtime?: number
-	status?: string
-	tagline?: string
+	is_verified_purchase?: boolean
+	product: RecordIdString
+	rating: number
 	title?: string
-	tmdb_id?: string
-	updated: IsoAutoDateString
+	user: RecordIdString
 }
 
-export type MoviesGenresRecord = {
-	created: IsoAutoDateString
-	genre?: RecordIdString
+export const ShipmentsStatusOptions = {
+	"preparing": "preparing",
+	"shipped": "shipped",
+	"out_for_delivery": "out_for_delivery",
+	"delivered": "delivered",
+	"failed": "failed",
+} as const
+export type ShipmentsStatusOptions = typeof ShipmentsStatusOptions[keyof typeof ShipmentsStatusOptions]
+export type ShipmentsRecord = {
+	carrier?: string
+	delivered_at?: IsoDateString
 	id: string
-	movie?: RecordIdString
-	updated: IsoAutoDateString
+	order: RecordIdString
+	shipped_at?: IsoDateString
+	status: ShipmentsStatusOptions
+	tracking_number?: string
 }
 
 export type UsersRecord = {
@@ -171,44 +284,25 @@ export type UsersRecord = {
 	verified?: boolean
 }
 
-export type WatchHistoryUserRecord = {
-	created: IsoAutoDateString
-	failed?: boolean
-	id: string
-	rating?: number
-	review?: HTMLString
-	updated: IsoAutoDateString
-	user?: RecordIdString
-	watch_history?: RecordIdString
-}
-
-export type WatchedHistoryRecord = {
-	added_by?: RecordIdString
-	created: IsoAutoDateString
-	id: string
-	imdb_score?: number
-	list?: RecordIdString
-	movie?: RecordIdString
-	rt_score?: number
-	tmdb_score?: number
-	updated: IsoAutoDateString
-	watched?: IsoDateString
-}
-
 // Response types include system fields and match responses from the PocketBase API
 export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
 export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
-export type GenreResponse<Texpand = unknown> = Required<GenreRecord> & BaseSystemFields<Texpand>
-export type ListUserResponse<Texpand = unknown> = Required<ListUserRecord> & BaseSystemFields<Texpand>
-export type ListsResponse<Texpand = unknown> = Required<ListsRecord> & BaseSystemFields<Texpand>
-export type MoviesResponse<Texpand = unknown> = Required<MoviesRecord> & BaseSystemFields<Texpand>
-export type MoviesGenresResponse<Texpand = unknown> = Required<MoviesGenresRecord> & BaseSystemFields<Texpand>
+export type AddressesResponse<Texpand = unknown> = Required<AddressesRecord> & BaseSystemFields<Texpand>
+export type CartItemsResponse<Texpand = unknown> = Required<CartItemsRecord> & BaseSystemFields<Texpand>
+export type CartsResponse<Texpand = unknown> = Required<CartsRecord> & BaseSystemFields<Texpand>
+export type CategoriesResponse<Texpand = unknown> = Required<CategoriesRecord> & BaseSystemFields<Texpand>
+export type CouponsResponse<Texpand = unknown> = Required<CouponsRecord> & BaseSystemFields<Texpand>
+export type OrderItemsResponse<Texpand = unknown> = Required<OrderItemsRecord> & BaseSystemFields<Texpand>
+export type OrdersResponse<Tshipping_address = unknown, Texpand = unknown> = Required<OrdersRecord<Tshipping_address>> & BaseSystemFields<Texpand>
+export type PaymentsResponse<Texpand = unknown> = Required<PaymentsRecord> & BaseSystemFields<Texpand>
+export type ProductVariantsResponse<Tattributes = unknown, Texpand = unknown> = Required<ProductVariantsRecord<Tattributes>> & BaseSystemFields<Texpand>
+export type ProductsResponse<Texpand = unknown> = Required<ProductsRecord> & BaseSystemFields<Texpand>
+export type ReviewsResponse<Texpand = unknown> = Required<ReviewsRecord> & BaseSystemFields<Texpand>
+export type ShipmentsResponse<Texpand = unknown> = Required<ShipmentsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
-export type WatchHistoryUserResponse<Texpand = unknown> = Required<WatchHistoryUserRecord> & BaseSystemFields<Texpand>
-export type WatchedHistoryResponse<Texpand = unknown> = Required<WatchedHistoryRecord> & BaseSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
@@ -218,14 +312,19 @@ export type CollectionRecords = {
 	_mfas: MfasRecord
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
-	genre: GenreRecord
-	list_user: ListUserRecord
-	lists: ListsRecord
-	movies: MoviesRecord
-	movies_genres: MoviesGenresRecord
+	addresses: AddressesRecord
+	cart_items: CartItemsRecord
+	carts: CartsRecord
+	categories: CategoriesRecord
+	coupons: CouponsRecord
+	order_items: OrderItemsRecord
+	orders: OrdersRecord
+	payments: PaymentsRecord
+	product_variants: ProductVariantsRecord
+	products: ProductsRecord
+	reviews: ReviewsRecord
+	shipments: ShipmentsRecord
 	users: UsersRecord
-	watch_history_user: WatchHistoryUserRecord
-	watched_history: WatchedHistoryRecord
 }
 
 export type CollectionResponses = {
@@ -234,14 +333,19 @@ export type CollectionResponses = {
 	_mfas: MfasResponse
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
-	genre: GenreResponse
-	list_user: ListUserResponse
-	lists: ListsResponse
-	movies: MoviesResponse
-	movies_genres: MoviesGenresResponse
+	addresses: AddressesResponse
+	cart_items: CartItemsResponse
+	carts: CartsResponse
+	categories: CategoriesResponse
+	coupons: CouponsResponse
+	order_items: OrderItemsResponse
+	orders: OrdersResponse
+	payments: PaymentsResponse
+	product_variants: ProductVariantsResponse
+	products: ProductsResponse
+	reviews: ReviewsResponse
+	shipments: ShipmentsResponse
 	users: UsersResponse
-	watch_history_user: WatchHistoryUserResponse
-	watched_history: WatchedHistoryResponse
 }
 
 // Utility types for create/update operations
