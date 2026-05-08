@@ -7,11 +7,11 @@
 // Try $os.getenv first if available (Go environment), else process.env (testing).
 const apiKey = process.env.TMDB_API_KEY || $os.getenv('TMDB_API_KEY') || ''
 
-const BASE_URL = 'https://api.themoviedb.org/3'
+const BASE_URL = 'https://api.theproductdb.org/3'
 
 /**
  * Fetches data from the TMDB API.
- * @param {string} endpoint - The API endpoint to fetch (e.g., '/search/movie').
+ * @param {string} endpoint - The API endpoint to fetch (e.g., '/search/product').
  * @param {Object} [params={}] - Optional query parameters.
  * @returns {Object} The JSON response from the API.
  * @throws {Error} If TMDB_API_KEY is not set or if the API returns an error.
@@ -54,36 +54,36 @@ function fetchTMDB(endpoint, params = {}) {
 
 module.exports = {
     /**
-     * Searches for movies by query string.
+     * Searches for products by query string.
      * @param {string} query - The search query.
      * @param {number} [page=1] - The page number to fetch.
      * @returns {Object} The search results from TMDB.
      */
-    searchMovies: (query, page = 1) => {
-        return fetchTMDB('/search/movie', { query, page })
+    searchProducts: (query, page = 1) => {
+        return fetchTMDB('/search/product', { query, page })
     },
 
     /**
-     * Retrieves details for a specific movie by ID.
-     * @param {string|number} id - The TMDB movie ID.
-     * @returns {Object} The movie details.
+     * Retrieves details for a specific product by ID.
+     * @param {string|number} id - The TMDB product ID.
+     * @returns {Object} The product details.
      */
     /**
-     * Retrieves details for a specific movie by ID.
-     * @param {string|number} id - The TMDB movie ID.
-     * @returns {Object} The movie details.
+     * Retrieves details for a specific product by ID.
+     * @param {string|number} id - The TMDB product ID.
+     * @returns {Object} The product details.
      */
-    getMovie: (id) => {
-        return fetchTMDB(`/movie/${id}`)
+    getProduct: (id) => {
+        return fetchTMDB(`/product/${id}`)
     },
 
     /**
-     * Retrieves credits for a specific movie by ID.
-     * @param {string|number} id - The TMDB movie ID.
-     * @returns {Object} The movie credits.
+     * Retrieves credits for a specific product by ID.
+     * @param {string|number} id - The TMDB product ID.
+     * @returns {Object} The product credits.
      */
     getCredits: (id) => {
-        return fetchTMDB(`/movie/${id}/credits`)
+        return fetchTMDB(`/product/${id}/credits`)
     },
 }
 

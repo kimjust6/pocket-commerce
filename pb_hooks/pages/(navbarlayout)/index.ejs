@@ -11,7 +11,8 @@
                 <span
                     class="inline-block bg-primary border-4 border-neutral px-4 py-2 mb-4 transform -rotate-2 text-primary-content">Discover</span>
                 <br>
-                <span class="inline-block bg-base-100 border-4 border-neutral px-4 py-2 text-base-content">Hilarious</span>
+                <span
+                    class="inline-block bg-base-100 border-4 border-neutral px-4 py-2 text-base-content">Hilarious</span>
                 <br>
                 <span
                     class="inline-block bg-secondary border-4 border-neutral px-4 py-2 transform rotate-1 text-secondary-content">Greetings.</span>
@@ -97,7 +98,8 @@
                     Collections</h2>
                 <div class="space-y-6">
                     <% if (data.topCollections && data.topCollections.length> 0) { %>
-                        <% const colColors=['bg-primary text-primary-content', 'bg-secondary text-secondary-content' , 'bg-warning text-warning-content' , 'bg-info text-info-content' ] %>
+                        <% const colColors=['bg-primary text-primary-content', 'bg-secondary text-secondary-content'
+                            , 'bg-warning text-warning-content' , 'bg-info text-info-content' ] %>
                             <% data.topCollections.forEach((collection, index)=> { %>
                                 <a href="/collections/<%= collection.id %>" class="block group">
                                     <div
@@ -208,13 +210,15 @@
             <% const features=[ { title: 'Premium Packaging' ,
                 desc: 'Every order is securely packaged to ensure your cards arrive in pristine condition.' ,
                 color: 'bg-primary text-primary-content' }, { title: 'Fast Shipping' ,
-                desc: 'Get your cards faster with our expedited worldwide shipping options.' , color: 'bg-base-100 text-base-content' }, {
-                title: 'Locally Printed' , desc: 'All our cards are printed locally on high-quality, sustainable paper.'
-                , color: 'bg-warning text-warning-content' }, { title: 'Secure Checkout' ,
-                desc: 'Your payment information is always encrypted and protected.' , color: 'bg-info text-info-content' }, {
-                title: 'Rewards Program' , desc: 'Earn points with every purchase and unlock exclusive discounts.' ,
-                color: 'bg-success text-success-content' }, { title: 'Community Loved' ,
-                desc: 'Join thousands of happy customers spreading joy with our cards.' , color: 'bg-base-100 text-base-content' } ] %>
+                desc: 'Get your cards faster with our expedited worldwide shipping options.' ,
+                color: 'bg-base-100 text-base-content' }, { title: 'Locally Printed' ,
+                desc: 'All our cards are printed locally on high-quality, sustainable paper.' ,
+                color: 'bg-warning text-warning-content' }, { title: 'Secure Checkout' ,
+                desc: 'Your payment information is always encrypted and protected.' , color: 'bg-info text-info-content'
+                }, { title: 'Rewards Program' , desc: 'Earn points with every purchase and unlock exclusive discounts.'
+                , color: 'bg-success text-success-content' }, { title: 'Community Loved' ,
+                desc: 'Join thousands of happy customers spreading joy with our cards.' ,
+                color: 'bg-base-100 text-base-content' } ] %>
 
                 <% features.forEach((f, idx)=> { %>
                     <div

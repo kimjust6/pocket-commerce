@@ -2,13 +2,13 @@
  * Alpine.js component for the watchlist detail page.
  * Manages the state of Share and Edit modals, table sorting, and infinite scroll.
  */
-function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initialHasMore = true, currentUserId = '') {
+function watchlistDetail(initialProducts = [], isOwner = false, listId = '', initialHasMore = true, currentUserId = '') {
     return {
         /**
-         * Movies array for the watchlist.
+         * Products array for the watchlist.
          * @type {Array}
          */
-        movies: initialMovies,
+        products: initialProducts,
 
         /**
          * Whether the current user is the owner.
@@ -71,7 +71,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
         isRatingReadOnly: false,
 
         /**
-         * Whether the user has an existing rating for the current movie.
+         * Whether the user has an existing rating for the current product.
          * @type {boolean}
          */
         hasExistingRating: false,
@@ -121,10 +121,10 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
         editHistoryId: '',
 
         /**
-         * The title of the movie being edited.
+         * The title of the product being edited.
          * @type {string}
          */
-        editMovieTitle: '',
+        editProductTitle: '',
 
         /**
          * The current watched date value for the edit form.
@@ -255,7 +255,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             });
 
             // Subscribe to watch_history_user table changes (ratings/reviews)
-            // We subscribe to all changes but filter client-side based on loaded movies
+            // We subscribe to all changes but filter client-side based on loaded products
             pb.collection('watch_history_user').subscribe('*', (e) => {
                 this.handleRatingRealtimeEvent(e);
             }).then(() => {
@@ -287,35 +287,35 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             // For delete action, we don't need to fetch from API
             if (action === 'delete') {
                 const historyId = record.id;
-                this.movies = this.movies.filter(m => m.history_id !== historyId);
+                this.products = this.products.filter(m => m.history_id !== historyId);
                 return;
             }
 
-            // Fetch the updated movie data from the API to get full details with attendance
+            // Fetch the updated product data from the API to get full details with attendance
             try {
                 const response = await this.fetchWithRetry(
-                    `/api/watchlists/movies?listId=${this.listId}&historyId=${record.id}`
+                    `/api/watchlists/products?listId=${this.listId}&historyId=${record.id}`
                 );
                 const data = await response.json();
 
                 if (action === 'create') {
-                    // Add new movie to the list if we have the data
-                    if (data.success && data.movies && data.movies.length > 0) {
-                        const newMovie = data.movies[0];
+                    // Add new product to the list if we have the data
+                    if (data.success && data.products && data.products.length > 0) {
+                        const newProduct = data.products[0];
                         // Check if it already exists (avoid duplicates)
-                        const exists = this.movies.some(m => m.history_id === newMovie.history_id);
+                        const exists = this.products.some(m => m.history_id === newProduct.history_id);
                         if (!exists) {
-                            this.movies.unshift(newMovie);
+                            this.products.unshift(newProduct);
                             this.applySort();
                         }
                     }
                 } else if (action === 'update') {
-                    // Update existing movie in the list
-                    if (data.success && data.movies && data.movies.length > 0) {
-                        const updatedMovie = data.movies[0];
-                        const index = this.movies.findIndex(m => m.history_id === updatedMovie.history_id);
+                    // Update existing product in the list
+                    if (data.success && data.products && data.products.length > 0) {
+                        const updatedProduct = data.products[0];
+                        const index = this.products.findIndex(m => m.history_id === updatedProduct.history_id);
                         if (index !== -1) {
-                            this.movies[index] = updatedMovie;
+                            this.products[index] = updatedProduct;
                             this.applySort();
                         }
                     }
@@ -344,32 +344,32 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
                 return;
             }
 
-            // Check if this rating change is for a movie we have loaded
-            const movieIndex = this.movies.findIndex(m => m.history_id === watchHistoryId);
-            if (movieIndex === -1) {
-                console.log('[Realtime] Rating for unloaded movie, ignoring. history_id:', watchHistoryId);
+            // Check if this rating change is for a product we have loaded
+            const productIndex = this.products.findIndex(m => m.history_id === watchHistoryId);
+            if (productIndex === -1) {
+                console.log('[Realtime] Rating for unloaded product, ignoring. history_id:', watchHistoryId);
                 return;
             }
 
-            console.log('[Realtime] Rating event matched movie at index:', movieIndex, 'action:', action);
+            console.log('[Realtime] Rating event matched product at index:', productIndex, 'action:', action);
 
             if (action === 'delete') {
-                // Remove this user's attendance from the movie
-                if (this.movies[movieIndex].attendance && this.movies[movieIndex].attendance[userId]) {
-                    delete this.movies[movieIndex].attendance[userId];
+                // Remove this user's attendance from the product
+                if (this.products[productIndex].attendance && this.products[productIndex].attendance[userId]) {
+                    delete this.products[productIndex].attendance[userId];
                     // Trigger Alpine.js reactivity by creating new array
-                    this.movies = [...this.movies];
+                    this.products = [...this.products];
                     console.log('[Realtime] Deleted rating for user:', userId);
                 }
                 return;
             }
 
             // For create or update, update the attendance data
-            if (!this.movies[movieIndex].attendance) {
-                this.movies[movieIndex].attendance = {};
+            if (!this.products[productIndex].attendance) {
+                this.products[productIndex].attendance = {};
             }
 
-            this.movies[movieIndex].attendance[userId] = {
+            this.products[productIndex].attendance[userId] = {
                 id: record.id,
                 rating: record.rating || 0,
                 review: record.review || '',
@@ -380,7 +380,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             console.log('[Realtime] Updated attendance for user:', userId, 'rating:', record.rating);
 
             // Trigger Alpine.js reactivity by creating new array
-            this.movies = [...this.movies];
+            this.products = [...this.products];
 
             // Re-sort if we're sorted by this user's rating
             if (this.sortColumn === 'user_' + userId) {
@@ -421,7 +421,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
             try {
                 const sortParam = this.getDbSortParam();
-                const url = `/api/watchlists/movies?listId=${this.listId}&page=${this.currentPage}&limit=${this.pageSize}&sort=${encodeURIComponent(sortParam)}`;
+                const url = `/api/watchlists/products?listId=${this.listId}&page=${this.currentPage}&limit=${this.pageSize}&sort=${encodeURIComponent(sortParam)}`;
 
                 // Use fetchWithRetry helper
                 const response = await this.fetchWithRetry(url);
@@ -436,26 +436,26 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
                     return;
                 }
 
-                if (data.success && data.movies && data.movies.length > 0) {
+                if (data.success && data.products && data.products.length > 0) {
                     if (isReset) {
-                        this.movies = data.movies;
+                        this.products = data.products;
                     } else {
                         // Filter out duplicates based on history_id
-                        const existingIds = new Set(this.movies.map(m => m.history_id));
-                        const newMovies = data.movies.filter(m => !existingIds.has(m.history_id));
-                        this.movies = [...this.movies, ...newMovies];
+                        const existingIds = new Set(this.products.map(m => m.history_id));
+                        const newProducts = data.products.filter(m => !existingIds.has(m.history_id));
+                        this.products = [...this.products, ...newProducts];
                     }
 
                     this.hasMore = data.hasMore;
                     this.applySort();
                 } else {
                     if (isReset) {
-                        this.movies = [];
+                        this.products = [];
                     }
                     this.hasMore = false;
                 }
             } catch (error) {
-                console.error('[Infinite Scroll] Failed to load more movies:', error);
+                console.error('[Infinite Scroll] Failed to load more products:', error);
                 this.hasMore = false;
             } finally {
                 this.isLoading = false;
@@ -485,9 +485,9 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
         getDbSortParam() {
             const colMap = {
                 'watched_at': 'watched',
-                'title': 'movie.title',
-                'release_date': 'movie.release_date',
-                'runtime': 'movie.runtime',
+                'title': 'product.title',
+                'release_date': 'product.release_date',
+                'runtime': 'product.runtime',
                 'tmdb_score': 'tmdb_score',
                 'imdb_score': 'imdb_score',
                 'rt_score': 'rt_score'
@@ -508,7 +508,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
                 this.sortDirection = 'desc'; // Default to desc for ratings (high to low)
             }
 
-            // For user specific sort, we only do client side sort of loaded movies
+            // For user specific sort, we only do client side sort of loaded products
             this.applySort();
             this.updateUrlParams();
         },
@@ -537,7 +537,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             const col = this.sortColumn;
             const dir = this.sortDirection;
 
-            this.movies.sort((a, b) => {
+            this.products.sort((a, b) => {
                 let valA, valB;
 
                 if (col.startsWith('user_')) {
@@ -591,15 +591,15 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
             // Store context for confirmation
             const historyId = this.editHistoryId;
-            const movieTitle = this.editMovieTitle;
+            const productTitle = this.editProductTitle;
 
             this.confirmModal = {
                 show: true,
-                title: 'Remove Movie?',
-                subtitle: movieTitle,
-                message: 'Are you sure you want to remove this movie from your watchlist?',
+                title: 'Remove Product?',
+                subtitle: productTitle,
+                message: 'Are you sure you want to remove this product from your watchlist?',
                 confirmText: 'Remove',
-                onConfirm: () => this.confirmDeleteMovie(historyId),
+                onConfirm: () => this.confirmDeleteProduct(historyId),
                 onCancel: () => {
                     this.confirmModal.show = false;
                     this.showDateModal = true;
@@ -607,16 +607,16 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             };
         },
 
-        async confirmDeleteMovie(historyId) {
+        async confirmDeleteProduct(historyId) {
             this.confirmModal.show = false;
 
-            const index = this.movies.findIndex(m => m.history_id === historyId);
+            const index = this.products.findIndex(m => m.history_id === historyId);
             if (index === -1) return;
 
             // Optimistic removal
-            const movie = this.movies[index];
-            this.movies.splice(index, 1);
-            this.movies = [...this.movies]; // Trigger reactivity
+            const product = this.products[index];
+            this.products.splice(index, 1);
+            this.products = [...this.products]; // Trigger reactivity
 
             const formData = new FormData();
             formData.append('action', 'delete_history_item');
@@ -624,7 +624,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             formData.append('list_id', this.listId);
 
             try {
-                const response = await fetch('/api/watchlists/movies', {
+                const response = await fetch('/api/watchlists/products', {
                     method: 'POST',
                     body: formData
                 });
@@ -632,43 +632,43 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
                 if (!result.success) {
                     console.error('Delete failed:', result.error);
-                    this.movies.splice(index, 0, movie); // Revert
-                    this.movies = [...this.movies];
-                    alert(result.error || 'Failed to remove movie.');
+                    this.products.splice(index, 0, product); // Revert
+                    this.products = [...this.products];
+                    alert(result.error || 'Failed to remove product.');
                 }
             } catch (error) {
                 console.error('Delete failed:', error);
-                this.movies.splice(index, 0, movie); // Revert
-                this.movies = [...this.movies];
+                this.products.splice(index, 0, product); // Revert
+                this.products = [...this.products];
                 alert('An error occurred. Changes reverted.');
             }
         },
 
-        openEditMovieModal(movie) {
-            this.editHistoryId = movie.history_id;
-            this.editMovieTitle = movie.title || '';
-            this.editDateValue = movie.watched_at ? new Date(movie.watched_at).toISOString().slice(0, 10) : '';
-            this.editTmdbScore = movie.tmdb_score || '';
-            this.editImdbScore = movie.imdb_score || '';
-            this.editRtScore = movie.rt_score || '';
+        openEditProductModal(product) {
+            this.editHistoryId = product.history_id;
+            this.editProductTitle = product.title || '';
+            this.editDateValue = product.watched_at ? new Date(product.watched_at).toISOString().slice(0, 10) : '';
+            this.editTmdbScore = product.tmdb_score || '';
+            this.editImdbScore = product.imdb_score || '';
+            this.editRtScore = product.rt_score || '';
             this.showDateModal = true;
         },
 
         /**
-         * Opens the user rating modal for a specific movie and user.
-         * @param {object} movie - The movie object.
+         * Opens the user rating modal for a specific product and user.
+         * @param {object} product - The product object.
          * @param {string} userId - The user ID whose rating we are viewing/editing.
          */
-        openRatingModal(movie, userId) {
-            this.editHistoryId = movie.history_id;
-            this.editMovieTitle = movie.title || '';
+        openRatingModal(product, userId) {
+            this.editHistoryId = product.history_id;
+            this.editProductTitle = product.title || '';
 
             // Determine if read-only
             this.isRatingReadOnly = (userId !== this.currentUserId);
             this.ratingModalTitle = this.isRatingReadOnly ? 'View Review' : 'Edit Rating';
 
             // Get existing attendance if any
-            const attendance = movie.attendance && movie.attendance[userId];
+            const attendance = product.attendance && product.attendance[userId];
             if (attendance) {
                 this.editUserRating = attendance.rating || 0;
                 this.editUserFailed = attendance.failed || false;
@@ -702,17 +702,17 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             }
 
             // 1. Find the item
-            const index = this.movies.findIndex(m => m.history_id === this.editHistoryId);
+            const index = this.products.findIndex(m => m.history_id === this.editHistoryId);
             if (index === -1) return;
 
             // 2. Backup original state
-            const originalMovie = { ...this.movies[index] };
+            const originalProduct = { ...this.products[index] };
 
             // 3. Optimistic Update
-            // We construct a temporary movie object merging old data with form values
-            this.movies[index] = {
-                ...originalMovie,
-                watched_at: this.editDateValue ? new Date(this.editDateValue).toISOString() : originalMovie.watched_at,
+            // We construct a temporary product object merging old data with form values
+            this.products[index] = {
+                ...originalProduct,
+                watched_at: this.editDateValue ? new Date(this.editDateValue).toISOString() : originalProduct.watched_at,
                 tmdb_score: this.editTmdbScore ? parseFloat(this.editTmdbScore) : 0,
                 imdb_score: this.editImdbScore ? parseFloat(this.editImdbScore) : 0,
                 rt_score: this.editRtScore ? parseInt(this.editRtScore) : 0
@@ -734,7 +734,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             formData.append('list_id', this.listId);
 
             try {
-                const response = await fetch('/api/watchlists/movies', {
+                const response = await fetch('/api/watchlists/products', {
                     method: 'POST',
                     body: formData
                 });
@@ -742,23 +742,23 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
                 if (result.success) {
                     // 5. Success: Update with canonical server data
-                    if (result.movie) {
+                    if (result.product) {
                         // Re-find index just in case list changed (unlikely but safe)
-                        const freshIndex = this.movies.findIndex(m => m.history_id === result.movie.history_id);
+                        const freshIndex = this.products.findIndex(m => m.history_id === result.product.history_id);
                         if (freshIndex !== -1) {
-                            this.movies[freshIndex] = result.movie;
+                            this.products[freshIndex] = result.product;
                         }
                     }
                 } else {
                     // 6. Failure: Revert and Alert
                     console.error('Update failed:', result.error);
-                    this.movies[index] = originalMovie;
+                    this.products[index] = originalProduct;
                     // Optional: re-open modal or simple toast
                     alert(result.error || 'Update failed, changes reverted.');
                 }
             } catch (error) {
                 console.error('Update failed:', error);
-                this.movies[index] = originalMovie;
+                this.products[index] = originalProduct;
                 alert('An error occurred. Changes reverted.');
             }
         },
@@ -773,18 +773,18 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             }
 
             // 1. Find the item
-            const index = this.movies.findIndex(m => m.history_id === this.editHistoryId);
+            const index = this.products.findIndex(m => m.history_id === this.editHistoryId);
             if (index === -1) return;
 
             // 2. Backup original state
-            const originalMovie = JSON.parse(JSON.stringify(this.movies[index])); // Deep copy for nested objects
+            const originalProduct = JSON.parse(JSON.stringify(this.products[index])); // Deep copy for nested objects
 
             // 3. Optimistic Update
-            if (!this.movies[index].attendance) this.movies[index].attendance = {};
-            if (!this.movies[index].attendance[this.currentUserId]) this.movies[index].attendance[this.currentUserId] = {};
+            if (!this.products[index].attendance) this.products[index].attendance = {};
+            if (!this.products[index].attendance[this.currentUserId]) this.products[index].attendance[this.currentUserId] = {};
 
-            this.movies[index].attendance[this.currentUserId] = {
-                ...this.movies[index].attendance[this.currentUserId],
+            this.products[index].attendance[this.currentUserId] = {
+                ...this.products[index].attendance[this.currentUserId],
                 rating: this.editUserRating ? parseFloat(this.editUserRating) : 0,
                 review: this.editUserReview,
                 failed: this.editUserFailed
@@ -805,7 +805,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             formData.append('list_id', this.listId);
 
             try {
-                const response = await fetch('/api/watchlists/movies', {
+                const response = await fetch('/api/watchlists/products', {
                     method: 'POST',
                     body: formData
                 });
@@ -813,21 +813,21 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
                 if (result.success) {
                     // 5. Success: Update with canonical server data
-                    if (result.movie) {
-                        const freshIndex = this.movies.findIndex(m => m.history_id === result.movie.history_id);
+                    if (result.product) {
+                        const freshIndex = this.products.findIndex(m => m.history_id === result.product.history_id);
                         if (freshIndex !== -1) {
-                            this.movies[freshIndex] = result.movie;
+                            this.products[freshIndex] = result.product;
                         }
                     }
                 } else {
                     // 6. Failure
                     console.error('Update failed:', result.error);
-                    this.movies[index] = originalMovie;
+                    this.products[index] = originalProduct;
                     alert(result.error || 'Update failed, changes reverted.');
                 }
             } catch (error) {
                 console.error('Update failed:', error);
-                this.movies[index] = originalMovie;
+                this.products[index] = originalProduct;
                 alert('An error occurred. Changes reverted.');
             }
         },
@@ -837,7 +837,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
             // Store context for the confirmation
             const historyId = this.editHistoryId;
-            const movieTitle = this.editMovieTitle;
+            const productTitle = this.editProductTitle;
 
             // Close rating modal and show confirmation
             this.showRatingModal = false;
@@ -845,8 +845,8 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             this.confirmModal = {
                 show: true,
                 title: 'Delete Rating?',
-                subtitle: movieTitle,
-                message: 'Are you sure you want to delete your rating for this movie?',
+                subtitle: productTitle,
+                message: 'Are you sure you want to delete your rating for this product?',
                 confirmText: 'Delete',
                 onConfirm: () => this.confirmDeleteRating(historyId),
                 onCancel: () => {
@@ -861,17 +861,17 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             this.confirmModal.show = false;
 
             // 1. Find the item
-            const index = this.movies.findIndex(m => m.history_id === historyId);
+            const index = this.products.findIndex(m => m.history_id === historyId);
             if (index === -1) return;
 
             // 2. Backup original state
-            const originalMovie = JSON.parse(JSON.stringify(this.movies[index]));
+            const originalProduct = JSON.parse(JSON.stringify(this.products[index]));
 
             // 3. Optimistic Update - remove attendance for current user
-            if (this.movies[index].attendance && this.movies[index].attendance[this.currentUserId]) {
-                delete this.movies[index].attendance[this.currentUserId];
+            if (this.products[index].attendance && this.products[index].attendance[this.currentUserId]) {
+                delete this.products[index].attendance[this.currentUserId];
                 // Trigger reactivity
-                this.movies = [...this.movies];
+                this.products = [...this.products];
             }
 
             const formData = new FormData();
@@ -880,7 +880,7 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
             formData.append('list_id', this.listId);
 
             try {
-                const response = await fetch('/api/watchlists/movies', {
+                const response = await fetch('/api/watchlists/products', {
                     method: 'POST',
                     body: formData
                 });
@@ -888,14 +888,14 @@ function watchlistDetail(initialMovies = [], isOwner = false, listId = '', initi
 
                 if (!result.success) {
                     console.error('Delete failed:', result.error);
-                    this.movies[index] = originalMovie;
-                    this.movies = [...this.movies];
+                    this.products[index] = originalProduct;
+                    this.products = [...this.products];
                     alert(result.error || 'Delete failed, changes reverted.');
                 }
             } catch (error) {
                 console.error('Delete failed:', error);
-                this.movies[index] = originalMovie;
-                this.movies = [...this.movies];
+                this.products[index] = originalProduct;
+                this.products = [...this.products];
                 alert('An error occurred. Changes reverted.');
             }
         },

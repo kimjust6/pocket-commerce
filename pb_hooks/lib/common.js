@@ -10,8 +10,8 @@
  * @property {string} USERS - The users table
  * @property {string} LISTS - The watchlists/lists table
  * @property {string} LIST_USER - The list-user relationship table for invites
- * @property {string} MOVIES - The movies table
- * @property {string} WATCHED_HISTORY - The watch history table (list-movie relationship)
+ * @property {string} PRODUCTS - The products table
+ * @property {string} WATCHED_HISTORY - The watch history table (list-product relationship)
  * @property {string} WATCH_HISTORY_USER - The user attendance/ratings table
  * @property {string} WATCHLIST - The personal watchlist table
  */
@@ -19,7 +19,7 @@ const TABLES = {
     USERS: 'users',
     LISTS: 'lists',
     LIST_USER: 'list_user',
-    MOVIES: 'movies',
+    PRODUCTS: 'products',
     WATCHED_HISTORY: 'watched_history',
     WATCH_HISTORY_USER: 'watch_history_user',
     WATCHLIST: 'watchlist'
@@ -35,8 +35,8 @@ const COLS = {
     ID: 'id',
     /** @type {string} List reference column */
     LIST: 'list',
-    /** @type {string} Movie reference column */
-    MOVIE: 'movie',
+    /** @type {string} Product reference column */
+    PRODUCT: 'product',
     /** @type {string} User reference column */
     USER: 'user',
     /** @type {string} Owner reference column */
@@ -53,7 +53,7 @@ const COLS = {
     RATING: 'rating',
     /** @type {string} User review text column */
     REVIEW: 'review',
-    /** @type {string} Movie title column */
+    /** @type {string} Product title column */
     TITLE: 'title',
     /** @type {string} List title column */
     LIST_TITLE: 'list_title',
@@ -67,13 +67,13 @@ const COLS = {
     RELEASE_DATE: 'release_date',
     /** @type {string} Runtime in minutes column */
     RUNTIME: 'runtime',
-    /** @type {string} Movie overview/synopsis column */
+    /** @type {string} Product overview/synopsis column */
     OVERVIEW: 'overview',
-    /** @type {string} Movie tagline column */
+    /** @type {string} Product tagline column */
     TAGLINE: 'tagline',
     /** @type {string} IMDB ID column */
     IMDB_ID: 'imdb_id',
-    /** @type {string} Movie status column */
+    /** @type {string} Product status column */
     STATUS: 'status',
     /** @type {string} TMDB score column */
     TMDB_SCORE: 'tmdb_score',
@@ -310,12 +310,12 @@ module.exports = {
     },
 
     /**
-     * Fetch movies for a watchlist.
+     * Fetch products for a watchlist.
      * @param {string} listId - The watchlist ID
      * @param {object} options - Fetch options { limit: 20, offset: 0, sort: '-created' }
-     * @returns {Array} Array of movie objects with history data
+     * @returns {Array} Array of product objects with history data
      */
-    fetchWatchlistMovies: function (listId, options = {}) {
+    fetchWatchlistProducts: function (listId, options = {}) {
         const limit = options.limit || 20
         const offset = options.offset || 0
         const sort = options.sort || '-created'
@@ -329,10 +329,10 @@ module.exports = {
                 offset
             )
 
-            $app.expandRecords(historyRecords, ['movie'])
+            $app.expandRecords(historyRecords, ['product'])
 
             const results = historyRecords.map((item) => {
-                const m = item.expandedOne('movie')
+                const m = item.expandedOne('product')
                 if (m) {
                     return {
                         id: m.id,
@@ -464,14 +464,14 @@ module.exports = {
     },
 
     /**
-     * Attach attendance data to movies.
-     * @param {Array} movies - Array of movie objects (must have history_id)
+     * Attach attendance data to products.
+     * @param {Array} products - Array of product objects (must have history_id)
      * @param {string} listId - The list ID (for optimization if needed, currently unused as we filter by history IDs)
      */
-    attachAttendance: function (movies, listId) {
-        if (!movies || movies.length === 0) return
+    attachAttendance: function (products, listId) {
+        if (!products || products.length === 0) return
 
-        const historyIds = movies.map(m => m.history_id).filter(Boolean)
+        const historyIds = products.map(m => m.history_id).filter(Boolean)
         if (historyIds.length === 0) return
 
         // Construct filter: watch_history = 'id1' || watch_history = 'id2' ...
@@ -499,81 +499,81 @@ module.exports = {
             console.error('[common.js] Failed to fetch attendance:', e)
         }
 
-        // Attach to movies
-        movies.forEach(m => {
+        // Attach to products
+        products.forEach(m => {
             m.attendance = attendanceMap[m.history_id] || {}
         })
     },
 
     /**
-     * Map a PocketBase movie record to a standardized movie object.
-     * Creates a consistent movie data structure from raw PocketBase records.
-     * @param {any} movieRecord - The expanded movie record from PocketBase
+     * Map a PocketBase product record to a standardized product object.
+     * Creates a consistent product data structure from raw PocketBase records.
+     * @param {any} productRecord - The expanded product record from PocketBase
      * @param {any} [historyRecord=null] - Optional history record for additional data like scores
-     * @returns {MovieObject|null} Standardized movie object or null if movieRecord is falsy
-     * @typedef {Object} MovieObject
+     * @returns {ProductObject|null} Standardized product object or null if productRecord is falsy
+     * @typedef {Object} ProductObject
      * @property {string} id - PocketBase record ID
-     * @property {string} tmdb_id - TMDB movie ID
-     * @property {string} title - Movie title
+     * @property {string} tmdb_id - TMDB product ID
+     * @property {string} title - Product title
      * @property {string} release_date - Release date string
      * @property {number} runtime - Runtime in minutes
      * @property {string} poster_path - TMDB poster path
      * @property {string} backdrop_path - TMDB backdrop path
-     * @property {string} overview - Movie synopsis
-     * @property {string} tagline - Movie tagline
+     * @property {string} overview - Product synopsis
+     * @property {string} tagline - Product tagline
      * @property {string} imdb_id - IMDB ID
-     * @property {string} status - Movie status
+     * @property {string} status - Product status
      * @property {string} [history_id] - Watch history record ID (if historyRecord provided)
      * @property {string} [watched_at] - Watch date (if historyRecord provided)
      * @property {number} [tmdb_score] - TMDB score (if historyRecord provided)
      * @property {number} [imdb_score] - IMDB score (if historyRecord provided)
      * @property {number} [rt_score] - Rotten Tomatoes score (if historyRecord provided)
      */
-    mapMovieFromRecord: function (movieRecord, historyRecord = null) {
-        if (!movieRecord) return null
+    mapProductFromRecord: function (productRecord, historyRecord = null) {
+        if (!productRecord) return null
 
-        const movie = {
-            id: movieRecord.id,
-            tmdb_id: movieRecord.getString(COLS.TMDB_ID),
-            title: movieRecord.getString(COLS.TITLE),
-            release_date: movieRecord.getString(COLS.RELEASE_DATE),
-            runtime: movieRecord.getInt(COLS.RUNTIME),
-            poster_path: movieRecord.getString(COLS.POSTER_PATH),
-            backdrop_path: movieRecord.getString(COLS.BACKDROP_PATH),
-            overview: movieRecord.getString(COLS.OVERVIEW),
-            tagline: movieRecord.getString(COLS.TAGLINE),
-            imdb_id: movieRecord.getString(COLS.IMDB_ID),
-            status: movieRecord.getString(COLS.STATUS)
+        const product = {
+            id: productRecord.id,
+            tmdb_id: productRecord.getString(COLS.TMDB_ID),
+            title: productRecord.getString(COLS.TITLE),
+            release_date: productRecord.getString(COLS.RELEASE_DATE),
+            runtime: productRecord.getInt(COLS.RUNTIME),
+            poster_path: productRecord.getString(COLS.POSTER_PATH),
+            backdrop_path: productRecord.getString(COLS.BACKDROP_PATH),
+            overview: productRecord.getString(COLS.OVERVIEW),
+            tagline: productRecord.getString(COLS.TAGLINE),
+            imdb_id: productRecord.getString(COLS.IMDB_ID),
+            status: productRecord.getString(COLS.STATUS)
         }
 
         // Add history data if provided
         if (historyRecord) {
-            movie.history_id = historyRecord.id
-            movie.history_created = historyRecord.getString(COLS.CREATED)
-            movie.watched_at = historyRecord.getString(COLS.WATCHED)
-            movie.tmdb_score = historyRecord.getFloat(COLS.TMDB_SCORE)
-            movie.imdb_score = historyRecord.getFloat(COLS.IMDB_SCORE)
-            movie.rt_score = historyRecord.getInt(COLS.RT_SCORE)
+            product.history_id = historyRecord.id
+            product.history_created = historyRecord.getString(COLS.CREATED)
+            product.watched_at = historyRecord.getString(COLS.WATCHED)
+            product.tmdb_score = historyRecord.getFloat(COLS.TMDB_SCORE)
+            product.imdb_score = historyRecord.getFloat(COLS.IMDB_SCORE)
+            product.rt_score = historyRecord.getInt(COLS.RT_SCORE)
         }
 
-        return movie
+        return product
     },
 
     /**
-     * Get top lists by movie count using the PocketBase query builder.
+     * Get top lists by product count using the PocketBase query builder.
      * Uses SQL GROUP BY and COUNT for efficient aggregation.
      * @param {number} [limit=3] - Maximum number of top lists to return
-     * @returns {Array<TopListObject>} Array of list objects sorted by movie count descending
+     * @returns {Array<TopListObject>} Array of list objects sorted by product count descending
      * @typedef {Object} TopListObject
      * @property {string} id - List ID
      * @property {string} title - List title
-     * @property {number} count - Number of movies in the list
-     * @property {string[]} posters - Array of up to 3 poster paths from the list's movies
+     * @property {number} count - Number of products in the list
+     * @property {string[]} posters - Array of up to 3 poster paths from the list's products
      * @example
-     * const topLists = common.getTopListsByMovieCount(4)
+     * const topLists = common.getTopListsByProductCount(4)
      * // Returns: [{ id: 'abc', title: 'Best Comedies', count: 25, posters: [...] }, ...]
      */
-    getTopListsByMovieCount: function (limit = 3) {
+    getTopListsByProductCount: function (limit = 3) {
         try {
             const listCountResult = arrayOf(new DynamicModel({
                 "list": "",
@@ -600,7 +600,7 @@ module.exports = {
                 const listRecord = $app.findRecordById(TABLES.LISTS, listId)
                 if (!listRecord) continue
 
-                // Get up to 3 movie posters for this list
+                // Get up to 3 product posters for this list
                 const listHistory = $app.findRecordsByFilter(
                     TABLES.WATCHED_HISTORY,
                     `${COLS.LIST} = "${listId}"`,
@@ -608,13 +608,13 @@ module.exports = {
                     3,
                     0
                 )
-                $app.expandRecords(listHistory, [COLS.MOVIE])
+                $app.expandRecords(listHistory, [COLS.PRODUCT])
 
                 const posters = []
                 for (const h of listHistory) {
-                    const movie = h.expandedOne(COLS.MOVIE)
-                    if (movie) {
-                        const posterPath = movie.getString(COLS.POSTER_PATH)
+                    const product = h.expandedOne(COLS.PRODUCT)
+                    if (product) {
+                        const posterPath = product.getString(COLS.POSTER_PATH)
                         if (posterPath && !posters.includes(posterPath)) {
                             posters.push(posterPath)
                         }
@@ -638,21 +638,21 @@ module.exports = {
     },
 
     /**
-     * Get recent unique movies from the watch history.
-     * Fetches recent additions and deduplicates by movie ID.
-     * @param {number} [limit=6] - Maximum number of unique movies to return
-     * @returns {Array<RecentMovieObject>} Array of recent movie objects sorted by watch date
-     * @typedef {Object} RecentMovieObject
-     * @property {string} id - PocketBase movie record ID
-     * @property {string} tmdb_id - TMDB movie ID
-     * @property {string} title - Movie title
+     * Get recent unique products from the watch history.
+     * Fetches recent additions and deduplicates by product ID.
+     * @param {number} [limit=6] - Maximum number of unique products to return
+     * @returns {Array<RecentProductObject>} Array of recent product objects sorted by watch date
+     * @typedef {Object} RecentProductObject
+     * @property {string} id - PocketBase product record ID
+     * @property {string} tmdb_id - TMDB product ID
+     * @property {string} title - Product title
      * @property {string} poster_path - TMDB poster path
      * @property {string} watched_at - Watch date timestamp
      * @example
-     * const recentMovies = common.getRecentMovies(6)
-     * // Returns: [{ id: 'abc', tmdb_id: '123', title: 'Movie', poster_path: '/path.jpg', watched_at: '2026-02-01' }, ...]
+     * const recentProducts = common.getRecentProducts(6)
+     * // Returns: [{ id: 'abc', tmdb_id: '123', title: 'Product', poster_path: '/path.jpg', watched_at: '2026-02-01' }, ...]
      */
-    getRecentMovies: function (limit = 6) {
+    getRecentProducts: function (limit = 6) {
         try {
             // Fetch more records than limit to account for duplicates
             const recentHistory = $app.findRecordsByFilter(
@@ -662,42 +662,42 @@ module.exports = {
                 limit * 4,
                 0
             )
-            $app.expandRecords(recentHistory, [COLS.MOVIE])
+            $app.expandRecords(recentHistory, [COLS.PRODUCT])
 
-            const seenMovies = new Set()
-            const recentMovies = []
+            const seenProducts = new Set()
+            const recentProducts = []
 
             for (const h of recentHistory) {
-                const movie = h.expandedOne(COLS.MOVIE)
-                if (movie && recentMovies.length < limit && !seenMovies.has(movie.id)) {
-                    recentMovies.push({
-                        id: movie.id,
-                        tmdb_id: movie.getString(COLS.TMDB_ID),
-                        title: movie.getString(COLS.TITLE),
-                        poster_path: movie.getString(COLS.POSTER_PATH),
+                const product = h.expandedOne(COLS.PRODUCT)
+                if (product && recentProducts.length < limit && !seenProducts.has(product.id)) {
+                    recentProducts.push({
+                        id: product.id,
+                        tmdb_id: product.getString(COLS.TMDB_ID),
+                        title: product.getString(COLS.TITLE),
+                        poster_path: product.getString(COLS.POSTER_PATH),
                         watched_at: h.getString(COLS.WATCHED)
                     })
-                    seenMovies.add(movie.id)
+                    seenProducts.add(product.id)
                 }
             }
 
-            return recentMovies
+            return recentProducts
         } catch (e) {
-            console.error('[common.js] Failed to get recent movies:', e)
+            console.error('[common.js] Failed to get recent products:', e)
             return []
         }
     },
 
     /**
-     * Get recent activity (movie adds and reviews/ratings).
+     * Get recent activity (product adds and reviews/ratings).
      * Combines recent list additions and user ratings into a single activity feed.
      * @param {number} [limit=4] - Maximum number of activity items to return
      * @returns {Array<ActivityObject>} Array of activity objects sorted by created date
      * @typedef {Object} ActivityObject
      * @property {'add'|'review'|'rating'} type - Type of activity
      * @property {string} created - Creation timestamp
-     * @property {string} movieTitle - Title of the movie
-     * @property {string} movieId - TMDB ID of the movie
+     * @property {string} productTitle - Title of the product
+     * @property {string} productId - TMDB ID of the product
      * @property {string} [listTitle] - List title (for 'add' type)
      * @property {string} [listId] - List ID (for 'add' type)
      * @property {string} [userName] - User's display name (for 'review'/'rating' type)
@@ -706,13 +706,13 @@ module.exports = {
      * @property {string} [review] - Review text (for 'review' type)
      * @example
      * const activity = common.getRecentActivity(4)
-     * // Returns: [{ type: 'add', movieTitle: 'Movie', listTitle: 'List', ... }, ...]
+     * // Returns: [{ type: 'add', productTitle: 'Product', listTitle: 'List', ... }, ...]
      */
     getRecentActivity: function (limit = 4) {
         const recentActivity = []
 
         try {
-            // Recent movie adds
+            // Recent product adds
             const recentAdds = $app.findRecordsByFilter(
                 TABLES.WATCHED_HISTORY,
                 `${COLS.LIST} != ''`,
@@ -720,17 +720,17 @@ module.exports = {
                 limit,
                 0
             )
-            $app.expandRecords(recentAdds, [COLS.MOVIE, COLS.LIST])
+            $app.expandRecords(recentAdds, [COLS.PRODUCT, COLS.LIST])
 
             for (const r of recentAdds) {
-                const movie = r.expandedOne(COLS.MOVIE)
+                const product = r.expandedOne(COLS.PRODUCT)
                 const list = r.expandedOne(COLS.LIST)
-                if (movie && list && !list.getBool(COLS.IS_DELETED) && !list.getBool(COLS.IS_PRIVATE)) {
+                if (product && list && !list.getBool(COLS.IS_DELETED) && !list.getBool(COLS.IS_PRIVATE)) {
                     recentActivity.push({
                         type: 'add',
                         created: r.getString(COLS.CREATED),
-                        movieTitle: movie.getString(COLS.TITLE),
-                        movieId: movie.getString(COLS.TMDB_ID),
+                        productTitle: product.getString(COLS.TITLE),
+                        productId: product.getString(COLS.TMDB_ID),
                         listTitle: list.getString(COLS.LIST_TITLE),
                         listId: list.id
                     })
@@ -755,9 +755,9 @@ module.exports = {
                 const user = r.expandedOne(COLS.USER)
                 const watchHistory = r.expandedOne(COLS.WATCH_HISTORY)
                 if (user && watchHistory) {
-                    $app.expandRecords([watchHistory], [COLS.MOVIE])
-                    const movie = watchHistory.expandedOne(COLS.MOVIE)
-                    if (movie) {
+                    $app.expandRecords([watchHistory], [COLS.PRODUCT])
+                    const product = watchHistory.expandedOne(COLS.PRODUCT)
+                    if (product) {
                         const rating = r.getFloat(COLS.RATING)
                         const review = r.getString(COLS.REVIEW)
                         recentActivity.push({
@@ -765,8 +765,8 @@ module.exports = {
                             created: r.getString(COLS.CREATED),
                             userName: user.getString(COLS.NAME) || user.getString(COLS.USERNAME) || 'User',
                             userInitials: (user.getString(COLS.SHORTHAND) || user.getString(COLS.NAME) || 'U').substring(0, 2).toUpperCase(),
-                            movieTitle: movie.getString(COLS.TITLE),
-                            movieId: movie.getString(COLS.TMDB_ID),
+                            productTitle: product.getString(COLS.TITLE),
+                            productId: product.getString(COLS.TMDB_ID),
                             rating: Math.round(rating) / 2,
                             review: review
                         })

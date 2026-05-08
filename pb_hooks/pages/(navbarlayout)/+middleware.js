@@ -1,7 +1,7 @@
 const common = require('../../lib/common.js')
 
 // Configure your site URL here (no trailing slash)
-const BASE_URL = 'https://movie.jkim.win';
+const BASE_URL = 'https://product.jkim.win';
 
 /**
  * Middleware function to provide site metadata and global data.

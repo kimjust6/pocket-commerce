@@ -1,11 +1,11 @@
-# Dank Movies
+# Pocket Commerce
 
-**Dank Movies** is a modern, self-hosted movie watchlist application that lets you discover films, curate personal collections, and share them with friends. Built for movie lovers who want control over their data with a premium user experience.
+**Pocket Commerce** is a modern, self-hosted product watchlist application that lets you discover films, curate personal collections, and share them with friends. Built for product lovers who want control over their data with a premium user experience.
 
 ## Features
 
--   **Movie Discovery**: Instantly search for millions of movies powered by the **TMDB API**.
--   **Smart Watchlists**: Create unlimited public or private watchlists to organize your movie backlog.
+-   **Product Discovery**: Instantly search for millions of products powered by the **TMDB API**.
+-   **Smart Watchlists**: Create unlimited public or private watchlists to organize your product backlog.
 -   **Collaboration**: Share private watchlists with specific users for collaborative planning.
 -   **Secure & Private**: Built-in User Authentication (Email/Password & Google OAuth) keeps your lists secure.
 -   **Modern Design**: Stunning UI features glassmorphism, smooth animations, and a responsive layout powered by Tailwind CSS & DaisyUI.
@@ -28,14 +28,14 @@ Follow these steps to get your own instance running locally.
 
 -   **Node.js** (LTS version recommended)
 -   **PocketBase**: Download the binary for your OS from [pocketbase.io/docs](https://pocketbase.io/docs/) and ensure it's in your PATH (or placed in the project root).
--   **TMDB API Key**: Get a free API key from [The Movie Database](https://www.themoviedb.org/documentation/api).
+-   **TMDB API Key**: Get a free API key from [The Product Database](https://www.theproductdb.org/documentation/api).
 
 ### Installation
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/kimjust6/pocket-movies.git
-    cd pocket-movies
+    git clone https://github.com/kimjust6/pocket-products.git
+    cd pocket-products
     ```
 
 2.  **Install dependencies**:

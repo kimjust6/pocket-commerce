@@ -230,7 +230,7 @@ function handleDeleteHistoryItem(list, data, isOwner) {
         }
 
         $app.delete(historyItem)
-        return "Movie removed from list."
+        return "Product removed from list."
     }
     return null
 }
@@ -436,57 +436,57 @@ function handleDeleteAttendance(list, data, userId) {
 const tmdb = require('./tmdb.js')
 
 /**
- * Adds a movie to a watchlist (finding/creating movie and list as needed).
+ * Adds a product to a watchlist (finding/creating product and list as needed).
  * @param {import('pocketbase').Record} user
  * @param {string} tmdbId
  * @param {string} targetListId
  * @returns {{message: string, error: string}}
  */
-function addMovieToWatchlist(user, tmdbId, targetListId) {
+function addProductToWatchlist(user, tmdbId, targetListId) {
     if (!user) throw new Error("You must be logged in.")
-    if (!tmdbId) throw new Error("Movie ID is missing.")
+    if (!tmdbId) throw new Error("Product ID is missing.")
 
-    // Get movie details from TMDB
-    let movieData
+    // Get product details from TMDB
+    let productData
     try {
-        movieData = tmdb.getMovie(tmdbId)
+        productData = tmdb.getProduct(tmdbId)
     } catch (e) {
-        throw new Error("Failed to fetch movie details from TMDB.")
+        throw new Error("Failed to fetch product details from TMDB.")
     }
 
-    // 1. Find or Create Movie
-    let movie = null
+    // 1. Find or Create Product
+    let product = null
     try {
-        movie = $app.findFirstRecordByFilter('movies', `tmdb_id = "${tmdbId}"`)
+        product = $app.findFirstRecordByFilter('products', `tmdb_id = "${tmdbId}"`)
     } catch (e) {
         // Not found, continue to create
     }
 
-    if (!movie) {
+    if (!product) {
         try {
-            const collection = $app.findCollectionByNameOrId('movies')
-            movie = new Record(collection)
+            const collection = $app.findCollectionByNameOrId('products')
+            product = new Record(collection)
 
-            movie.set('tmdb_id', tmdbId)
-            movie.set('title', movieData.title || 'Unknown')
-            movie.set('imdb_id', String(movieData.imdb_id || ''))
-            movie.set('original_title', String(movieData.original_title || ''))
-            movie.set('original_language', String(movieData.original_language || 'en'))
-            movie.set('status', String(movieData.status || 'Released'))
-            movie.set('overview', String(movieData.overview || ''))
-            movie.set('tagline', String(movieData.tagline || ''))
-            movie.set('poster_path', String(movieData.poster_path || ''))
-            movie.set('backdrop_path', String(movieData.backdrop_path || ''))
-            movie.set('homepage', String(movieData.homepage || ''))
-            movie.set('runtime', parseInt(movieData.runtime) || 0)
-            movie.set('adult', !!movieData.adult)
-            if (movieData.release_date) {
-                movie.set('release_date', movieData.release_date)
+            product.set('tmdb_id', tmdbId)
+            product.set('title', productData.title || 'Unknown')
+            product.set('imdb_id', String(productData.imdb_id || ''))
+            product.set('original_title', String(productData.original_title || ''))
+            product.set('original_language', String(productData.original_language || 'en'))
+            product.set('status', String(productData.status || 'Released'))
+            product.set('overview', String(productData.overview || ''))
+            product.set('tagline', String(productData.tagline || ''))
+            product.set('poster_path', String(productData.poster_path || ''))
+            product.set('backdrop_path', String(productData.backdrop_path || ''))
+            product.set('homepage', String(productData.homepage || ''))
+            product.set('runtime', parseInt(productData.runtime) || 0)
+            product.set('adult', !!productData.adult)
+            if (productData.release_date) {
+                product.set('release_date', productData.release_date)
             }
 
-            $app.save(movie)
+            $app.save(product)
         } catch (createError) {
-            throw new Error(`Failed to save movie: ${createError.message}`)
+            throw new Error(`Failed to save product: ${createError.message}`)
         }
     }
 
@@ -555,18 +555,18 @@ function addMovieToWatchlist(user, tmdbId, targetListId) {
     try {
         const historyCollection = $app.findCollectionByNameOrId('watched_history')
         const watchItem = new Record(historyCollection)
-        watchItem.set('movie', movie.id)
+        watchItem.set('product', product.id)
         watchItem.set('list', actualListId)
         watchItem.set('watched', new Date().toISOString())
 
-        if (movieData.vote_average) {
-            watchItem.set('tmdb_score', movieData.vote_average)
+        if (productData.vote_average) {
+            watchItem.set('tmdb_score', productData.vote_average)
         }
 
         $app.save(watchItem)
 
         return {
-            message: `"${movieData.title}" added to watchlist!`,
+            message: `"${productData.title}" added to watchlist!`,
             error: null
         }
 
@@ -577,7 +577,7 @@ function addMovieToWatchlist(user, tmdbId, targetListId) {
 
 module.exports = {
     handlePostAction,
-    addMovieToWatchlist,
+    addProductToWatchlist,
     handleUpdateList,
     handleDeleteList,
     handleInviteUser,
