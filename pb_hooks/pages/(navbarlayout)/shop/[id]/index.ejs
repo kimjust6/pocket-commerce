@@ -1,0 +1,68 @@
+<div class="min-h-screen border-b-8 border-neutral bg-base-200">
+    <% if (data.product) { %>
+        <div class="container mx-auto max-w-7xl px-4 py-12 lg:py-24">
+            <div class="flex flex-col lg:flex-row gap-12 bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 lg:p-12">
+                <!-- Image Gallery -->
+                <div class="w-full lg:w-1/2">
+                    <div class="border-4 border-neutral bg-base-200 aspect-[4/5] relative overflow-hidden">
+                        <img src="<%= data.product.images[0] %>" alt="<%= data.product.name %>" class="w-full h-full object-cover">
+                    </div>
+                    <% if (data.product.images.length > 1) { %>
+                        <div class="flex gap-4 mt-4 overflow-x-auto pb-4">
+                            <% data.product.images.forEach(img => { %>
+                                <div class="border-4 border-neutral w-24 h-24 flex-shrink-0 cursor-pointer hover:-translate-y-1 hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
+                                    <img src="<%= img %>" alt="<%= data.product.name %>" class="w-full h-full object-cover">
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Product Info -->
+                <div class="w-full lg:w-1/2 flex flex-col justify-center">
+                    <% if (data.product.category) { %>
+                        <a href="/shop?category=<%= data.product.category.slug %>" class="inline-block bg-secondary text-secondary-content border-2 border-neutral px-4 py-1 font-bold text-sm uppercase self-start mb-6 hover:-translate-y-1 transition-transform shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                            <%= data.product.category.name %>
+                        </a>
+                    <% } %>
+                    
+                    <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter text-base-content mb-6">
+                        <%= data.product.name %>
+                    </h1>
+
+                    <% 
+                        let displayPrice = "Sold Out";
+                        if (data.variants && data.variants.length > 0) {
+                            const minPrice = Math.min(...data.variants.map(v => v.price));
+                            displayPrice = "$" + minPrice.toFixed(2);
+                        }
+                    %>
+                    <div class="text-4xl font-black bg-primary text-primary-content border-4 border-neutral inline-block px-6 py-3 shadow-[6px_6px_0_0_rgba(0,0,0,1)] self-start mb-8 transform -rotate-2">
+                        <%= displayPrice %>
+                    </div>
+
+                    <div class="prose prose-lg prose-neutral max-w-none text-base-content font-medium mb-12">
+                        <%- data.product.description || "No description available." %>
+                    </div>
+
+                    <!-- Add to Cart / Actions -->
+                    <div class="flex flex-col sm:flex-row gap-6 mt-auto">
+                        <button class="bg-accent text-accent-content border-4 border-neutral font-black text-2xl uppercase px-8 py-4 shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-2 hover:translate-x-2 hover:shadow-none transition-all flex-1 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="container mx-auto max-w-4xl px-4 py-24 text-center">
+            <div class="bg-base-100 border-4 border-neutral p-12 shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
+                <h1 class="text-6xl font-black uppercase text-base-content mb-6">Product Not Found</h1>
+                <p class="text-xl font-medium mb-8">The product you're looking for doesn't exist or has been removed.</p>
+                <a href="/shop" class="inline-block bg-primary text-primary-content border-4 border-neutral font-black text-xl uppercase px-8 py-4 shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-2 hover:translate-x-2 hover:shadow-none transition-all">
+                    Back to Shop
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>

@@ -26,7 +26,7 @@ module.exports = function (context) {
             }
         }
 
-        const productRecords = $app.findRecordsByFilter("products", filterStr, "-created", 100, 0);
+        const productRecords = $app.findRecordsByFilter("products", filterStr, "", 100, 0);
         $app.expandRecords(productRecords, ["category"]);
 
         // Fetch prices for all products

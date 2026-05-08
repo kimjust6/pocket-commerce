@@ -35,8 +35,9 @@ const toPlainObject = (value) => {
  * @returns {import('pocketpages').Plugin} The auth plugin instance.
  */
 const authPlugin = (config) => {
-    const { globalApi } = config;
-    const { dbg, info } = globalApi;
+    const globalApi = config?.globalApi || config || {};
+    const dbg = globalApi.dbg || console.log;
+    const info = globalApi.info || console.log;
 
     // Global API methods for user management
     globalApi.createUser = (email, password, options) => {
@@ -108,7 +109,7 @@ const authPlugin = (config) => {
             }
 
             // Check for auth cookie
-            const cookieRecordAuth = safeParseJson(request.cookies("pb_auth"));
+            const cookieRecordAuth = safeParseJson(request.cookie ? request.cookie("pb_auth") : request.cookies("pb_auth"));
             if (typeof cookieRecordAuth !== "object") {
                 dbg(`invalid auth cookie found in cookie: ${cookieRecordAuth}`);
                 response.cookie("pb_auth", "");
@@ -189,7 +190,7 @@ const authPlugin = (config) => {
             };
 
             api.signInWithOAuth2 = (state, code, options, _storedProviderInfo) => {
-                const storedProvider = _storedProviderInfo ?? api.request.cookies(options?.cookieName ?? "pp_oauth_state");
+                const storedProvider = _storedProviderInfo ?? (api.request.cookie ? api.request.cookie(options?.cookieName ?? "pp_oauth_state") : api.request.cookies(options?.cookieName ?? "pp_oauth_state"));
                 if (!storedProvider) throw new Error("No stored provider info found");
                 if (storedProvider.state !== state) throw new Error("State parameters don't match.");
 
