@@ -1,19 +1,13 @@
 {
     "description": "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action",
     "version": "1.0.0",
-    "generatedTime": 1778204780876,
+    "generatedTime": 1778205099356,
     "data": [
         {
             "type": "file",
             "name": "package.json",
-            "size": 1955,
-            "hash": "85962f0bd17d1c278eed6b8f516105889df9e2ebf168f28d1bdc19167a0fa66a"
-        },
-        {
-            "type": "file",
-            "name": "bun.lock",
-            "size": 32032,
-            "hash": "e26eb8ffe9af27748534c18b6094ac1a3761bf8849f3723bdb13f77cbf07c460"
+            "size": 1962,
+            "hash": "5047d7e967615aaacc360824744b14d17d55a1a7f8766e547ca70e485a6f946b"
         },
         {
             "type": "folder",
@@ -312,18 +306,6 @@
             "name": "pb_hooks/pages/(navbarlayout)/banano/index.ejs",
             "size": 14029,
             "hash": "7277fc52d3a43e38ed6295ec035358b4cc4cdb7fc9bc421a6f1d83b630c0cb5b"
-        },
-        {
-            "type": "file",
-            "name": "pb_hooks/lib/watchlist-actions.js",
-            "size": 21155,
-            "hash": "56e1541c370a7127425a6b19632572a3dc8a7104afe7a018f0b2005fee8e9150"
-        },
-        {
-            "type": "file",
-            "name": "pb_hooks/lib/tmdb.js",
-            "size": 2920,
-            "hash": "594b95bb457ee0e3c963b1ce1d8c53b559192bab9cf9d93d08a20de5ad4cf740"
         },
         {
             "type": "file",
