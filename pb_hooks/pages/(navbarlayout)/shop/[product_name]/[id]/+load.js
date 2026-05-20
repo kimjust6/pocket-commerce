@@ -1,5 +1,5 @@
 module.exports = function(context) {
-    const common = require('../../../../lib/common.js');
+    const common = require('../../../../../lib/common.js');
     const productId = common.getParam(context, 'id');
     
     let product = null;
@@ -27,7 +27,7 @@ module.exports = function(context) {
                 price: v.getFloat('price'),
                 compare_at_price: v.getFloat('compare_at_price'),
                 stock: v.getInt('stock'),
-                attributes: v.get('attributes')
+                attributes: common.normalizeJsonField(v.get('attributes'))
             }));
         } catch (e) {
             console.error("Failed to load variants", e);

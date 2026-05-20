@@ -219,7 +219,7 @@ module.exports = function (context) {
                         total,
                         variantId: variant.id,
                         sku: variant.getString("sku"),
-                        attributes: variant.get("attributes"),
+                        attributes: common.normalizeJsonField(variant.get("attributes")),
                         productId: product.id,
                         productName: product.getString("name"),
                         productSlug: product.getString("slug"),

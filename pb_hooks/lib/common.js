@@ -182,6 +182,67 @@ module.exports = {
     },
 
     /**
+     * Converts PocketBase JSON field values into plain JavaScript values.
+     * JSVM can expose JSON fields as reflected Go values, which render as method
+     * tables in EJS unless they are explicitly unpacked first.
+     * @param {any} value - Raw value returned from record.get(...)
+     * @returns {any} Plain JavaScript value
+     */
+    normalizeJsonField: function (value) {
+        const seen = new WeakSet()
+        const normalize = (raw) => {
+            if (raw === null || raw === undefined) return raw
+
+            if (typeof raw === 'string') {
+                try {
+                    return normalize(JSON.parse(raw))
+                } catch (ignore) {
+                    return raw
+                }
+            }
+
+            if (typeof raw !== 'object') return raw
+            if (seen.has(raw)) return null
+            seen.add(raw)
+
+            try {
+                if (typeof raw.string === 'function') {
+                    const stringValue = raw.string()
+                    if (!stringValue) return null
+                    return normalize(JSON.parse(stringValue))
+                }
+            } catch (ignore) { }
+
+            try {
+                if (typeof raw.value === 'function') {
+                    return normalize(raw.value())
+                }
+            } catch (ignore) { }
+
+            if (Array.isArray(raw)) {
+                return raw.map((item) => normalize(item))
+            }
+
+            try {
+                const plain = JSON.parse(JSON.stringify(raw))
+                if (plain && typeof plain === 'object') {
+                    return normalize(plain)
+                }
+            } catch (ignore) { }
+
+            const normalized = {}
+            Object.keys(raw).forEach((key) => {
+                if (typeof raw[key] !== 'function') {
+                    normalized[key] = normalize(raw[key])
+                }
+            })
+            return normalized
+        }
+
+        return normalize(value)
+    },
+
+    /**
      * Fetch all watchlists (owned and shared) for a user.
      * @param {any} client - The initialized PocketBase client
      * @param {any} user - The user object

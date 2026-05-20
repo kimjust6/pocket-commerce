@@ -6,12 +6,12 @@
 module.exports = function (context) {
     try {
         const recentCards = [
-            { id: '1', title: 'Have a Mice Day', price: '$4.99', image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80&w=500' },
-            { id: '2', title: 'Toad-ally Awesome Bday', price: '$5.50', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=500' },
-            { id: '3', title: 'You Are Purrfect', price: '$4.99', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500' },
-            { id: '4', title: 'Donut Forget My Bday', price: '$5.00', image: 'https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=500' },
-            { id: '5', title: 'You Guac My World', price: '$5.99', image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&q=80&w=500' },
-            { id: '6', title: 'I Loaf You', price: '$4.50', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=500' }
+            { id: '1', title: 'Have a Mice Day', price: '$4.99', image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80&w=500', slug: 'have-a-mice-day' },
+            { id: '2', title: 'Toad-ally Awesome Bday', price: '$5.50', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=500', slug: 'toad-ally-awesome-bday' },
+            { id: '3', title: 'You Are Purrfect', price: '$4.99', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500', slug: 'you-are-purrfect' },
+            { id: '4', title: 'Donut Forget My Bday', price: '$5.00', image: 'https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=500', slug: 'donut-forget-my-bday' },
+            { id: '5', title: 'You Guac My World', price: '$5.99', image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&q=80&w=500', slug: 'you-guac-my-world' },
+            { id: '6', title: 'I Loaf You', price: '$4.50', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=500', slug: 'i-loaf-you' }
         ];
 
         const topCollections = [

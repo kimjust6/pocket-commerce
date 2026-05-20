@@ -106,12 +106,12 @@
     }
 
     /* Neo-Brutalism Global Overrides */
-    .btn, .card, .input, .textarea, .select, .badge, .alert, .stats {
+    .btn, .card, .input, .textarea, .badge, .alert, .stats {
         @apply border-2 border-black dark:border-white !important;
         box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
         transition: transform 0.1s ease, box-shadow 0.1s ease !important;
     }
-    .dark .btn, .dark .card, .dark .input, .dark .textarea, .dark .select, .dark .badge, .dark .alert, .dark .stats {
+    .dark .btn, .dark .card, .dark .input, .dark .textarea, .dark .badge, .dark .alert, .dark .stats {
         box-shadow: 4px 4px 0px 0px rgba(255,255,255,1) !important;
     }
 
