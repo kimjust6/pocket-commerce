@@ -30,13 +30,50 @@ const toPlainObject = (value) => {
 
 // Custom Auth Plugin Factory (inline)
 /**
+ * Safely retrieves a cookie value from the request.
+ * Supports request.cookie / request.cookies as either a function or an object/map.
+ * @param {any} request - The request object.
+ * @param {string} name - The name of the cookie.
+ * @returns {any} The cookie value, or null if not found.
+ */
+const getCookie = (request, name) => {
+    if (!request) return null;
+    
+    // Check request.cookie
+    if (typeof request.cookie === "function") {
+        try {
+            return request.cookie(name);
+        } catch { }
+    }
+    if (request.cookie && typeof request.cookie === "object") {
+        if (request.cookie[name] !== undefined) {
+            return request.cookie[name];
+        }
+    }
+    
+    // Check request.cookies
+    if (typeof request.cookies === "function") {
+        try {
+            return request.cookies(name);
+        } catch { }
+    }
+    if (request.cookies && typeof request.cookies === "object") {
+        if (request.cookies[name] !== undefined) {
+            return request.cookies[name];
+        }
+    }
+    
+    return null;
+};
+
+/**
  * Factory for the custom authentication plugin.
  * @param {import('pocketpages').PluginConfig} config - The plugin configuration.
  * @returns {import('pocketpages').Plugin} The auth plugin instance.
  */
 const authPlugin = (config) => {
     const globalApi = config?.globalApi || config || {};
-    const dbg = globalApi.dbg || console.log;
+    const _dbg = globalApi.dbg || console.log;
     const info = globalApi.info || console.log;
 
     // Global API methods for user management
@@ -49,7 +86,7 @@ const authPlugin = (config) => {
             password,
             passwordConfirm: password
         });
-        dbg(`created user: ${user.id}`);
+        _dbg(`created user: ${user.id}`);
         if (options?.sendVerificationEmail === undefined || options.sendVerificationEmail) {
             globalApi.requestVerification(email, options);
         }
@@ -69,7 +106,7 @@ const authPlugin = (config) => {
 
     globalApi.createPasswordlessUser = (email, options) => {
         const password = $security.randomStringWithAlphabet(40, "123456789");
-        dbg(`created passwordless user: ${email}:${password}`);
+        _dbg(`created passwordless user: ${email}:${password}`);
         return {
             password,
             user: globalApi.createUser(email, password, options)
@@ -104,14 +141,14 @@ const authPlugin = (config) => {
         onRequest: ({ request, response }) => {
             const { auth } = request;
             if (auth) {
-                dbg(`skipping cookie auth because auth record already set: ${auth.id}`);
+                _dbg(`skipping cookie auth because auth record already set: ${auth.id}`);
                 return;
             }
 
             // Check for auth cookie
-            const cookieRecordAuth = safeParseJson(request.cookie ? request.cookie("pb_auth") : request.cookies("pb_auth"));
-            if (typeof cookieRecordAuth !== "object") {
-                dbg(`invalid auth cookie found in cookie: ${cookieRecordAuth}`);
+            const cookieRecordAuth = safeParseJson(getCookie(request, "pb_auth"));
+            if (!cookieRecordAuth || typeof cookieRecordAuth !== "object") {
+                _dbg(`invalid auth cookie found: ${cookieRecordAuth}`);
                 response.cookie("pb_auth", "");
                 return;
             }
@@ -120,7 +157,7 @@ const authPlugin = (config) => {
                 try {
                     const validAuthRecord = $app.findAuthRecordByToken(cookieRecordAuth.token);
                     if (!validAuthRecord) {
-                        dbg(`invalid auth token found in cookie: ${cookieRecordAuth.token}`);
+                        _dbg(`invalid auth token found in cookie: ${cookieRecordAuth.token}`);
                         response.cookie("pb_auth", "");
                         return;
                     }
@@ -128,7 +165,7 @@ const authPlugin = (config) => {
                     request.auth = validAuthRecord;
                     request.authToken = cookieRecordAuth.token;
                 } catch (e) {
-                    dbg(`error fetching auth record: ${e}`);
+                    _dbg(`error fetching auth record: ${e}`);
                 }
             }
         },
@@ -190,7 +227,8 @@ const authPlugin = (config) => {
             };
 
             api.signInWithOAuth2 = (state, code, options, _storedProviderInfo) => {
-                const storedProvider = _storedProviderInfo ?? (api.request.cookie ? api.request.cookie(options?.cookieName ?? "pp_oauth_state") : api.request.cookies(options?.cookieName ?? "pp_oauth_state"));
+                const cookieVal = getCookie(api.request, options?.cookieName ?? "pp_oauth_state");
+                const storedProvider = _storedProviderInfo ?? (typeof cookieVal === "string" ? safeParseJson(cookieVal) : cookieVal);
                 if (!storedProvider) throw new Error("No stored provider info found");
                 if (storedProvider.state !== state) throw new Error("State parameters don't match.");
 
@@ -212,7 +250,7 @@ const authPlugin = (config) => {
             api.signIn = (authData) => {
                 const { record, token } = authData;
                 if (!record) throw new Error("No auth record found");
-                dbg(`signing in with token and saving to pb_auth cookie: ${record.id} ${token}`);
+                _dbg(`signing in with token and saving to pb_auth cookie: ${record.id} ${token}`);
                 api.response.cookie("pb_auth", {
                     token,
                     record: toPlainObject(record)
