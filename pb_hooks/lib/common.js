@@ -164,6 +164,12 @@ module.exports = {
                 const body = context.body()
                 if (body) return body
             }
+
+            // PocketPages templates and hooks also expose body() globally.
+            if (typeof body === 'function') {
+                const parsedBody = body()
+                if (parsedBody) return parsedBody
+            }
         } catch (e) {
             console.error('[common.js] Error parsing form data:', e)
         }

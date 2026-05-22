@@ -21,14 +21,20 @@ module.exports = function(context) {
 
         try {
             const variantRecords = $app.findRecordsByFilter("product_variants", `product='${productId}'`, "", 100, 0);
-            variants = variantRecords.map(v => ({
-                id: v.id,
-                sku: v.getString('sku'),
-                price: v.getFloat('price'),
-                compare_at_price: v.getFloat('compare_at_price'),
-                stock: v.getInt('stock'),
-                attributes: common.normalizeJsonField(v.get('attributes'))
-            }));
+            variants = variantRecords
+                .map(v => ({
+                    id: v.id,
+                    sku: v.getString('sku'),
+                    price: v.getFloat('price'),
+                    compare_at_price: v.getFloat('compare_at_price'),
+                    stock: v.getInt('stock'),
+                    attributes: common.normalizeJsonField(v.get('attributes'))
+                }))
+                .sort((a, b) => {
+                    if (a.stock > 0 && b.stock <= 0) return -1;
+                    if (a.stock <= 0 && b.stock > 0) return 1;
+                    return a.price - b.price;
+                });
         } catch (e) {
             console.error("Failed to load variants", e);
         }

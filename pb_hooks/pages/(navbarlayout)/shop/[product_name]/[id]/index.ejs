@@ -32,8 +32,9 @@
 
                     <% 
                         let displayPrice = "Sold Out";
-                        if (data.variants && data.variants.length > 0) {
-                            const minPrice = Math.min(...data.variants.map(v => v.price));
+                        const availableVariants = (data.variants || []).filter(v => v.stock > 0);
+                        if (availableVariants.length > 0) {
+                            const minPrice = Math.min(...availableVariants.map(v => v.price));
                             displayPrice = "$" + minPrice.toFixed(2);
                         }
                     %>
@@ -49,14 +50,14 @@
                     <form action="/cart" method="POST" class="mt-auto flex flex-col gap-6">
                         <input type="hidden" name="action" value="add">
                         
-                        <% if (data.variants && data.variants.length > 0) { %>
-                            <% if (data.variants.length === 1) { %>
-                                <input type="hidden" name="variant_id" value="<%= data.variants[0].id %>">
+                        <% if (availableVariants.length > 0) { %>
+                            <% if (availableVariants.length === 1) { %>
+                                <input type="hidden" name="variant_id" value="<%= availableVariants[0].id %>">
                             <% } else { %>
                                 <div class="flex flex-col gap-2">
                                     <label for="variant_id" class="text-lg font-black uppercase text-base-content">Select Style / Variant</label>
                                     <select name="variant_id" id="variant_id" class="select select-bordered border-4 border-neutral bg-base-100 text-lg font-bold py-2 px-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
-                                        <% data.variants.forEach(variant => { %>
+                                        <% availableVariants.forEach(variant => { %>
                                             <%
                                                 let attrLabel = variant.sku;
                                                 if (variant.attributes && typeof variant.attributes === 'object') {
@@ -66,8 +67,8 @@
                                                     }
                                                 }
                                             %>
-                                            <option value="<%= variant.id %>" <%= variant.stock <= 0 ? 'disabled' : '' %>>
-                                                <%= attrLabel %> (<%= variant.stock > 0 ? '$' + variant.price.toFixed(2) : 'Sold Out' %>)
+                                            <option value="<%= variant.id %>">
+                                                <%= attrLabel %> ($<%= variant.price.toFixed(2) %>)
                                             </option>
                                         <% }); %>
                                     </select>

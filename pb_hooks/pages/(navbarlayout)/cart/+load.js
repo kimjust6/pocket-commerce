@@ -7,6 +7,87 @@ module.exports = function (context) {
     const common = require('../../../lib/common.js');
     const { client, user } = common.init(context);
 
+    const getFormValue = (formData, key, fallback = '') => {
+        if (!formData) return fallback;
+
+        const normalizeValue = (value) => {
+            if (value === undefined || value === null) return fallback;
+            if (Array.isArray(value)) return value.length > 0 ? normalizeValue(value[0]) : fallback;
+            if (typeof value === 'string') return value;
+            if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+            try {
+                if (typeof value.string === 'function') return value.string();
+            } catch { }
+            try {
+                return String(value);
+            } catch { }
+            return fallback;
+        };
+
+        if (typeof formData.get === 'function') {
+            const value = formData.get(key);
+            return normalizeValue(value);
+        }
+
+        const value = formData[key];
+        return normalizeValue(value);
+
+    };
+
+    const hasFormValue = (formData, key) => {
+        if (!formData) return false;
+        if (typeof formData.get === 'function') {
+            const value = formData.get(key);
+            return value !== undefined && value !== null;
+        }
+        const value = formData[key];
+        return value !== undefined && value !== null && value !== '';
+    };
+
+    const getRequestFormValue = (key) => {
+        try {
+            if (context.request && context.request.event && typeof context.request.event.requestInfo === 'function') {
+                const info = context.request.event.requestInfo();
+                if (info && info.query && info.query[key]) return info.query[key];
+                if (info && info.body && info.body[key]) return info.body[key];
+            }
+            if (context.query && context.query[key]) return context.query[key];
+            if (typeof context.queryParam === 'function') {
+                const value = context.queryParam(key);
+                if (value) return value;
+            }
+            if (context.request && context.request.url && context.request.url.searchParams) {
+                const value = context.request.url.searchParams.get(key);
+                if (value) return value;
+            }
+            if (context.request && context.request.url && context.request.url.search) {
+                const query = String(context.request.url.search).replace(/^\?/, '');
+                const pairs = query.split('&');
+                for (const pair of pairs) {
+                    const parts = pair.split('=');
+                    if (decodeURIComponent(parts[0] || '') === key) {
+                        return decodeURIComponent((parts[1] || '').replace(/\+/g, ' '));
+                    }
+                }
+            }
+        } catch { }
+
+        try {
+            if (context.request && typeof context.request.formValue === 'function') {
+                return context.request.formValue(key);
+            }
+        } catch { }
+
+        try {
+            const eventRequest = context.request && context.request.event && context.request.event.request;
+            if (eventRequest && typeof eventRequest.formValue === 'function') {
+                return eventRequest.formValue(key);
+            }
+        } catch { }
+
+        return '';
+    };
+
     /**
      * Safely retrieves a cookie value from the request.
      * Supports request.cookie / request.cookies as either a function or an object/map.
@@ -59,7 +140,7 @@ module.exports = function (context) {
         let cart = null;
         try {
             if (user) {
-                const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "-created", 1, 0);
+                const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "", 1, 0);
                 if (records.length > 0) {
                     cart = records[0];
                 } else {
@@ -69,7 +150,7 @@ module.exports = function (context) {
                     $app.save(cart);
                 }
             } else if (sessionId) {
-                const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "-created", 1, 0);
+                const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
                 if (records.length > 0) {
                     cart = records[0];
                 } else {
@@ -88,35 +169,56 @@ module.exports = function (context) {
     // 1. Process Form Submissions / Actions (POST)
     if (context.request.method === 'POST') {
         try {
-            const formData = context.request.formData();
-            const action = formData.action;
+            let formData = common.parseFormData(context);
+            if (!hasFormValue(formData, 'action') && context.request && typeof context.request.formData === 'function') {
+                formData = context.request.formData();
+            }
+            if (!hasFormValue(formData, 'action')) {
+                formData = {
+                    action: getRequestFormValue('action'),
+                    variant_id: getRequestFormValue('variant_id'),
+                    quantity: getRequestFormValue('quantity'),
+                    item_id: getRequestFormValue('item_id')
+                };
+            }
+            const action = getFormValue(formData, 'action');
 
             if (action === 'add') {
-                const variantId = formData.variant_id;
-                const quantity = parseInt(formData.quantity || '1', 10);
+                const variantId = getFormValue(formData, 'variant_id');
+                const quantity = parseInt(getFormValue(formData, 'quantity', '1'), 10);
                 if (variantId && quantity > 0) {
-                    const cart = findOrCreateCart();
-                    if (cart) {
+                    const variant = $app.findRecordById("product_variants", variantId);
+                    const stock = variant ? variant.getInt("stock") : 0;
+                    if (stock > 0) {
+                        const cart = findOrCreateCart();
+                        if (!cart) {
+                            context.response.redirect('/cart');
+                            return;
+                        }
+
                         // Check if item already exists in this cart
-                        const existing = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}' && variant = '${variantId}'`, "-created", 1, 0);
+                        const existing = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}' && variant = '${variantId}'`, "", 1, 0);
                         if (existing.length > 0) {
                             const item = existing[0];
-                            item.set("quantity", item.getInt("quantity") + quantity);
-                            $app.save(item);
+                            const nextQuantity = Math.min(item.getInt("quantity") + quantity, stock);
+                            if (nextQuantity > 0) {
+                                item.set("quantity", nextQuantity);
+                                $app.save(item);
+                            }
                         } else {
                             const collection = $app.findCollectionByNameOrId("cart_items");
                             const item = new Record(collection);
                             item.set("cart", cart.id);
                             item.set("variant", variantId);
-                            item.set("quantity", quantity);
+                            item.set("quantity", Math.min(quantity, stock));
                             $app.save(item);
                         }
                     }
                 }
 
             } else if (action === 'update') {
-                const itemId = formData.item_id;
-                const quantity = parseInt(formData.quantity || '0', 10);
+                const itemId = getFormValue(formData, 'item_id');
+                const quantity = parseInt(getFormValue(formData, 'quantity', '0'), 10);
                 if (itemId) {
                     const item = $app.findRecordById("cart_items", itemId);
                     if (item) {
@@ -134,7 +236,7 @@ module.exports = function (context) {
                 }
 
             } else if (action === 'delete') {
-                const itemId = formData.item_id;
+                const itemId = getFormValue(formData, 'item_id');
                 if (itemId) {
                     const item = $app.findRecordById("cart_items", itemId);
                     if (item) {
@@ -172,15 +274,15 @@ module.exports = function (context) {
     try {
         let cart = null;
         if (user) {
-            const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "-created", 1, 0);
+            const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "", 1, 0);
             if (records.length > 0) cart = records[0];
         } else if (sessionId) {
-            const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "-created", 1, 0);
+            const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
             if (records.length > 0) cart = records[0];
         }
 
         if (cart) {
-            const items = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}'`, "-created", 100, 0);
+            const items = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}'`, "", 100, 0);
             if (items.length > 0) {
                 // Expand variants
                 $app.expandRecords(items, ["variant"]);

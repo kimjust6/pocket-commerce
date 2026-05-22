@@ -65,12 +65,12 @@ module.exports = function (context) {
     try {
         if (user) {
             // Logged in user: find by user relation
-            const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "-created", 1, 0);
+            const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "", 1, 0);
             if (records.length > 0) {
                 cart = records[0];
             } else if (sessionId) {
                 // If there's a guest cart for this session, associate it with the logged in user
-                const guestRecords = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "-created", 1, 0);
+                const guestRecords = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
                 if (guestRecords.length > 0) {
                     cart = guestRecords[0];
                     cart.set("user", user.id);
@@ -80,14 +80,14 @@ module.exports = function (context) {
             }
         } else if (sessionId) {
             // Guest user: find by session_id
-            const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "-created", 1, 0);
+            const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
             if (records.length > 0) {
                 cart = records[0];
             }
         }
 
         if (cart) {
-            const items = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}'`, "-created", 100, 0);
+            const items = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}'`, "", 100, 0);
             if (items.length > 0) {
                 // Expand variants
                 $app.expandRecords(items, ["variant"]);
