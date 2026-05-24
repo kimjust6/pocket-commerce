@@ -1,70 +1,77 @@
 # Pocket Commerce
 
-**Pocket Commerce** is a modern, self-hosted product watchlist application that lets you discover films, curate personal collections, and share them with friends. Built for product lovers who want control over their data with a premium user experience.
+**Pocket Commerce** is a premium, self-hosted greeting card ecommerce application featuring a bold, modern Neo-Brutalist aesthetic. Designed for maximum speed and simplicity, it provides complete control over your store's backend, checkout systems, and database with a highly premium user experience.
+
+---
 
 ## Features
 
--   **Product Discovery**: Instantly search for millions of products powered by the **TMDB API**.
--   **Smart Watchlists**: Create unlimited public or private watchlists to organize your product backlog.
--   **Collaboration**: Share private watchlists with specific users for collaborative planning.
--   **Secure & Private**: Built-in User Authentication (Email/Password & Google OAuth) keeps your lists secure.
--   **Modern Design**: Stunning UI features glassmorphism, smooth animations, and a responsive layout powered by Tailwind CSS & DaisyUI.
--   **Dark Mode**: Easy on the eyes with a sleek dark theme.
+- **Greeting Card Catalog**: Interactive browsing experience for jokes, memes, and premium greeting cards categorized for quick discovery.
+- **Neo-Brutalist Visuals**: Sleek typography, thick borders, robust shadows, and vibrant HSL palettes built with Tailwind CSS, Alpine.js, and DaisyUI.
+- **Intuitive Cart & Session Management**: Cart persistence using session cookies, supporting seamless transition of items from guest sessions to authenticated accounts.
+- **Smooth Checkout Pipelines**:
+  - **Guest Checkout**: Automatic secure guest registration via anonymous authentication plugin so users can check out frictionlessly.
+  - **Registered Checkout**: Ability to manage multiple saved addresses and select defaults for one-click orders.
+- **Automated Order Processing**: Direct generation of order entries, line items, and payment transactions coupled with real-time stock adjustments.
+- **Security & Auth**: Complete user login/registration matching email, passwords, Google OAuth, and secure profile management.
+- **Thorough Test Suites**: Ready-to-run Vitest test suites checking cart math, address profiles, checkouts, and system middleware.
+
+---
 
 ## Tech Stack
 
-This project is built on a robust and simple stack designed for performance and ease of deployment.
+This project is engineered on a lightweight, high-performance stack designed for simple deployments:
 
--   **Backend**: [PocketBase](https://pocketbase.io/) (Golang + SQLite embedded DB) - Handles Auth, Database, and API.
--   **Frontend**: [PocketPages](https://github.com/pocketpages/pocketpages) - Server-side rendering using **EJS**.
--   **Interactivity**: [Alpine.js](https://alpinejs.dev/) - For lightweight, reactive UI components (Modals, Search).
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/).
+- **Backend**: [PocketBase](https://pocketbase.io/) (Golang + SQLite embedded DB) - Powers Authentication, API endpoints, and data collections.
+- **Frontend**: [PocketPages](https://github.com/pocketpages/pocketpages) - Fast, lightweight server-side rendering using **EJS**.
+- **Interactivity**: [Alpine.js](https://alpinejs.dev/) - For micro-animations and reactive client-side bindings (Modals, Cart drawers, address select).
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/) with a curated "neobrutalism" theme.
+
+---
 
 ## Getting Started
 
-Follow these steps to get your own instance running locally.
+Follow these steps to get your own card commerce store running locally.
 
 ### Prerequisites
 
--   **Node.js** (LTS version recommended)
--   **PocketBase**: Download the binary for your OS from [pocketbase.io/docs](https://pocketbase.io/docs/) and ensure it's in your PATH (or placed in the project root).
--   **TMDB API Key**: Get a free API key from [The Product Database](https://www.theproductdb.org/documentation/api).
+- **Node.js** (LTS version recommended)
+- **PocketBase**: The PocketBase binary is integrated, running directly on SQLite.
 
 ### Installation
 
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/kimjust6/pocket-products.git
-    cd pocket-products
-    ```
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/kimjust6/pocket-commerce.git
+   cd pocket-commerce
+   ```
 
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-3.  **Set Environment Variables**:
-    Create a `.env` file or export the variable in your shell:
-    ```bash
-    export TMDB_API_KEY="your_tmdb_api_key_here"
-    ```
+3. **Run the Application**:
+   Starts the Tailwind CSS builder and the PocketBase server concurrently in development mode:
+   ```bash
+   npm run dev
+   ```
 
-4.  **Run the App**:
-    This command starts the Tailwind watcher and the PocketBase server in dev mode.
-    ```bash
-    npm run dev
-    ```
+4. **Visit the App**:
+   Open [http://localhost:8090](http://localhost:8090) in your browser.
 
-5.  **Visit the App**:
-    Open [http://localhost:8090](http://localhost:8090) in your browser.
+---
 
 ## Project Structure
 
--   `pb_hooks/` - Server-side logic and templates.
-    -   `pages/` - EJS templates and route handlers (PocketPages).
-    -   `*.pb.js` - PocketBase hooks and extensions.
--   `pb_public/` - Static assets (compiled CSS, images).
--   `pb_data/` - Local database and storage (created after first run).
+- `pb_hooks/` - Server-side hook handlers and templates.
+  - `pages/` - EJS views, static stylesheet bundles, and route loaders (PocketPages framework).
+  - `lib/` - Shared business logic and common wrappers.
+- `pb_public/` - Compiled static assets.
+- `pb_data/` - SQLite database files and store data (generated automatically).
+- `tests/` - Vitest unit tests verifying business loader rules.
+
+---
 
 ## Contributing
 

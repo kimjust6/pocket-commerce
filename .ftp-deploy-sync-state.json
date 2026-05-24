@@ -1,13 +1,13 @@
 {
     "description": "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action",
     "version": "1.0.0",
-    "generatedTime": 1778206658247,
+    "generatedTime": 1779641120735,
     "data": [
         {
             "type": "file",
             "name": "package.json",
-            "size": 1955,
-            "hash": "85962f0bd17d1c278eed6b8f516105889df9e2ebf168f28d1bdc19167a0fa66a"
+            "size": 1962,
+            "hash": "5047d7e967615aaacc360824744b14d17d55a1a7f8766e547ca70e485a6f946b"
         },
         {
             "type": "folder",
@@ -32,18 +32,6 @@
             "name": "pb_public/favicon.ico",
             "size": 181598,
             "hash": "42852b72e4963165d078b06d7a62a8d64d14b07ea19ad0c0aa30466079481fe8"
-        },
-        {
-            "type": "file",
-            "name": "pb_public/js/watchlists.js",
-            "size": 1218,
-            "hash": "53adb8c46283a56ff2ac284451e796179be21762aecd9872b80ccc0b133c5feb"
-        },
-        {
-            "type": "file",
-            "name": "pb_public/js/watchlist-detail.js",
-            "size": 34822,
-            "hash": "81be299f88f3f30f63e35361da467b936ec288955f74714cf3370e9e62c28c75"
         },
         {
             "type": "file",
@@ -86,14 +74,14 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/app.tailwind.css",
-            "size": 5660,
-            "hash": "6de0b85a33ff6557ec9f97da307684ac6e4935ae5e55104b944781b436d5cff0"
+            "size": 5878,
+            "hash": "79adf85a956e027df4a337021173787454cec763e9cf37215dbad4a41764ae6c"
         },
         {
             "type": "file",
             "name": "pb_hooks/pages/app.css",
-            "size": 143874,
-            "hash": "222a99ba5dc86d18f52d00da450871617eb88351326bf2569aba74de6e4b482b"
+            "size": 196245,
+            "hash": "789131658424270a36e43cbd05432bc72c65bc8afb28b4c92e78ca5a7efbbdd8"
         },
         {
             "type": "folder",
@@ -102,8 +90,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/+config.js",
-            "size": 9012,
-            "hash": "aa16070f52d2d3c717e3079975f61913ed7f78344ba918e3b485f55f690fcf14"
+            "size": 10330,
+            "hash": "55246b0e54eaa5f1fe7420d463b8a2cc3557e15267d58cf8ca1333b09387c785"
         },
         {
             "type": "folder",
@@ -118,8 +106,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/register/+load.js",
-            "size": 404,
-            "hash": "10209c82c8901e275032dcecd72b3d0d4ae4e3bdc97a6328f25e03290d8e245b"
+            "size": 405,
+            "hash": "7104d9569ea2bbe4699fd618cce4e5c3ebf6ab3d42aec872fc5aad5bbdcdb53d"
         },
         {
             "type": "file",
@@ -136,8 +124,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/login/+load.js",
-            "size": 401,
-            "hash": "83e3c8105840837d44bb0464f94ad72156062034450b57fbf495b713f93d66c4"
+            "size": 402,
+            "hash": "7a0a0fada512079ac12c23017c9b9463428da9180230c284fdb9949e9381bee7"
         },
         {
             "type": "file",
@@ -160,8 +148,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/auth/oauth/redirect/index.ejs",
-            "size": 752,
-            "hash": "1e4438d0070c609d6cfeddc4c90295965ef28bbb21364e34e60121ed903bc240"
+            "size": 749,
+            "hash": "29322a2927e5d73463e0766fc5083c679f3e04f61f8df2a2526edc862c964c3b"
         },
         {
             "type": "file",
@@ -208,8 +196,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/_private/header.ejs",
-            "size": 8884,
-            "hash": "189a19c4c5c097a6c48cd1b0b66ba88d098821bd8fef586db8574d4eb96dee67"
+            "size": 10871,
+            "hash": "39f2dbc0dd627416ec3a3a82e84cb54df6b6e30459e84d97e8a532dcd3fd5613"
         },
         {
             "type": "file",
@@ -243,29 +231,45 @@
         },
         {
             "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/shop"
+        },
+        {
+            "type": "folder",
             "name": "pb_hooks/pages/(navbarlayout)/profile"
         },
         {
             "type": "file",
             "name": "pb_hooks/pages/(navbarlayout)/index.ejs",
-            "size": 17206,
-            "hash": "bfa0a623c70b6c5fc6a89279c4ed14ce9590458d4d11ce450c55de7146a09dfa"
+            "size": 17583,
+            "hash": "6e42498d595fbf6b23f747e84642c46c1df634d4c89f08cbabb7df2a7819daa5"
+        },
+        {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/checkout"
+        },
+        {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/cart"
         },
         {
             "type": "folder",
             "name": "pb_hooks/pages/(navbarlayout)/banano"
         },
         {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/account"
+        },
+        {
             "type": "file",
             "name": "pb_hooks/pages/(navbarlayout)/+middleware.js",
-            "size": 2390,
-            "hash": "fa35c2a7dec66ea6b683dfeb93c97b56af6d932a5890219524064d5eb4ea67db"
+            "size": 7477,
+            "hash": "2cb4ca9aa2a5851681ff0e156f1928c13863c42c83ae8c6341035933bf74c4b5"
         },
         {
             "type": "file",
             "name": "pb_hooks/pages/(navbarlayout)/+load.js",
-            "size": 3239,
-            "hash": "6b92e7260598f43bd7d94d5bf6b338364a54803db7af06ce5b69da46fe53a371"
+            "size": 3399,
+            "hash": "a877e291017e4808d046b3713e2118784c76799c22852b87d93d9a1c76737dff"
         },
         {
             "type": "file",
@@ -275,9 +279,41 @@
         },
         {
             "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/shop/index.ejs",
+            "size": 6515,
+            "hash": "7a80f5c5f1674383fc11baa57954a28e623e22801fdea77c9d002f38c03309e6"
+        },
+        {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/shop/[product_name]"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/shop/+load.js",
+            "size": 3220,
+            "hash": "8ac5a9a94c62957f946b502d402bbb601ddae5a9c6f7b97d2b2c5b71dc30575c"
+        },
+        {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/shop/[product_name]/[id]"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/shop/[product_name]/[id]/index.ejs",
+            "size": 8508,
+            "hash": "7a834cdbccb12000c86701f5f742eeee169ee0a93f4fb85f747bacb06daed187"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/shop/[product_name]/[id]/+load.js",
+            "size": 2128,
+            "hash": "861d1a29f7731b0a1750c6630d012ff7f64d50e716a1c3f45fd312131b421504"
+        },
+        {
+            "type": "file",
             "name": "pb_hooks/pages/(navbarlayout)/profile/index.ejs",
-            "size": 7743,
-            "hash": "c78c092ad5b18d10e97919f1c9b4e93b7c8328d0a4484522b866b24f9a5c0169"
+            "size": 7761,
+            "hash": "7b02fbb322f83a90bfb6665ce209fafb454d33ceba2cf8af94776ed8050061a0"
         },
         {
             "type": "folder",
@@ -302,6 +338,46 @@
             "hash": "6b457e15811419130f9591b3024fa32cb7e9cfe9e18b9eb01b93c3bda569689e"
         },
         {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/checkout/success"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/checkout/index.ejs",
+            "size": 22956,
+            "hash": "f923074d2ab44bef0598a876c48eca47118302387b85737300c3b2f0e671aba0"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/checkout/+load.js",
+            "size": 14097,
+            "hash": "5d05ddee852d7824be70bf1af0db317c9465a1a011c642ceadf11846df650d13"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/checkout/success/index.ejs",
+            "size": 10649,
+            "hash": "e2a57fbb4d688f87cc7eb5387cb09a08464fba87b0830536d4538b670512f3ac"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/checkout/success/+load.js",
+            "size": 3975,
+            "hash": "c05a3cdbdc309332845e64bb8aa0756250c9344fc441f5923903911698384713"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/cart/index.ejs",
+            "size": 13666,
+            "hash": "5ec5d28b8361b2e34a32782890cfb209f91c96aff9f1be2a674bff17092136e9"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/cart/+load.js",
+            "size": 14049,
+            "hash": "a19bdde3feac1ac78e029a79b948a366bc48dda25b777b88511b7e3bbc9f47d5"
+        },
+        {
             "type": "file",
             "name": "pb_hooks/pages/(navbarlayout)/banano/index.ejs",
             "size": 14029,
@@ -309,15 +385,43 @@
         },
         {
             "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/account/index.ejs",
+            "size": 34681,
+            "hash": "fe5b484acc2349fd27f65b06ddd8ab4519df38f805ed0316db85eca954e4233c"
+        },
+        {
+            "type": "folder",
+            "name": "pb_hooks/pages/(navbarlayout)/account/addresses"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/account/+load.js",
+            "size": 4112,
+            "hash": "41b459a82ec71982f98b88d8c1069ec2f0e879f9ed2ae980c381ec775231c45a"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/account/addresses/index.ejs",
+            "size": 20831,
+            "hash": "7ea42a09fc7753cd9e482cccbe27219f931d4e32528694ed9e516e7fd0e59c90"
+        },
+        {
+            "type": "file",
+            "name": "pb_hooks/pages/(navbarlayout)/account/addresses/+load.js",
+            "size": 7559,
+            "hash": "8ff5963c386c1a98b4b60a54fb88f652f9285da851845fa9704d711adedd715c"
+        },
+        {
+            "type": "file",
             "name": "pb_hooks/lib/pocketbase-types.ts",
-            "size": 11787,
-            "hash": "411116e3039f7235aad2795c138098fbc8c9cac22e7e2b09c6c9033cf5727355"
+            "size": 11372,
+            "hash": "74625927e20c15a275a6ede32b18b07a3ef21d74268dfc0f71543827a21a6862"
         },
         {
             "type": "file",
             "name": "pb_hooks/lib/common.js",
-            "size": 32405,
-            "hash": "875d657f11402e410ab2fc8254393ad99fd6fb1be20dd65b2e1466fece243fad"
+            "size": 5362,
+            "hash": "f09838802936455953cd299c51ab9921b1135ce7ef054e57ffdcc8087919aaaa"
         },
         {
             "type": "file",
