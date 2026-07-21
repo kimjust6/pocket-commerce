@@ -96,9 +96,9 @@
                                             <input type="hidden" name="action" value="update">
                                             <input type="hidden" name="item_id" value="<%= item.id %>">
                                             
-                                            <button type="submit" name="quantity" value="<%= item.quantity - 1 %>" class="btn btn-ghost rounded-none border-0 px-3 py-1 font-bold text-xl hover:bg-neutral/10" aria-label="Decrease quantity">-</button>
-                                            <span class="w-8 text-center font-black text-lg text-base-content"><%= item.quantity %></span>
-                                            <button type="submit" name="quantity" value="<%= item.quantity + 1 %>" class="btn btn-ghost rounded-none border-0 px-3 py-1 font-bold text-xl hover:bg-neutral/10" aria-label="Increase quantity" <%= item.quantity >= item.stock ? 'disabled' : '' %>>+</button>
+                                            <button type="submit" name="quantity" value="<%= item.quantity - 1 %>" class="btn btn-ghost rounded-none border-0 border-r-4 border-neutral px-4 py-1 font-black text-xl hover:bg-neutral hover:text-neutral-content transition-colors" aria-label="Decrease quantity">-</button>
+                                            <span class="w-10 text-center font-black text-lg text-base-content"><%= item.quantity %></span>
+                                            <button type="submit" name="quantity" value="<%= item.quantity + 1 %>" class="btn btn-ghost rounded-none border-0 border-l-4 border-neutral px-4 py-1 font-black text-xl hover:bg-neutral hover:text-neutral-content transition-colors" aria-label="Increase quantity" <%= item.quantity >= item.stock ? 'disabled' : '' %>>+</button>
                                         </form>
                                     </div>
 

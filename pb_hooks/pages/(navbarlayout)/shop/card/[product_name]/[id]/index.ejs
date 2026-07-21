@@ -44,9 +44,18 @@
                         <%= displayPrice %>
                     </div>
 
-                    <div class="prose prose-lg prose-neutral max-w-none text-base-content font-medium mb-12">
-                        <%- data.product.description || "No description available." %>
-                    </div>
+                    <% if (data.product.description) { %>
+                        <div class="prose prose-lg prose-neutral max-w-none text-base-content font-medium mb-12">
+                            <%- data.product.description %>
+                        </div>
+                    <% } else { %>
+                        <div class="bg-base-200 border-4 border-dashed border-neutral p-6 mb-12 font-bold text-base-content/60 text-lg flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>No description available for this card.</span>
+                        </div>
+                    <% } %>
 
                     <!-- Add to Cart / Actions Form -->
                     <form action="/cart" method="POST" class="mt-auto flex flex-col gap-6">
@@ -82,9 +91,9 @@
                                 <div class="flex flex-col gap-2 w-full sm:w-36">
                                     <label for="quantity" class="text-lg font-black uppercase text-base-content">Qty</label>
                                     <div class="flex items-center border-4 border-neutral bg-base-100 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
-                                        <button type="button" onclick="const input = this.nextElementSibling; if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1" class="btn btn-ghost rounded-none border-0 text-xl font-bold px-3 py-2">-</button>
-                                        <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-full text-center font-bold text-lg border-0 bg-transparent focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none py-2">
-                                        <button type="button" onclick="const input = this.previousElementSibling; input.value = parseInt(input.value) + 1" class="btn btn-ghost rounded-none border-0 text-xl font-bold px-3 py-2">+</button>
+                                        <button type="button" onclick="const input = this.nextElementSibling; if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1" class="btn btn-ghost rounded-none border-0 border-r-4 border-neutral text-xl font-black px-4 py-2 hover:bg-neutral hover:text-neutral-content transition-colors">-</button>
+                                        <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-full text-center font-black text-lg border-0 bg-transparent focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none py-2">
+                                        <button type="button" onclick="const input = this.previousElementSibling; input.value = parseInt(input.value) + 1" class="btn btn-ghost rounded-none border-0 border-l-4 border-neutral text-xl font-black px-4 py-2 hover:bg-neutral hover:text-neutral-content transition-colors">+</button>
                                     </div>
                                 </div>
 
