@@ -22,27 +22,97 @@
                         </svg>
                     </div>
                     
-                    <!-- Categories List -->
-                    <div x-show="open" x-transition.opacity class="px-6 pb-6 lg:p-6 lg:pt-4">
-                        <ul class="space-y-3">
-                            <li>
-                                <a href="/shop" class="block text-xl font-bold hover:translate-x-2 transition-transform <%= !data.selectedCategory ? 'text-primary border-l-4 border-primary pl-2' : 'text-base-content' %>">
-                                All Products
-                            </a>
-                        </li>
-                        <% if (data.categories && data.categories.length > 0) { %>
-                            <% data.categories.forEach(category => { %>
+                    <!-- Categories & Filters List Form -->
+                    <% const filters = data.filters || {}; %>
+                    <form action="/shop" method="GET" x-show="open" x-transition.opacity class="divide-y-4 divide-neutral">
+                        <% if (data.selectedCategory) { %>
+                            <input type="hidden" name="category" value="<%= data.selectedCategory %>">
+                        <% } %>
+
+                        <!-- Categories Section -->
+                        <div class="p-6">
+                            <h3 class="text-sm font-bold uppercase text-base-content/60 mb-4">Browse by category</h3>
+                            <ul class="space-y-3">
                                 <li>
-                                    <a href="/shop?category=<%= category.slug %>" class="block text-xl font-bold hover:translate-x-2 transition-transform <%= data.selectedCategory === category.slug ? 'text-primary border-l-4 border-primary pl-2' : 'text-base-content' %>">
-                                        <%= category.name %>
+                                    <a href="/shop" data-no-link-fix class="block text-xl font-bold hover:translate-x-2 transition-transform <%= !data.selectedCategory ? 'text-primary border-l-4 border-primary pl-2' : 'text-base-content' %>">
+                                        All Products
                                     </a>
                                 </li>
-                            <% }); %>
-                        <% } else { %>
-                            <li class="text-lg font-medium text-base-content opacity-70">No categories found.</li>
+                                <% if (data.categories && data.categories.length > 0) { %>
+                                    <% data.categories.forEach(category => { %>
+                                        <li>
+                                            <a href="/shop?category=<%= category.slug %>" class="block text-xl font-bold hover:translate-x-2 transition-transform <%= data.selectedCategory === category.slug ? 'text-primary border-l-4 border-primary pl-2' : 'text-base-content' %>">
+                                                <%= category.name %>
+                                            </a>
+                                        </li>
+                                    <% }); %>
+                                <% } else { %>
+                                    <li class="text-lg font-medium text-base-content opacity-70">No categories found.</li>
+                                <% } %>
+                            </ul>
+                        </div>
+
+                        <!-- Price Range Accordion -->
+                        <div class="p-6" x-data="{ priceOpen: true }">
+                            <button type="button" @click="priceOpen = !priceOpen" class="w-full flex justify-between items-center text-left font-black uppercase text-lg text-base-content">
+                                <span>Price range (CAD$)</span>
+                                <svg class="w-5 h-5 transition-transform duration-200" :class="{'rotate-180': priceOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="priceOpen" x-transition.opacity class="mt-4 flex gap-2 items-center">
+                                <input type="number" name="min_price" placeholder="Min" value="<%= filters.minPrice || '' %>" class="input input-bordered border-2 border-neutral w-full bg-base-100 text-sm font-bold p-2 shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:translate-y-[1px] focus:shadow-[1px_1px_0_0_rgba(0,0,0,1)] transition-all">
+                                <span class="font-bold text-base-content/40">-</span>
+                                <input type="number" name="max_price" placeholder="Max" value="<%= filters.maxPrice || '' %>" class="input input-bordered border-2 border-neutral w-full bg-base-100 text-sm font-bold p-2 shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:translate-y-[1px] focus:shadow-[1px_1px_0_0_rgba(0,0,0,1)] transition-all">
+                                <button type="submit" class="bg-primary text-primary-content border-2 border-neutral p-2 px-3 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_rgba(0,0,0,1)] transition-all font-black text-sm uppercase">Go</button>
+                            </div>
+                        </div>
+
+                        <!-- Availability Accordion -->
+                        <div class="p-6" x-data="{ availOpen: true }">
+                            <button type="button" @click="availOpen = !availOpen" class="w-full flex justify-between items-center text-left font-black uppercase text-lg text-base-content">
+                                <span>Availability</span>
+                                <svg class="w-5 h-5 transition-transform duration-200" :class="{'rotate-180': availOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="availOpen" x-transition.opacity class="mt-4 space-y-3">
+                                <label class="flex items-center gap-3 cursor-pointer font-bold text-sm select-none">
+                                    <input type="checkbox" name="availability" value="in_stock" <%= filters.availability === 'in_stock' ? 'checked' : '' %> onchange="if(this.checked) { const other = this.form.querySelector('input[value=out_of_stock]'); if(other) other.checked = false; }; this.form.submit();" class="checkbox border-4 border-neutral rounded-none checked:bg-primary shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                                    <span>In Stock</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer font-bold text-sm select-none">
+                                    <input type="checkbox" name="availability" value="out_of_stock" <%= filters.availability === 'out_of_stock' ? 'checked' : '' %> onchange="if(this.checked) { const other = this.form.querySelector('input[value=in_stock]'); if(other) other.checked = false; }; this.form.submit();" class="checkbox border-4 border-neutral rounded-none checked:bg-primary shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                                    <span>Out of Stock</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Sale and Deals Accordion -->
+                        <div class="p-6" x-data="{ saleOpen: true }">
+                            <button type="button" @click="saleOpen = !saleOpen" class="w-full flex justify-between items-center text-left font-black uppercase text-lg text-base-content">
+                                <span>Sale and Deals</span>
+                                <svg class="w-5 h-5 transition-transform duration-200" :class="{'rotate-180': saleOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="saleOpen" x-transition.opacity class="mt-4">
+                                <label class="flex items-center gap-3 cursor-pointer font-bold text-sm select-none">
+                                    <input type="checkbox" name="on_sale" value="1" <%= filters.onSale === '1' ? 'checked' : '' %> onchange="this.form.submit()" class="checkbox border-4 border-neutral rounded-none checked:bg-primary shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                                    <span>On Sale / Deals</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Clear Filters -->
+                        <% if (filters.minPrice || filters.maxPrice || filters.availability || filters.onSale) { %>
+                            <div class="p-6 bg-error/10 flex justify-center">
+                                <a href="/shop<%= data.selectedCategory ? '?category=' + data.selectedCategory : '' %>" data-no-link-fix class="w-full bg-error text-error-content hover:bg-error/80 border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none transition-all font-black text-sm uppercase text-center py-3 block select-none">
+                                    Clear All Filters
+                                </a>
+                            </div>
                         <% } %>
-                        </ul>
-                    </div>
+                    </form>
                 </div>
             </div>
 

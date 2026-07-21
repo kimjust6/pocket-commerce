@@ -9,6 +9,9 @@
 
         document.querySelectorAll('a[href]').forEach(link => {
             try {
+                if (link.hasAttribute('data-no-link-fix')) {
+                    return;
+                }
                 // Skip if href is missing, empty, or a fragment/script
                 const href = link.getAttribute('href');
                 if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {

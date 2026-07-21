@@ -15,6 +15,13 @@ module.exports = function (context) {
     }
 
     const selectedCategorySlug = common.getParam(context, 'category') || null;
+    const minPriceParam = common.getParam(context, 'min_price') || null;
+    const maxPriceParam = common.getParam(context, 'max_price') || null;
+    const availabilityParam = common.getParam(context, 'availability') || null;
+    const onSaleParam = common.getParam(context, 'on_sale') || null;
+
+    const minPriceVal = minPriceParam !== null && minPriceParam !== undefined && minPriceParam !== "" && !isNaN(parseFloat(minPriceParam)) ? parseFloat(minPriceParam) : null;
+    const maxPriceVal = maxPriceParam !== null && maxPriceParam !== undefined && maxPriceParam !== "" && !isNaN(parseFloat(maxPriceParam)) ? parseFloat(maxPriceParam) : null;
 
     try {
         let filterStr = "status='active'";
@@ -29,10 +36,12 @@ module.exports = function (context) {
         const productRecords = $app.findRecordsByFilter("products", filterStr, "", 100, 0);
         $app.expandRecords(productRecords, ["category"]);
 
-        // Fetch prices for all products
+        // Fetch prices and stock details for all products
         const productIds = productRecords.map(p => p.id);
         
         let minPrices = {}; // productId -> price
+        let totalStocks = {}; // productId -> stock
+        let isOnSale = {}; // productId -> bool
 
         try {
             if (productIds.length > 0) {
@@ -46,8 +55,15 @@ module.exports = function (context) {
                     variants.forEach(v => {
                         const pId = v.getString('product');
                         const price = v.getFloat('price');
+                        const stock = v.getInt('stock');
+                        const compareAt = v.getFloat('compare_at_price');
+
                         if (!minPrices[pId] || price < minPrices[pId]) {
                             minPrices[pId] = price;
+                        }
+                        totalStocks[pId] = (totalStocks[pId] || 0) + stock;
+                        if (compareAt > price) {
+                            isOnSale[pId] = true;
                         }
                     });
                 }
@@ -67,17 +83,40 @@ module.exports = function (context) {
                 imageUrls = ["https://placehold.co/400x500?text=No+Image"];
             }
 
+            const price = minPrices[p.id] || null;
+            const stock = totalStocks[p.id] || 0;
+            const inStock = stock > 0;
+            const onSale = isOnSale[p.id] || false;
+
             return {
                 id: p.id,
                 name: p.getString('name'),
                 slug: p.getString('slug'),
                 description: p.getString('description'),
                 category: cat ? { name: cat.getString('name'), slug: cat.getString('slug') } : null,
-                price: minPrices[p.id] || null,
+                price: price,
                 image: imageUrls[0],
-                images: imageUrls
+                images: imageUrls,
+                inStock: inStock,
+                onSale: onSale
             };
         });
+
+        // Filter products list based on advanced criteria
+        if (minPriceVal !== null) {
+            products = products.filter(p => p.price !== null && p.price >= minPriceVal);
+        }
+        if (maxPriceVal !== null) {
+            products = products.filter(p => p.price !== null && p.price <= maxPriceVal);
+        }
+        if (availabilityParam === 'in_stock') {
+            products = products.filter(p => p.inStock);
+        } else if (availabilityParam === 'out_of_stock') {
+            products = products.filter(p => !p.inStock);
+        }
+        if (onSaleParam === '1') {
+            products = products.filter(p => p.onSale);
+        }
 
     } catch (e) {
         console.error("Failed to load products", e);
@@ -86,6 +125,12 @@ module.exports = function (context) {
     return {
         categories,
         products,
-        selectedCategory: selectedCategorySlug
+        selectedCategory: selectedCategorySlug,
+        filters: {
+            minPrice: minPriceParam,
+            maxPrice: maxPriceParam,
+            availability: availabilityParam,
+            onSale: onSaleParam
+        }
     };
 }
