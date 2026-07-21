@@ -1,5 +1,5 @@
 module.exports = function(context) {
-    const common = require('../../../../../lib/common.js');
+    const common = require('../../../../../../lib/common.js');
     const productId = common.getParam(context, 'id');
     
     let product = null;
