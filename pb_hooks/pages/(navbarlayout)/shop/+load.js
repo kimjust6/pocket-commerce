@@ -59,10 +59,12 @@ module.exports = function (context) {
         products = productRecords.map(p => {
             const cat = p.expandedOne("category");
             const imagesArray = p.getStringSlice("images");
-            let imageUrl = "https://placehold.co/400x500?text=No+Image";
+            let imageUrls = [];
             
             if (imagesArray && imagesArray.length > 0) {
-                imageUrl = `/api/files/products/${p.id}/${imagesArray[0]}`;
+                imageUrls = imagesArray.map(img => `/api/files/products/${p.id}/${img}`);
+            } else {
+                imageUrls = ["https://placehold.co/400x500?text=No+Image"];
             }
 
             return {
@@ -72,7 +74,8 @@ module.exports = function (context) {
                 description: p.getString('description'),
                 category: cat ? { name: cat.getString('name'), slug: cat.getString('slug') } : null,
                 price: minPrices[p.id] || null,
-                image: imageUrl
+                image: imageUrls[0],
+                images: imageUrls
             };
         });
 

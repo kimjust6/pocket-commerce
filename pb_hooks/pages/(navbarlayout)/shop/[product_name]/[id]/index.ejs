@@ -3,14 +3,16 @@
         <div class="container mx-auto max-w-7xl px-4 py-12 lg:py-24">
             <div class="flex flex-col lg:flex-row gap-12 bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 lg:p-12">
                 <!-- Image Gallery -->
-                <div class="w-full lg:w-1/2">
-                    <div class="border-4 border-neutral bg-base-200 aspect-[4/5] relative overflow-hidden">
-                        <img src="<%= data.product.images[0] %>" alt="<%= data.product.name %>" class="w-full h-full object-cover">
+                <div class="w-full lg:w-1/2" x-data="{ activeImage: '<%= data.product.images[0] %>' }">
+                    <div class="border-4 border-neutral bg-base-200 aspect-[4/5] relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
+                        <img :src="activeImage" alt="<%= data.product.name %>" class="w-full h-full object-cover">
                     </div>
                     <% if (data.product.images.length > 1) { %>
-                        <div class="flex gap-4 mt-4 overflow-x-auto pb-4">
+                        <div class="flex gap-4 mt-6 overflow-x-auto pb-4">
                             <% data.product.images.forEach(img => { %>
-                                <div class="border-4 border-neutral w-24 h-24 flex-shrink-0 cursor-pointer hover:-translate-y-1 hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
+                                <div class="border-4 flex-shrink-0 cursor-pointer transition-all duration-150 w-24 h-24 overflow-hidden relative"
+                                     :class="activeImage === '<%= img %>' ? 'border-primary shadow-[4px_4px_0_0_rgba(0,0,0,1)] -translate-y-1' : 'border-neutral hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:-translate-y-1'"
+                                     @click="activeImage = '<%= img %>'">
                                     <img src="<%= img %>" alt="<%= data.product.name %>" class="w-full h-full object-cover">
                                 </div>
                             <% }); %>
