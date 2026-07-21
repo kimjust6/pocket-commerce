@@ -51,7 +51,13 @@ module.exports = function (context) {
                     if (product) {
                         const imagesArray = product.getStringSlice("images");
                         if (imagesArray && imagesArray.length > 0) {
-                            imageUrl = `/api/files/products/${product.id}/${imagesArray[0]}`;
+                            const img = imagesArray[0];
+                            const cleanImg = (img || '').split('"').join('').trim();
+                            if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) {
+                                imageUrl = cleanImg;
+                            } else {
+                                imageUrl = `/api/files/products/${product.id}/${cleanImg}`;
+                            }
                         }
                     }
 

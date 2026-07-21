@@ -73,8 +73,8 @@ const getCookie = (request, name) => {
  */
 const authPlugin = (config) => {
     const globalApi = config?.globalApi || config || {};
-    const _dbg = globalApi.dbg || console.log;
-    const info = globalApi.info || console.log;
+    const _dbg = globalApi.dbg || (typeof console !== 'undefined' && console.log ? console.log : (typeof print === 'function' ? print : () => {}));
+    const info = globalApi.info || (typeof console !== 'undefined' && console.log ? console.log : (typeof print === 'function' ? print : () => {}));
 
     // Global API methods for user management
     globalApi.createUser = (email, password, options) => {

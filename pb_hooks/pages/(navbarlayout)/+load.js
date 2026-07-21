@@ -74,12 +74,64 @@ module.exports = function (context) {
             }
         ];
 
-        const topCollections = [
-            { id: 'c1', title: 'Birthday Laughs', description: 'Punny cards for everyone turning a year older.', count: 42, images: ['https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150'] },
-            { id: 'c2', title: 'Animal Puns', description: 'Hilarious greetings featuring cute critters.', count: 28, images: ['https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=150'] },
-            { id: 'c3', title: 'Foodie Jokes', description: 'Deliciously funny cards for food lovers.', count: 15, images: ['https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=150'] },
-            { id: 'c4', title: 'Just Because', description: 'Random puns to make someone smile today.', count: 34, images: ['https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=150'] }
-        ];
+        let categoryRecords = [];
+        try {
+            categoryRecords = $app.findRecordsByFilter("categories", "", "name", 100, 0);
+            if (categoryRecords.length === 0) {
+                const collection = $app.findCollectionByNameOrId("categories");
+                const defaults = [
+                    { name: "Birthday", slug: "birthday" },
+                    { name: "Animals", slug: "animals" },
+                    { name: "Food", slug: "food" },
+                    { name: "Love", slug: "love" }
+                ];
+                for (const d of defaults) {
+                    const record = new Record(collection);
+                    record.set("name", d.name);
+                    record.set("slug", d.slug);
+                    $app.save(record);
+                }
+                categoryRecords = $app.findRecordsByFilter("categories", "", "name", 100, 0);
+            }
+        } catch (e) {
+            console.error("Failed to load/seed categories", e);
+        }
+
+        const topCollections = categoryRecords.map(c => {
+            const name = c.getString('name');
+            const slug = c.getString('slug');
+            let description = `Hilarious ${name.toLowerCase()} greetings.`;
+            let image = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=150';
+            let count = 0;
+
+            if (slug === 'birthday') {
+                description = 'Punny cards for everyone turning a year older.';
+                image = 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150';
+            } else if (slug === 'animals') {
+                description = 'Hilarious greetings featuring cute critters.';
+                image = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=150';
+            } else if (slug === 'food') {
+                description = 'Deliciously funny cards for food lovers.';
+                image = 'https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=150';
+            } else if (slug === 'love') {
+                description = 'Romantic puns to make your partner laugh.';
+                image = 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=150';
+            }
+
+            try {
+                const products = $app.findRecordsByFilter("products", `category = '${c.id}' && status = 'active'`, "", 500, 0);
+                count = products.length;
+            } catch (e) {}
+
+            return {
+                id: c.id,
+                slug: slug,
+                title: name,
+                description: description,
+                count: count,
+                images: [image]
+            };
+        });
 
         const recentReviews = [
             { userInitials: 'JD', userName: 'John Doe', type: 'review', cardTitle: 'Toad-ally Awesome Bday', review: 'My brother loved this card! The pun is fantastic.', rating: 5 },

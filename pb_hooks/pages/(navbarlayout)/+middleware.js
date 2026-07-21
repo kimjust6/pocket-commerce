@@ -116,7 +116,13 @@ module.exports = function (context) {
                     const imagesArray = product.getStringSlice("images");
                     let imageUrl = "https://placehold.co/400x500?text=No+Image";
                     if (imagesArray && imagesArray.length > 0) {
-                        imageUrl = `/api/files/products/${product.id}/${imagesArray[0]}`;
+                        const img = imagesArray[0];
+                        const cleanImg = (img || '').split('"').join('').trim();
+                        if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) {
+                            imageUrl = cleanImg;
+                        } else {
+                            imageUrl = `/api/files/products/${product.id}/${cleanImg}`;
+                        }
                     }
 
                     return {

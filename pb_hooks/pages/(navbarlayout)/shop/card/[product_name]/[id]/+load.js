@@ -20,7 +20,11 @@ module.exports = function(context) {
         
         let imageUrls = [];
         if (imagesArray && imagesArray.length > 0) {
-            imageUrls = imagesArray.map(img => `/api/files/products/${productRecord.id}/${img}`);
+            imageUrls = imagesArray.map(img => {
+                const cleanImg = (img || '').split('"').join('').trim();
+                if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) return cleanImg;
+                return `/api/files/products/${productRecord.id}/${cleanImg}`;
+            });
         } else {
             imageUrls = ["https://placehold.co/600x800?text=No+Image"];
         }

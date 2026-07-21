@@ -78,7 +78,11 @@ module.exports = function (context) {
             let imageUrls = [];
             
             if (imagesArray && imagesArray.length > 0) {
-                imageUrls = imagesArray.map(img => `/api/files/products/${p.id}/${img}`);
+                imageUrls = imagesArray.map(img => {
+                    const cleanImg = (img || '').split('"').join('').trim();
+                    if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) return cleanImg;
+                    return `/api/files/products/${p.id}/${cleanImg}`;
+                });
             } else {
                 imageUrls = ["https://placehold.co/400x500?text=No+Image"];
             }
