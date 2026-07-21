@@ -114,7 +114,7 @@ module.exports = function (context) {
         } else if (availabilityParam === 'out_of_stock') {
             products = products.filter(p => !p.inStock);
         }
-        if (onSaleParam === '1') {
+        if (onSaleParam == '1') {
             products = products.filter(p => p.onSale);
         }
 

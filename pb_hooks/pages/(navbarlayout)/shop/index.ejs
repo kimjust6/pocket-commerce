@@ -1,7 +1,7 @@
 <div class="min-h-screen border-b-8 border-neutral bg-base-200 relative">
     <!-- Header -->
     <div class="bg-accent border-b-8 border-neutral px-4 py-16 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image: radial-gradient(currentColor 4px, transparent 4px); background-size: 40px 40px;"></div>
+        <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;"></div>
         <div class="container mx-auto max-w-7xl relative z-10">
             <h1 class="text-6xl md:text-8xl font-black uppercase tracking-tighter bg-base-100 text-base-content inline-block border-4 border-neutral px-6 py-2 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transform -rotate-1">
                 Shop All
@@ -98,7 +98,7 @@
                             </button>
                             <div x-show="saleOpen" x-transition.opacity class="mt-4">
                                 <label class="flex items-center gap-3 cursor-pointer font-bold text-sm select-none">
-                                    <input type="checkbox" name="on_sale" value="1" <%= filters.onSale === '1' ? 'checked' : '' %> onchange="this.form.submit()" class="checkbox border-4 border-neutral rounded-none checked:bg-primary shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                                    <input type="checkbox" name="on_sale" value="1" <%= filters.onSale == '1' ? 'checked' : '' %> onchange="this.form.submit()" class="checkbox border-4 border-neutral rounded-none checked:bg-primary shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                                     <span>On Sale / Deals</span>
                                 </label>
                             </div>

@@ -1,37 +1,58 @@
 <!-- Hero Section Neo-Brutalist -->
-<div class="min-h-screen border-b-8 border-neutral bg-base-200 relative overflow-hidden" id="home">
-    <!-- Stark Grid Background -->
-    <div class="absolute inset-0 pointer-events-none opacity-20"
-        style="background-image: radial-gradient(currentColor 2px, transparent 2px); background-size: 30px 30px;">
+<div class="min-h-screen border-b-8 border-neutral bg-base-200 relative overflow-hidden flex items-center" id="home">
+    <!-- Stark Linear Grid Background -->
+    <div class="absolute inset-0 pointer-events-none opacity-10"
+        style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
     </div>
 
     <div class="container mx-auto px-4 py-20 lg:py-32 relative z-10">
-        <div class="max-w-5xl mx-auto">
-            <h1 class="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-none mb-8">
-                <span
-                    class="inline-block bg-primary border-4 border-neutral px-4 py-2 mb-4 transform -rotate-2 text-primary-content">Discover</span>
-                <br>
-                <span
-                    class="inline-block bg-base-100 border-4 border-neutral px-4 py-2 text-base-content">Hilarious</span>
-                <br>
-                <span
-                    class="inline-block bg-secondary border-4 border-neutral px-4 py-2 transform rotate-1 text-secondary-content">Greetings.</span>
-            </h1>
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- Left Column: Copy & Actions -->
+            <div class="lg:col-span-7 text-left space-y-8">
+                <h1 class="text-6xl md:text-8xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-[0.95] mb-2">
+                    <span
+                        class="inline-block bg-primary border-4 border-neutral px-4 py-2 mb-3 transform -rotate-2 text-primary-content shadow-[4px_4px_0_0_rgba(0,0,0,1)]">Discover</span>
+                    <br>
+                    <span
+                        class="inline-block bg-base-100 border-4 border-neutral px-4 py-2 text-base-content shadow-[4px_4px_0_0_rgba(0,0,0,1)]">Hilarious</span>
+                    <br>
+                    <span
+                        class="inline-block bg-secondary border-4 border-neutral px-4 py-2 transform rotate-1 text-secondary-content shadow-[4px_4px_0_0_rgba(0,0,0,1)]">Greetings.</span>
+                </h1>
 
-            <p
-                class="text-xl md:text-3xl font-bold max-w-2xl bg-warning border-4 border-neutral p-6 mb-12 shadow-[8px_8px_0_0_rgba(0,0,0,1)] text-warning-content">
-                Shop hilariously punny birthday cards and unique greetings for every occasion.
-            </p>
+                <p
+                    class="text-xl md:text-2xl font-bold bg-warning border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] text-warning-content leading-relaxed">
+                    Shop hilariously punny birthday cards and unique greetings for every occasion.
+                </p>
 
-            <div class="flex flex-wrap gap-6">
-                <a href="/shop"
-                    class="btn btn-primary btn-lg border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none text-xl font-bold h-auto py-4 px-8 text-primary-content">
-                    Shop Now
-                </a>
-                <a href="#features"
-                    class="btn bg-base-100 hover:bg-base-200 text-base-content btn-lg border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none text-xl font-bold h-auto py-4 px-8">
-                    View Collections
-                </a>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="/shop"
+                        class="btn btn-primary btn-lg border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none rounded-none text-xl font-bold h-auto py-4 px-8 text-primary-content">
+                        Shop Now
+                    </a>
+                    <a href="#features"
+                        class="btn bg-base-100 hover:bg-base-200 text-base-content btn-lg border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none rounded-none text-xl font-bold h-auto py-4 px-8">
+                        View Collections
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Column: Card Mockup Graphic -->
+            <div class="lg:col-span-5 relative mt-10 lg:mt-0">
+                <!-- Floating decorative tape -->
+                <div class="absolute -top-5 left-1/4 w-36 h-8 bg-warning border-2 border-neutral transform -rotate-6 z-20 shadow-[2px_2px_0_0_rgba(0,0,0,1)] flex items-center justify-center font-black text-xs uppercase tracking-widest text-warning-content select-none">
+                    Fragile / Funny
+                </div>
+                <!-- Card Frame -->
+                <div class="border-4 border-neutral bg-base-100 p-4 shadow-[12px_12px_0_0_rgba(0,0,0,1)] transform rotate-2 hover:rotate-0 transition-transform duration-300 relative z-10">
+                    <div class="border-4 border-neutral bg-base-200 aspect-[4/5] overflow-hidden relative">
+                        <img src="/hero-greeting-card.png" alt="Hilarious Greeting Card Mockup" class="w-full h-full object-cover">
+                    </div>
+                    <div class="mt-4 flex justify-between items-center bg-accent text-accent-content border-2 border-neutral p-3 font-bold text-sm uppercase">
+                        <span>Featured Pun</span>
+                        <span class="bg-base-100 text-base-content border border-neutral px-2 py-0.5 text-xs font-black">"You're Toast!"</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -39,9 +60,9 @@
 
 <!-- New Arrivals Section -->
 <section class="bg-accent border-b-8 border-neutral px-4 py-20 relative overflow-hidden">
-    <!-- Polka dot pattern on accent -->
+    <!-- Linear Grid Background -->
     <div class="absolute inset-0 pointer-events-none opacity-10"
-        style="background-image: radial-gradient(currentColor 4px, transparent 4px); background-size: 40px 40px;">
+        style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
     </div>
     <div class="container mx-auto max-w-6xl relative z-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
