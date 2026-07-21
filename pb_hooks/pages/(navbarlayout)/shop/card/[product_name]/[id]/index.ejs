@@ -99,6 +99,200 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Reviews Section -->
+            <div class="mt-16 bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 lg:p-12" x-data="{ editMode: false }">
+                <h2 class="text-4xl font-black uppercase text-base-content mb-8 border-b-4 border-neutral pb-4">Customer Reviews</h2>
+                
+                <div class="flex flex-col lg:flex-row gap-12">
+                    <!-- Reviews Stats Summary -->
+                    <div class="w-full lg:w-1/3 flex flex-col gap-6">
+                        <div class="bg-base-200 border-4 border-neutral p-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)] text-center">
+                            <div class="text-6xl font-black text-base-content mb-2">
+                                <%= data.averageRating || '0' %>
+                            </div>
+                            <div class="flex justify-center text-warning text-3xl mb-2">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <%= i <= Math.round(data.averageRating) ? '★' : '☆' %>
+                                <% } %>
+                            </div>
+                            <div class="text-sm font-bold text-base-content/60 uppercase">
+                                <%= data.reviews.length %> customer review<%= data.reviews.length === 1 ? '' : 's' %>
+                            </div>
+                        </div>
+                        
+                        <!-- Breakdown of stars -->
+                        <div class="space-y-3">
+                            <% for (let ratingVal = 5; ratingVal >= 1; ratingVal--) { %>
+                                <% 
+                                    const ratingCount = data.reviews.filter(r => r.rating === ratingVal).length;
+                                    const ratingPct = data.reviews.length > 0 ? Math.round((ratingCount / data.reviews.length) * 100) : 0;
+                                %>
+                                <div class="flex items-center gap-4 text-sm font-bold">
+                                    <span class="w-12 text-right uppercase"><%= ratingVal %> star</span>
+                                    <div class="flex-1 h-5 bg-base-200 border-2 border-neutral shadow-[2px_2px_0_0_rgba(0,0,0,1)] overflow-hidden">
+                                        <div class="h-full bg-warning border-r-2 border-neutral transition-all" style="width: <%= ratingPct %>%"></div>
+                                    </div>
+                                    <span class="w-10 text-left opacity-60"><%= ratingPct %>%</span>
+                                </div>
+                            <% } %>
+                        </div>
+                        
+                        <!-- Write a Review button/form container trigger -->
+                        <% if (!data.user) { %>
+                            <div class="border-4 border-dashed border-neutral p-6 text-center bg-base-200 mt-4">
+                                <p class="font-bold text-lg mb-4 text-base-content/80">Bought this card? Share your thoughts!</p>
+                                <a href="/login" class="inline-block bg-primary text-primary-content border-4 border-neutral font-black uppercase px-6 py-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all text-center">
+                                    Login to write a review
+                                </a>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Reviews list or Write Review form -->
+                    <div class="w-full lg:w-2/3 flex flex-col gap-8">
+                        <% if (data.user) { %>
+                            <% if (data.userReview) { %>
+                                <!-- Already reviewed message with Edit/Delete buttons -->
+                                <div x-show="!editMode" class="border-4 border-neutral p-6 bg-base-200 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                                    <h3 class="text-2xl font-black uppercase text-base-content mb-2">You've already reviewed this card</h3>
+                                    <p class="font-medium text-base-content/75 mb-6">You can edit or delete your existing review.</p>
+                                    
+                                    <div class="flex gap-4">
+                                        <button @click="editMode = true; $nextTick(() => document.getElementById('review_form_container').scrollIntoView({ behavior: 'smooth' }))" class="bg-primary text-primary-content border-4 border-neutral font-black uppercase text-sm px-6 py-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
+                                            Edit Review
+                                        </button>
+                                        
+                                        <form action="" method="POST" onsubmit="return confirm('Are you sure you want to delete your review?')">
+                                            <input type="hidden" name="action" value="delete_review">
+                                            <button type="submit" class="bg-error text-error-content border-4 border-neutral font-black uppercase text-sm px-6 py-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
+                                                Delete Review
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <!-- Form to submit/edit a review -->
+                            <div x-show="!<%= !!data.userReview %> || editMode" id="review_form_container" class="border-4 border-neutral p-6 bg-secondary/10 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                                <h3 class="text-2xl font-black uppercase text-base-content mb-6">
+                                    <%= data.userReview ? 'Edit Your Review' : 'Write a Customer Review' %>
+                                </h3>
+                                
+                                <% if (data.reviewError) { %>
+                                    <div class="bg-error text-error-content border-4 border-neutral p-4 font-bold mb-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                                        <%= data.reviewError %>
+                                    </div>
+                                <% } %>
+                                <% if (data.reviewSuccess) { %>
+                                    <div class="bg-success text-success-content border-4 border-neutral p-4 font-bold mb-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                                        <%= data.reviewSuccess %>
+                                    </div>
+                                <% } %>
+                                
+                                <form action="" method="POST" class="space-y-4">
+                                    <input type="hidden" name="action" value="submit_review">
+                                    
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-sm font-bold uppercase text-base-content">Rating</label>
+                                        <div class="flex gap-2" x-data="{ selectedRating: <%= data.userReview ? data.userReview.rating : 5 %> }">
+                                            <input type="hidden" name="rating" :value="selectedRating">
+                                            <template x-for="star in 5">
+                                                <button type="button" @click="selectedRating = star" class="text-3xl focus:outline-none transition-colors" :class="star <= selectedRating ? 'text-warning' : 'text-base-content/20'">
+                                                    ★
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex flex-col gap-2">
+                                        <label for="review_title" class="text-sm font-bold uppercase text-base-content">Title / Headline</label>
+                                        <input type="text" id="review_title" name="title" required value="<%= data.userReview ? data.userReview.title : '' %>" placeholder="What's the main headline of your review?" class="input input-bordered border-4 border-neutral w-full bg-base-100 font-bold p-3 shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:translate-y-[1px] focus:shadow-[1px_1px_0_0_rgba(0,0,0,1)] transition-all text-sm">
+                                    </div>
+                                    
+                                    <div class="flex flex-col gap-2">
+                                        <label for="review_body" class="text-sm font-bold uppercase text-base-content">Review Description</label>
+                                        <textarea id="review_body" name="body" required rows="4" placeholder="Write your review here. What did you like or dislike?" class="textarea textarea-bordered border-4 border-neutral w-full bg-base-100 font-bold p-3 shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:translate-y-[1px] focus:shadow-[1px_1px_0_0_rgba(0,0,0,1)] transition-all text-sm"><%= data.userReview ? data.userReview.body : '' %></textarea>
+                                    </div>
+                                    
+                                    <div class="flex gap-4 items-center">
+                                        <button type="submit" class="bg-primary text-primary-content border-4 border-neutral font-black uppercase text-lg px-6 py-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
+                                            <%= data.userReview ? 'Update Review' : 'Submit Review' %>
+                                        </button>
+                                        <% if (data.userReview) { %>
+                                            <button type="button" @click="editMode = false" class="bg-base-200 text-base-content border-4 border-neutral font-black uppercase text-lg px-6 py-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
+                                                Cancel
+                                            </button>
+                                        <% } %>
+                                    </div>
+                                </form>
+                            </div>
+                        <% } %>
+
+                        <!-- Review list -->
+                        <div class="space-y-6">
+                            <% if (data.reviews && data.reviews.length > 0) { %>
+                                <% data.reviews.forEach(review => { %>
+                                    <div class="bg-base-200 border-4 border-neutral p-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                                        <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
+                                            <div>
+                                                <div class="flex text-warning text-xl mb-1">
+                                                    <% for (let i = 1; i <= 5; i++) { %>
+                                                        <%= i <= review.rating ? '★' : '☆' %>
+                                                    <% } %>
+                                                </div>
+                                                <h4 class="font-black text-xl text-base-content uppercase">
+                                                    <%= review.title %>
+                                                </h4>
+                                            </div>
+                                            <div class="text-right text-xs font-bold text-base-content/50 uppercase">
+                                                <%= review.created %>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="font-medium text-base-content mb-4 text-base">
+                                            <%= review.body %>
+                                        </p>
+                                        
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-sm font-bold text-base-content/70">
+                                                By <span class="text-primary font-black"><%= review.userName %></span>
+                                            </span>
+                                            <% if (review.isVerified) { %>
+                                                <span class="bg-success/20 text-success border-2 border-success font-black text-xs px-2 py-0.5 uppercase tracking-wide rounded">
+                                                    Verified Purchase
+                                                </span>
+                                            <% } %>
+                                            <% if (data.user && data.userReview && review.id === data.userReview.id) { %>
+                                                <span class="bg-primary/20 text-primary border-2 border-primary font-black text-xs px-2 py-0.5 uppercase tracking-wide rounded animate-pulse">
+                                                    Your Review
+                                                </span>
+                                                <div class="flex gap-2 ml-auto">
+                                                    <button @click="editMode = true; $nextTick(() => document.getElementById('review_form_container').scrollIntoView({ behavior: 'smooth' }))" class="text-xs uppercase font-bold text-primary hover:underline">
+                                                        Edit
+                                                    </button>
+                                                    <span class="text-neutral/20">|</span>
+                                                    <form action="" method="POST" onsubmit="return confirm('Are you sure you want to delete your review?')" class="inline">
+                                                        <input type="hidden" name="action" value="delete_review">
+                                                        <button type="submit" class="text-xs uppercase font-bold text-error hover:underline">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="border-4 border-dashed border-neutral p-12 text-center text-base-content">
+                                    <h3 class="text-2xl font-black uppercase mb-2">No Reviews Yet</h3>
+                                    <p class="font-medium">Be the first to share your thoughts on this card!</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     <% } else { %>
         <div class="container mx-auto max-w-4xl px-4 py-24 text-center">
