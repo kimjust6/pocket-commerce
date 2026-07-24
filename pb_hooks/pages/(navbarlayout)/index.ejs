@@ -1,56 +1,38 @@
-<!-- Hero Section Neo-Brutalist -->
-<div class="min-h-screen border-b-8 border-neutral bg-base-200 relative overflow-hidden flex items-center" id="home">
-    <!-- Stark Linear Grid Background -->
-    <div class="absolute inset-0 pointer-events-none opacity-10"
-        style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
-    </div>
-
-    <div class="container mx-auto px-4 py-20 lg:py-32 relative z-10">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <!-- Left Column: Copy & Actions -->
-            <div class="lg:col-span-7 text-left space-y-8">
-                <h1 class="text-6xl md:text-8xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-[0.95] mb-2">
-                    <span
-                        class="inline-block bg-primary border-4 border-neutral px-4 py-2 mb-3 transform -rotate-2 text-primary-content shadow-[4px_4px_0_0_rgba(0,0,0,1)]">Discover</span>
-                    <br>
-                    <span
-                        class="inline-block bg-base-100 border-4 border-neutral px-4 py-2 text-base-content shadow-[4px_4px_0_0_rgba(0,0,0,1)]">Hilarious</span>
-                    <br>
-                    <span
-                        class="inline-block bg-secondary border-4 border-neutral px-4 py-2 transform rotate-1 text-secondary-content shadow-[4px_4px_0_0_rgba(0,0,0,1)]">Greetings.</span>
+<!-- E-Commerce Store Banner -->
+<div class="bg-slate-900 text-white py-12 md:py-20 relative overflow-hidden">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="space-y-4">
+                <span class="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary-light text-xs font-semibold tracking-wider uppercase">
+                    Greeting Cards & Stationery
+                </span>
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    Shop Handcrafted Greeting Cards for Every Occasion
                 </h1>
-
-                <p
-                    class="text-xl md:text-2xl font-bold bg-warning border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] text-warning-content leading-relaxed">
-                    Shop hilariously punny birthday cards and unique greetings for every occasion.
+                <p class="text-base md:text-lg text-slate-300 max-w-lg leading-relaxed">
+                    Explore our collection of funny, heartfelt, and uniquely illustrated cards. Printed on premium sustainable paper stock.
                 </p>
-
-                <div class="flex flex-wrap gap-4 pt-2">
-                    <a href="/shop"
-                        class="btn btn-primary btn-lg border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none rounded-none text-xl font-bold h-auto py-4 px-8 text-primary-content">
-                        Shop Now
+                <div class="pt-2 flex flex-wrap gap-3">
+                    <a href="/shop" class="btn btn-primary btn-md rounded-xl font-bold px-6 shadow-md">
+                        Shop All Products
                     </a>
-                    <a href="#features"
-                        class="btn bg-base-100 hover:bg-base-200 text-base-content btn-lg border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none rounded-none text-xl font-bold h-auto py-4 px-8">
-                        View Collections
+                    <a href="/shop?category=birthday" class="btn btn-outline btn-md rounded-xl text-white border-slate-700 hover:bg-slate-800 font-semibold px-6">
+                        Birthday Cards
                     </a>
                 </div>
             </div>
 
-            <!-- Right Column: Card Mockup Graphic -->
-            <div class="lg:col-span-5 relative mt-10 lg:mt-0">
-                <!-- Floating decorative tape -->
-                <div class="absolute -top-5 left-1/4 w-36 h-8 bg-warning border-2 border-neutral transform -rotate-6 z-20 shadow-[2px_2px_0_0_rgba(0,0,0,1)] flex items-center justify-center font-black text-xs uppercase tracking-widest text-warning-content select-none">
-                    Fragile / Funny
-                </div>
-                <!-- Card Frame -->
-                <div class="border-4 border-neutral bg-base-100 p-4 shadow-[12px_12px_0_0_rgba(0,0,0,1)] transform rotate-2 hover:rotate-0 transition-transform duration-300 relative z-10">
-                    <div class="border-4 border-neutral bg-base-200 aspect-[4/5] overflow-hidden relative">
-                        <img src="/hero-greeting-card.png" alt="Hilarious Greeting Card Mockup" class="w-full h-full object-cover">
-                    </div>
-                    <div class="mt-4 flex justify-between items-center bg-accent text-accent-content border-2 border-neutral p-3 font-bold text-sm uppercase">
-                        <span>Featured Pun</span>
-                        <span class="bg-base-100 text-base-content border border-neutral px-2 py-0.5 text-xs font-black">"You're Toast!"</span>
+            <!-- Featured Product Spot -->
+            <div class="hidden md:flex justify-end">
+                <div class="bg-slate-800/80 border border-slate-700 rounded-3xl p-5 max-w-sm flex items-center gap-4 shadow-xl">
+                    <img src="/hero-greeting-card.png" alt="Featured Card" class="w-24 h-28 object-cover rounded-xl bg-slate-900 flex-shrink-0">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Featured Item</span>
+                        <h3 class="text-base font-bold text-white leading-snug">Hilarious Toast Greeting</h3>
+                        <p class="text-xs text-slate-300 font-semibold">$4.99</p>
+                        <a href="/shop" class="text-xs font-bold text-primary hover:underline block pt-1">
+                            Buy Now →
+                        </a>
                     </div>
                 </div>
             </div>
@@ -58,235 +40,157 @@
     </div>
 </div>
 
-<!-- New Arrivals Section -->
-<section class="bg-accent border-b-8 border-neutral px-4 py-20 relative overflow-hidden">
-    <!-- Linear Grid Background -->
-    <div class="absolute inset-0 pointer-events-none opacity-10"
-        style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
+<!-- Quick Category Navigation Bar -->
+<div class="border-b border-slate-200 dark:border-slate-800 bg-base-100 sticky top-16 z-30 shadow-sm">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+        <div class="flex items-center gap-2 overflow-x-auto py-3 scrollbar-hide text-xs font-semibold">
+            <span class="text-base-content/50 pr-2 font-bold uppercase tracking-wider hidden sm:inline">Categories:</span>
+            <a href="/shop" class="px-4 py-2 rounded-full bg-primary text-primary-content font-bold whitespace-nowrap shadow-xs">
+                All Products
+            </a>
+            <% if (data.topCollections && data.topCollections.length > 0) { %>
+                <% data.topCollections.forEach(col => { %>
+                    <a href="/shop?category=<%= col.slug %>" class="px-4 py-2 rounded-full bg-base-200 text-base-content/80 hover:bg-base-300 hover:text-base-content whitespace-nowrap transition-colors">
+                        <%= col.title %>
+                    </a>
+                <% }); %>
+            <% } %>
+            <a href="/shop?on_sale=1" class="px-4 py-2 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold whitespace-nowrap hover:bg-amber-500/20 transition-colors">
+                🔥 Special Deals
+            </a>
+        </div>
     </div>
-    <div class="container mx-auto max-w-6xl relative z-10">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-            <h2
-                class="text-5xl md:text-7xl font-black uppercase tracking-tighter bg-base-100 text-base-content inline-block border-4 border-neutral px-6 py-2 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transform -rotate-1">
-                New Arrivals
-            </h2>
-            <a href="/shop"
-                class="btn bg-base-100 hover:bg-primary text-base-content hover:text-primary-content border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none font-bold">
-                View All Products →
+</div>
+
+<!-- Store Products Grid Section -->
+<section class="py-12 md:py-16 bg-base-100">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div>
+                <h2 class="text-2xl font-bold text-base-content tracking-tight">Best Selling Cards</h2>
+                <p class="text-xs text-base-content/60 mt-0.5">Top rated greetings loved by our customers</p>
+            </div>
+            <a href="/shop" class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                Browse Full Catalog →
             </a>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            <% if (data.recentCards && data.recentCards.length> 0) { %>
-                <% data.recentCards.forEach(card=> { %>
-                    <a href="/shop/card/<%= card.slug.replace(/\s+/g, '-') %>/<%= card.id %>" class="block group h-full">
-                        <div
-                            class="bg-base-100 border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all duration-200 group-hover:translate-y-1 group-hover:translate-x-1 group-hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] h-full flex flex-col"
-                            x-data="{ showSecond: false }"
-                            @mouseenter="showSecond = true"
-                            @mouseleave="showSecond = false">
-                            <div class="aspect-[2/3] border-b-4 border-neutral bg-base-200 relative overflow-hidden">
-                                <% if (card.images && card.images.length > 1) { %>
-                                    <img src="<%= card.images[0] %>" alt="<%= card.title %>" 
-                                         class="w-full h-full object-cover transition-opacity duration-300 absolute inset-0"
-                                         :class="showSecond ? 'opacity-0' : 'opacity-100'">
-                                    <img src="<%= card.images[1] %>" alt="<%= card.title %>" 
-                                         class="w-full h-full object-cover transition-opacity duration-300 absolute inset-0 opacity-0"
-                                         :class="showSecond ? 'opacity-100' : 'opacity-0'">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+            <% if (data.recentCards && data.recentCards.length > 0) { %>
+                <% data.recentCards.forEach(card => { %>
+                    <div class="store-card h-full flex flex-col justify-between" x-data="{ showSecond: false }" @mouseenter="showSecond = true" @mouseleave="showSecond = false">
+                        <a href="/shop/card/<%= card.slug.replace(/\s+/g, '-') %>/<%= card.id %>" class="block aspect-[4/5] bg-base-200 relative overflow-hidden">
+                            <% if (card.images && card.images.length > 1) { %>
+                                <img src="<%= card.images[0] %>" alt="<%= card.title %>" 
+                                     class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0"
+                                     :class="showSecond ? 'opacity-0' : 'opacity-100'">
+                                <img src="<%= card.images[1] %>" alt="<%= card.title %>" 
+                                     class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0 opacity-0"
+                                     :class="showSecond ? 'opacity-100' : 'opacity-0'">
+                            <% } else { %>
+                                <img src="<%= card.image %>" alt="<%= card.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <% } %>
+                            <span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Card</span>
+                        </a>
+
+                        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between">
+                            <div>
+                                <a href="/shop/card/<%= card.slug.replace(/\s+/g, '-') %>/<%= card.id %>" class="font-bold text-xs text-base-content hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                    <%= card.title %>
+                                </a>
+                            </div>
+
+                            <div class="space-y-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-extrabold text-base-content"><%= card.price %></span>
+                                    <span class="text-[10px] text-amber-500 font-bold flex items-center gap-0.5">★ 4.9</span>
+                                </div>
+
+                                <a href="/shop/card/<%= card.slug.replace(/\s+/g, '-') %>/<%= card.id %>" class="btn btn-primary btn-xs w-full rounded-lg font-semibold text-[11px]">
+                                    View Item
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-span-full border border-slate-200 dark:border-slate-800 bg-base-200/50 rounded-2xl p-8 text-center text-sm font-medium text-base-content/60">
+                    No products currently listed.
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Shop Categories Section -->
+<section class="py-12 bg-base-200/40 border-t border-slate-200 dark:border-slate-800">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-base-content tracking-tight">Shop by Category</h2>
+            <p class="text-xs text-base-content/60 mt-0.5">Find greetings tailored to your exact event or topic</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <% if (data.topCollections && data.topCollections.length > 0) { %>
+                <% data.topCollections.forEach((col) => { %>
+                    <a href="/shop?category=<%= col.slug %>" class="block group">
+                        <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+                            <div class="w-16 h-16 rounded-xl bg-base-200 overflow-hidden flex-shrink-0">
+                                <% if (col.images && col.images.length > 0) { %>
+                                    <img src="<%= col.images[0] %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 <% } else { %>
-                                    <img src="<%= card.image %>" alt="<%= card.title %>" class="w-full h-full object-cover">
+                                    <div class="w-full h-full bg-base-300"></div>
                                 <% } %>
                             </div>
-                            <div
-                                class="p-3 flex-1 flex flex-col justify-between bg-primary group-hover:bg-warning transition-colors">
-                                <h3 class="font-bold text-sm leading-tight mb-2 text-primary-content">
-                                    <%= card.title %>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-base font-bold text-base-content group-hover:text-primary transition-colors truncate">
+                                    <%= col.title %>
                                 </h3>
-                                <div
-                                    class="bg-neutral text-neutral-content font-black px-2 py-1 inline-block self-start text-sm border-2 border-neutral">
-                                    <%= card.price %>
-                                </div>
+                                <p class="text-xs text-base-content/60 line-clamp-1 mt-0.5">
+                                    <%= col.description %>
+                                </p>
+                                <span class="inline-block mt-1 text-[11px] font-semibold text-primary">
+                                    Shop Collection →
+                                </span>
                             </div>
                         </div>
                     </a>
-                    <% }); %>
-                        <% } else { %>
-                            <div
-                                class="col-span-full border-4 border-neutral bg-base-100 p-8 text-center text-xl font-bold shadow-[8px_8px_0_0_rgba(0,0,0,1)] text-base-content">
-                                No products available yet.
-                            </div>
-                            <% } %>
+                <% }); %>
+            <% } %>
         </div>
     </div>
 </section>
 
-<!-- Curated Collections & Trending Now Section -->
-<section class="bg-base-200 border-b-8 border-neutral px-4 py-20">
-    <div class="container mx-auto max-w-6xl">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <!-- Collections -->
-            <div>
-                <h2
-                    class="text-4xl md:text-5xl font-black uppercase mb-8 border-b-4 border-neutral pb-2 inline-block text-base-content">
-                    Collections</h2>
-                <div class="space-y-6">
-                    <% if (data.topCollections && data.topCollections.length> 0) { %>
-                        <% const colColors=['bg-primary text-primary-content', 'bg-secondary text-secondary-content'
-                            , 'bg-warning text-warning-content' , 'bg-info text-info-content' ] %>
-                            <% data.topCollections.forEach((collection, index)=> { %>
-                                <a href="/shop?category=<%= collection.slug %>" class="block group">
-                                    <div
-                                        class="<%= colColors[index % 4] %> border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all duration-200 group-hover:translate-y-2 group-hover:translate-x-2 group-hover:shadow-[0px_0px_0_0_rgba(0,0,0,1)] p-4 flex items-center gap-6">
-                                        <div
-                                            class="w-20 h-20 border-4 border-neutral bg-base-100 flex-shrink-0 overflow-hidden transform -rotate-3 group-hover:rotate-0 transition-transform">
-                                            <% if (collection.images && collection.images.length> 0) { %>
-                                                <img src="<%= collection.images[0] %>"
-                                                    class="w-full h-full object-cover">
-                                                <% } else { %>
-                                                    <div class="w-full h-full bg-base-200"></div>
-                                                    <% } %>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h3 class="text-2xl font-black uppercase mb-1">
-                                                <%= collection.title %>
-                                            </h3>
-                                            <p class="font-medium mb-2 leading-snug">
-                                                <%= collection.description %>
-                                            </p>
-                                            <span
-                                                class="bg-neutral text-neutral-content px-2 py-1 text-xs font-bold uppercase border-2 border-neutral">
-                                                <%= collection.count %> Items
-                                            </span>
-                                        </div>
-                                    </div>
-                                </a>
-                                <% }); %>
-                                    <% } else { %>
-                                        <div
-                                            class="border-4 border-neutral bg-base-100 p-8 text-center text-xl font-bold shadow-[8px_8px_0_0_rgba(0,0,0,1)] text-base-content">
-                                            No collections yet.
-                                        </div>
-                                        <% } %>
-                </div>
-            </div>
-
-            <!-- Reviews -->
-            <div>
-                <h2
-                    class="text-4xl md:text-5xl font-black uppercase mb-8 border-b-4 border-neutral pb-2 inline-block text-base-content">
-                    Happy Customers</h2>
-                <div class="space-y-6">
-                    <% if (data.recentReviews && data.recentReviews.length> 0) { %>
-                        <% data.recentReviews.forEach((review, index)=> { %>
-                            <div
-                                class="bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 relative">
-                                <!-- Pin decoration -->
-                                <div
-                                    class="absolute -top-3 -left-3 w-6 h-6 rounded-none bg-accent border-4 border-neutral">
-                                </div>
-
-                                <div class="flex items-start gap-4 text-base-content">
-                                    <div
-                                        class="w-12 h-12 border-4 border-neutral bg-base-200 flex-shrink-0 flex items-center justify-center font-black text-xl text-base-content">
-                                        <%= review.userInitials || 'U' %>
-                                    </div>
-                                    <div>
-                                        <div class="font-black text-lg text-base-content uppercase">
-                                            <%= review.userName %>
-                                        </div>
-                                        <div
-                                            class="text-sm font-bold bg-warning inline-block px-2 py-1 border-2 border-neutral mb-3 text-warning-content">
-                                            on <%= review.cardTitle %>
-                                        </div>
-                                        <% if (review.review) { %>
-                                            <p
-                                                class="text-base-content font-medium italic border-l-4 border-primary pl-3 bg-base-200 p-2">
-                                                "<%= review.review %>"</p>
-                                            <% } %>
-                                                <% if (review.rating) { %>
-                                                    <div class="flex gap-1 mt-3">
-                                                        <% for(let i=0; i<Math.floor(review.rating); i++) { %>
-                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                class="h-5 w-5 text-base-content fill-current"
-                                                                viewBox="0 0 20 20">
-                                                                <path
-                                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                            </svg>
-                                                            <% } %>
-                                                    </div>
-                                                    <% } %>
-                                    </div>
-                                </div>
-                            </div>
-                            <% }); %>
-                                <% } else { %>
-                                    <div
-                                        class="border-4 border-neutral bg-base-100 p-8 text-center text-xl font-bold shadow-[8px_8px_0_0_rgba(0,0,0,1)] text-base-content">
-                                        No recent reviews yet.
-                                    </div>
-                                    <% } %>
-                </div>
-            </div>
+<!-- Customer Reviews Bar -->
+<section class="py-12 bg-base-100 border-t border-slate-200 dark:border-slate-800">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-base-content tracking-tight">Recent Customer Feedback</h2>
         </div>
-    </div>
-</section>
 
-<!-- Features Section -->
-<section id="features" class="bg-secondary border-b-8 border-neutral px-4 py-24 relative">
-    <div class="container mx-auto max-w-6xl relative z-10">
-        <h2
-            class="text-5xl md:text-7xl font-black uppercase text-center mb-16 bg-base-100 text-base-content inline-block border-4 border-neutral px-8 py-4 shadow-[10px_10px_0_0_rgba(0,0,0,1)] transform rotate-1 mx-auto flex justify-center w-max">
-            Why Us?
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <% const features=[ { title: 'Premium Packaging' ,
-                desc: 'Every order is securely packaged to ensure your cards arrive in pristine condition.' ,
-                color: 'bg-primary text-primary-content' }, { title: 'Fast Shipping' ,
-                desc: 'Get your cards faster with our expedited worldwide shipping options.' ,
-                color: 'bg-base-100 text-base-content' }, { title: 'Locally Printed' ,
-                desc: 'All our cards are printed locally on high-quality, sustainable paper.' ,
-                color: 'bg-warning text-warning-content' }, { title: 'Secure Checkout' ,
-                desc: 'Your payment information is always encrypted and protected.' , color: 'bg-info text-info-content'
-                }, { title: 'Rewards Program' , desc: 'Earn points with every purchase and unlock exclusive discounts.'
-                , color: 'bg-success text-success-content' }, { title: 'Community Loved' ,
-                desc: 'Join thousands of happy customers spreading joy with our cards.' ,
-                color: 'bg-base-100 text-base-content' } ] %>
-
-                <% features.forEach((f, idx)=> { %>
-                    <div
-                        class="<%= f.color %> border-4 border-neutral p-8 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transform <%= idx % 2 === 0 ? '-rotate-1' : 'rotate-2' %> hover:rotate-0 transition-transform flex flex-col h-full">
-                        <h3
-                            class="text-2xl font-black uppercase mb-4 border-b-4 border-neutral pb-2 inline-block self-start">
-                            <%= f.title %>
-                        </h3>
-                        <p class="font-bold text-lg leading-snug">
-                            <%= f.desc %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <% if (data.recentReviews && data.recentReviews.length > 0) { %>
+                <% data.recentReviews.forEach((review) => { %>
+                    <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-base-content"><%= review.userName %></span>
+                            <div class="flex text-amber-400 text-xs">
+                                <% for(let i=0; i<Math.floor(review.rating || 5); i++) { %>
+                                    ★
+                                <% } %>
+                            </div>
+                        </div>
+                        <% if (review.review) { %>
+                            <p class="text-xs text-base-content/80 leading-relaxed italic">
+                                "<%= review.review %>"
+                            </p>
+                        <% } %>
+                        <p class="text-[10px] text-base-content/50 pt-1 border-t border-slate-100 dark:border-slate-800">
+                            On <%= review.cardTitle %>
                         </p>
                     </div>
-                    <% }); %>
+                <% }); %>
+            <% } %>
         </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="bg-base-100 px-4 py-32 text-center relative overflow-hidden">
-    <!-- Huge background text -->
-    <div
-        class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none overflow-hidden text-base-content">
-        <span class="text-[15rem] md:text-[20rem] font-black uppercase whitespace-nowrap leading-none">JOIN NOW JOIN
-            NOW</span>
-    </div>
-
-    <div class="container mx-auto max-w-4xl relative z-10">
-        <h2 class="text-5xl md:text-7xl font-black uppercase mb-12 text-base-content">Ready to Spread Joy?</h2>
-        <p
-            class="text-2xl font-bold max-w-2xl mx-auto mb-16 bg-primary text-primary-content border-4 border-neutral p-6 shadow-[10px_10px_0_0_rgba(0,0,0,1)] transform -rotate-1">
-            Create an account to track your orders, save your favorites, and earn reward points.
-        </p>
-        <a href="/login"
-            class="inline-block bg-neutral text-neutral-content text-3xl font-black uppercase px-12 py-6 border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-warning hover:text-warning-content hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
-            Sign Up Now!
-        </a>
     </div>
 </section>

@@ -1,50 +1,50 @@
 <!-- Mobile Menu Dropdown -->
-<div class="fixed inset-x-0 top-[4.05rem] w-full border-b border-base-300 bg-base-100 shadow-lg md:hidden"
-    x-show="navOpen" x-transition x-cloak style="z-index: 60; display: none">
-    <div class="mx-auto max-w-7xl">
-        <% if (locals.auth) { %>
-            <a href="/profile"
-                class="flex w-full items-center gap-3 border-b border-base-300 px-6 py-4 text-left text-base font-semibold text-base-content transition duration-200 last:border-b-0 hover:bg-base-200"
-                @click="navOpen = false">
-                <div class="avatar">
-                    <div class="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-                        <% if (auth.getString('avatar')) { %>
-                            <img src="<%= '/api/files/' + auth.collection().id + '/' + auth.id + '/' + auth.getString('avatar') %>"
-                                alt="User Avatar" class="w-full h-full object-cover" />
-                            <% } else { %>
-                                <span
-                                    class="text-xl font-bold flex h-full w-full items-center justify-center bg-neutral text-neutral-content">
-                                    <%= auth.email().slice(0, 1).toUpperCase() %>
-                                </span>
-                                <% } %>
-                    </div>
-                </div>
-                <span>
-                    <%= auth.email() %>
-                </span>
+<div class="fixed inset-x-0 top-16 w-full border-b border-slate-200 dark:border-slate-800 bg-base-100/95 backdrop-blur-lg shadow-xl md:hidden z-50"
+    x-show="navOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4" x-cloak style="display: none">
+    <div class="p-4 space-y-4 max-w-lg mx-auto">
+        <!-- Search Bar Mobile -->
+        <form action="/shop" method="GET" class="relative" @submit="navOpen = false">
+            <input type="text" name="q" class="input input-sm input-bordered w-full rounded-xl pl-9 bg-base-200 text-sm" placeholder="Search cards & greetings...">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-3 top-2.5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </form>
+
+        <nav class="flex flex-col space-y-1 pt-2">
+            <a href="/shop" class="flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-base-content hover:bg-base-200 transition-colors" @click="navOpen = false">
+                <span>Browse All Products</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </a>
-            <% } %>
-                <template x-for="item in navigation" :key="item.title">
-                    <a class="flex w-full items-start border-b border-base-300 px-6 py-4 text-left text-base font-semibold text-base-content transition duration-200 last:border-b-0 hover:bg-base-200"
-                        :href="item.href" @click="navOpen = false" x-show="item.mobile">
-                        <span x-text="item.title"></span>
-                    </a>
-                </template>
+            <a href="/shop?category=birthday" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+                <span>Birthday Cards</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </a>
+            <a href="/shop?category=thank-you" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+                <span>Thank You Notes</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </a>
+            <a href="/cart" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+                <span>Shopping Cart</span>
+                <% if (locals.data && locals.data.totalItems > 0) { %>
+                    <span class="badge badge-primary font-bold"><%= locals.data.totalItems %></span>
+                <% } %>
+            </a>
+        </nav>
 
-                <% if (locals.auth) { %>
+        <div class="divider my-1"></div>
 
-
-                    <a href="/auth/logout"
-                        class="flex w-full items-start border-b border-base-300 px-6 py-4 text-left text-base font-semibold text-base-content transition duration-200 last:border-b-0 hover:bg-base-200"
-                        @click="navOpen = false">
-                        <span>Logout</span>
-                    </a>
-                    <% } else { %>
-                        <a href="/login"
-                            class="flex w-full items-start border-b border-base-300 px-6 py-4 text-left text-base font-semibold text-base-content transition duration-200 last:border-b-0 hover:bg-base-200"
-                            @click="navOpen = false">
-                            <span>Login</span>
-                        </a>
-                        <% } %>
+        <% if (locals.auth) { %>
+            <div class="space-y-2">
+                <a href="/profile" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-base-200/60 hover:bg-base-200 transition-colors" @click="navOpen = false">
+                    <div class="w-8 h-8 rounded-full bg-primary text-primary-content font-bold flex items-center justify-center text-xs">
+                        <%= auth.email().slice(0, 1).toUpperCase() %>
+                    </div>
+                    <span class="font-semibold text-sm truncate"><%= auth.email() %></span>
+                </a>
+                <a href="/auth/logout" class="btn btn-error btn-outline btn-sm w-full rounded-xl font-semibold" @click="navOpen = false">Logout</a>
+            </div>
+        <% } else { %>
+            <a href="/login" class="btn btn-primary btn-sm w-full rounded-xl font-semibold shadow-sm" @click="navOpen = false">Sign In / Create Account</a>
+        <% } %>
     </div>
 </div>

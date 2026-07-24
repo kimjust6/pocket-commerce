@@ -12,82 +12,60 @@ export default {
     daisyui: {
         themes: [
             {
-                neobrutalism: {
-                    "primary": "#D8B4FE",           // Lilac
-                    "primary-content": "#000000",
-                    "secondary": "#A78BFA",         // Purple
-                    "secondary-content": "#000000",
-                    "accent": "#F472B6",            // Pink
-                    "accent-content": "#000000",
-                    "neutral": "#000000",           // Black
-                    "neutral-content": "#ffffff",
-                    "base-100": "#FFFDF7",          // Warm white / beige
-                    "base-200": "#f4f1e1",
-                    "base-300": "#e3deca",
-                    "base-content": "#000000",
-                    "info": "#60A5FA",
-                    "success": "#4ADE80",
-                    "warning": "#FDE047",
-                    "error": "#F87171",
-                    "--rounded-box": "0.125rem",
-                    "--rounded-btn": "0.125rem",
-                    "--rounded-badge": "0.125rem",
-                    "--animation-btn": "0",
-                    "--animation-input": "0",
-                    "--btn-focus-scale": "1",
-                    "--tab-radius": "0.125rem",
+                light: {
+                    "primary": "#2563eb",           // Royal / Brand Blue
+                    "primary-content": "#ffffff",
+                    "secondary": "#4f46e5",         // Indigo
+                    "secondary-content": "#ffffff",
+                    "accent": "#0d9488",            // Teal / Emerald
+                    "accent-content": "#ffffff",
+                    "neutral": "#1e293b",           // Slate dark
+                    "neutral-content": "#f8fafc",
+                    "base-100": "#ffffff",          // Clean White
+                    "base-200": "#f8fafc",          // Slate 50
+                    "base-300": "#f1f5f9",          // Slate 100
+                    "base-content": "#0f172a",      // Slate 900 body text
+                    "info": "#3b82f6",
+                    "success": "#10b981",
+                    "warning": "#f59e0b",
+                    "error": "#ef4444",
+                    "--rounded-box": "1rem",
+                    "--rounded-btn": "0.5rem",
+                    "--rounded-badge": "9999px",
+                    "--animation-btn": "0.2s",
+                    "--animation-input": "0.2s",
+                    "--btn-focus-scale": "0.98",
+                    "--tab-radius": "0.5rem",
                 },
-                neobrutalismdark: {
-                    "primary": "#D8B4FE",           // Lilac
-                    "primary-content": "#000000",
-                    "secondary": "#A78BFA",         // Purple
-                    "secondary-content": "#000000",
-                    "accent": "#F472B6",            // Pink
-                    "accent-content": "#000000",
-                    "neutral": "#ffffff",           // White borders
-                    "neutral-content": "#000000",
-                    "base-100": "#1C1917",          // Very dark slate/brown
-                    "base-200": "#292524",
-                    "base-300": "#44403C",
-                    "base-content": "#FFFFFF",      // White text
-                    "info": "#60A5FA",
-                    "success": "#4ADE80",
-                    "warning": "#FDE047",
-                    "error": "#F87171",
-                    "--rounded-box": "0.125rem",
-                    "--rounded-btn": "0.125rem",
-                    "--rounded-badge": "0.125rem",
-                    "--animation-btn": "0",
-                    "--animation-input": "0",
-                    "--btn-focus-scale": "1",
-                    "--tab-radius": "0.125rem",
-                },
-                yellowdark: {
-                    "primary": "#FACC15",          // Vibrant yellow
-                    "primary-content": "#1C1917",   // Dark text on yellow
-                    "secondary": "#e4b159ff",         // Amber/orange
-                    "secondary-content": "#1C1917", // Dark text on amber
-                    "accent": "#EAB308",            // Yellow accent
-                    "accent-content": "#1C1917",    // Dark text on accent
-                    "neutral": "#1C1917",           // Dark neutral
-                    "neutral-content": "#D4D4D4",   // Light text on dark
-                    "base-100": "#000000",          // Darkest background
-                    "base-200": "#201f1f",          // Slightly lighter
-                    "base-300": "#2b2826",          // Even lighter
-                    "base-content": "#E7E5E4",      // Light content text
-                    "info": "#38BDF8",              // Sky blue
-                    "info-content": "#1C1917",
-                    "success": "#4ADE80",           // Green
-                    "success-content": "#1C1917",
-                    "warning": "#FB923C",           // Orange
-                    "warning-content": "#1C1917",
-                    "error": "#dd2e2e",             // Red (Darker)
-                    "error-content": "#1C1917",
+                dark: {
+                    "primary": "#3b82f6",           // Bright Blue
+                    "primary-content": "#ffffff",
+                    "secondary": "#6366f1",         // Soft Indigo
+                    "secondary-content": "#ffffff",
+                    "accent": "#14b8a6",            // Soft Teal
+                    "accent-content": "#ffffff",
+                    "neutral": "#0f172a",           // Very Dark Slate
+                    "neutral-content": "#f8fafc",
+                    "base-100": "#0f172a",          // Dark Slate Background
+                    "base-200": "#1e293b",          // Surface Slate 800
+                    "base-300": "#334155",          // Surface Slate 700
+                    "base-content": "#f8fafc",      // Light Text
+                    "info": "#60a5fa",
+                    "success": "#34d399",
+                    "warning": "#fbbf24",
+                    "error": "#f87171",
+                    "--rounded-box": "1rem",
+                    "--rounded-btn": "0.5rem",
+                    "--rounded-badge": "9999px",
+                    "--animation-btn": "0.2s",
+                    "--animation-input": "0.2s",
+                    "--btn-focus-scale": "0.98",
+                    "--tab-radius": "0.5rem",
                 },
             },
-            'light', 'dark', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid', 'lemonade', 'night', 'coffee', 'winter', 'dim', 'nord', 'sunset'
+            'light', 'dark', 'corporate', 'nord'
         ],
-        darkTheme: 'neobrutalism',
+        darkTheme: 'dark',
         base: true,
         styled: true,
         utils: true,

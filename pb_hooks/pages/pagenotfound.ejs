@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="neobrutalism" x-data="shell()">
+<html lang="en" data-theme="light" x-data="shell()">
 
 <head>
     <%- include('_private/head') %>
@@ -10,20 +10,17 @@
 </head>
 
 <body class="bg-base-100 text-base-content min-h-screen">
-    <div class="min-h-screen border-b-8 border-neutral bg-base-200 flex flex-col items-center justify-center px-6 py-24 relative overflow-hidden">
-        <!-- Stark Linear Grid Background -->
-        <div class="absolute inset-0 pointer-events-none opacity-10"
-            style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
-        </div>
-
-        <div class="relative z-10 bg-base-100 border-4 border-neutral p-12 text-center shadow-[8px_8px_0_0_rgba(0,0,0,1)] max-w-lg mx-auto">
-            <h1 class="text-8xl font-black uppercase text-error mb-4">404</h1>
-            <h2 class="text-3xl font-black uppercase text-base-content mb-2">Page Not Found</h2>
-            <p class="text-lg font-bold text-base-content/60 mb-8 leading-snug">
-                Sorry, we couldn't find the page you're looking for. It might have been moved or eaten by puns.
+    <div class="min-h-screen bg-gradient-to-b from-base-200/50 to-base-100 flex flex-col items-center justify-center px-6 py-24 relative overflow-hidden">
+        <div class="relative z-10 bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 md:p-14 text-center shadow-xl max-w-lg mx-auto">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-error/10 text-error mb-6">
+                <span class="text-3xl font-extrabold">404</span>
+            </div>
+            <h1 class="text-3xl font-bold text-base-content mb-3 tracking-tight">Page Not Found</h1>
+            <p class="text-base text-base-content/70 mb-8 leading-relaxed">
+                Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
             </p>
-            <a href="/" class="inline-block bg-primary text-primary-content border-4 border-neutral font-black text-xl uppercase px-8 py-4 shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all">
-                Go Home
+            <a href="/" class="btn btn-primary btn-lg rounded-xl shadow-md hover:shadow-lg px-8 font-semibold transition-all">
+                Return to Store
             </a>
         </div>
     </div>

@@ -1,20 +1,15 @@
-<div class="min-h-screen bg-base-100 border-b-8 border-neutral relative overflow-hidden pb-20">
-    <!-- Stark Linear Grid Background -->
-    <div class="absolute inset-0 pointer-events-none opacity-10"
-        style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
-    </div>
-
-    <div class="container relative z-10 mx-auto px-4 py-12 max-w-4xl">
+<div class="min-h-screen bg-base-100 py-12">
+    <div class="container mx-auto px-4 md:px-8 max-w-4xl">
         <!-- Profile Card -->
-        <div class="bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 md:p-10 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
+        <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-sm flex flex-col md:flex-row gap-8 items-center md:items-start">
             <!-- Left Column: Avatar Frame -->
             <div class="flex-shrink-0">
-                <div class="w-32 h-32 md:w-40 md:h-40 border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] overflow-hidden bg-base-200 relative group transition-transform duration-200 hover:rotate-2">
+                <div class="w-32 h-32 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-base-200 shadow-sm relative">
                     <% if (data.profile.getString('avatar')) { %>
                         <img src="<%= '/api/files/' + data.profile.collection().id + '/' + data.profile.id + '/' + data.profile.getString('avatar') %>"
                              alt="Avatar" class="w-full h-full object-cover" />
                     <% } else { %>
-                        <div class="w-full h-full bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center text-primary-content text-6xl font-black">
+                        <div class="w-full h-full bg-primary text-primary-content flex items-center justify-center text-4xl font-extrabold">
                             <%= data.profile.email().slice(0, 1).toUpperCase() %>
                         </div>
                     <% } %>
@@ -22,53 +17,43 @@
             </div>
 
             <!-- Right Column: Info -->
-            <div class="flex-grow space-y-6 w-full text-center md:text-left">
-                <!-- Header: Email + Edit Button -->
-                <div class="space-y-2">
-                    <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4">
-                        <h2 class="text-3xl font-black uppercase tracking-tight text-base-content bg-base-200 border-2 border-neutral px-3 py-1 transform -rotate-1 inline-block">
+            <div class="flex-grow space-y-4 text-center md:text-left">
+                <div>
+                    <div class="flex flex-col md:flex-row items-center md:items-baseline gap-3">
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">
                             <%= data.profile.getString('name') || data.profile.email().split('@')[0] %>
-                        </h2>
+                        </h1>
                         <% if (data.profile.getString('shortHand')) { %>
-                            <span class="bg-accent text-accent-content border-2 border-neutral font-black px-3 py-0.5 text-sm uppercase transform rotate-2">
+                            <span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-semibold text-xs">
                                 @<%= data.profile.getString('shortHand') %>
                             </span>
                         <% } %>
                     </div>
-                    <p class="text-base-content/80 font-bold font-mono">
+                    <p class="text-sm text-base-content/60 font-medium mt-0.5">
                         <%= data.profile.email() %>
                     </p>
                 </div>
 
-                <!-- Bio Section -->
                 <% if (data.profile.getString('bio')) { %>
-                    <div class="bg-base-200 border-4 border-neutral p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)] max-w-2xl transform rotate-1 mx-auto md:mx-0">
-                        <p class="font-bold leading-relaxed text-sm text-base-content">
-                            "<%= data.profile.getString('bio') %>"
-                        </p>
+                    <div class="bg-base-200/50 rounded-2xl p-4 text-xs text-base-content/80 italic leading-relaxed">
+                        "<%= data.profile.getString('bio') %>"
                     </div>
                 <% } %>
 
-                <!-- Stats Row -->
-                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                    <div class="bg-warning text-warning-content border-2 border-neutral px-4 py-2 font-black text-xs uppercase shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
-                        Member Since: <%= data.formatDateTime(data.profile.getString('created')) %>
-                    </div>
+                <div class="text-xs text-base-content/50 font-medium">
+                    Member since <%= data.formatDateTime(data.profile.getString('created')) %>
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
-                    <a href="/profile/edit"
-                       class="btn btn-secondary border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] rounded-none font-black text-sm uppercase">
+                <div class="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+                    <a href="/profile/edit" class="btn btn-primary btn-sm rounded-xl font-semibold px-5">
                        Edit Profile
                     </a>
-                    <a href="/account#order-history"
-                       class="btn bg-base-100 hover:bg-neutral hover:text-neutral-content text-neutral border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] rounded-none font-black text-sm uppercase">
-                       My Orders
+                    <a href="/account/addresses" class="btn btn-outline btn-sm rounded-xl font-semibold px-5 border-slate-300 dark:border-slate-700">
+                       Saved Addresses
                     </a>
-                    <a href="/shop"
-                       class="btn bg-base-100 hover:bg-neutral hover:text-neutral-content text-neutral border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] rounded-none font-black text-sm uppercase">
-                       Shop Cards
+                    <a href="/shop" class="btn btn-ghost btn-sm rounded-xl font-semibold px-5 text-base-content/70">
+                       Browse Catalog
                     </a>
                 </div>
             </div>

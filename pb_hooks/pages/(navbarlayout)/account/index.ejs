@@ -1,12 +1,7 @@
 <!-- Main Container -->
-<div class="min-h-screen bg-base-100 border-b-8 border-neutral relative overflow-hidden pb-20">
-    <!-- Stark Linear Grid Background -->
-    <div class="absolute inset-0 pointer-events-none opacity-10"
-        style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
-    </div>
-
+<div class="min-h-screen bg-base-100 py-12">
     <!-- Alpine.js Page Context -->
-    <div class="container mx-auto px-4 py-12 max-w-6xl relative z-10" 
+    <div class="container mx-auto px-4 md:px-8 max-w-6xl" 
          x-data="{ 
             activeTab: 'all', 
             search: '', 
@@ -21,7 +16,6 @@
                 this.supportModalOpen = true;
             },
             shouldShow(id, status, itemsText) {
-                // Tab filter matching
                 let tabMatch = false;
                 if (this.activeTab === 'all') {
                     tabMatch = true;
@@ -33,7 +27,6 @@
                     tabMatch = ['cancelled', 'refunded'].includes(status);
                 }
 
-                // Search query matching
                 let searchMatch = true;
                 if (this.search.trim() !== '') {
                     const q = this.search.toLowerCase();
@@ -44,413 +37,358 @@
             }
          }">
 
-        <!-- Breadcrumbs Neo-Brutalist -->
-        <div class="text-sm font-black uppercase tracking-wider mb-8 flex items-center gap-2 text-neutral">
-            <a href="/" class="hover:text-primary transition-colors hover:underline">Home</a>
+        <!-- Breadcrumbs -->
+        <div class="text-xs text-base-content/60 font-medium mb-6 flex items-center gap-2">
+            <a href="/" class="hover:text-primary transition-colors">Home</a>
             <span>/</span>
-            <span class="opacity-60">Your Account</span>
+            <span class="text-base-content/90 font-semibold">Your Account</span>
         </div>
 
         <!-- Page Hero Header -->
-        <div class="mb-12">
-            <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter bg-base-100 text-base-content inline-block border-4 border-neutral px-6 py-2 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transform -rotate-1">
-                Your Account
-            </h1>
+        <div class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-base-content tracking-tight">
+                    Your Account
+                </h1>
+                <p class="text-sm text-base-content/60 mt-1">
+                    Manage your orders, addresses, profile settings, and payment options.
+                </p>
+            </div>
+            <a href="/shop" class="btn btn-primary btn-sm rounded-xl font-semibold px-5">
+                Browse Shop Catalog →
+            </a>
         </div>
 
-        <!-- Profile Banner Card -->
-        <div class="bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] mb-12 p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-8">
-            <!-- Left Side: Neo-Brutalist Avatar Frame -->
+        <!-- Profile Summary Card -->
+        <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm mb-10 flex flex-col md:flex-row items-center md:items-start gap-6">
             <div class="flex-shrink-0">
-                <div class="w-32 h-32 md:w-40 md:h-40 border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] overflow-hidden bg-base-200 relative group transition-transform duration-200 hover:rotate-2">
+                <div class="w-24 h-24 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-base-200 relative">
                     <% if (data.profile.getString('avatar')) { %>
                         <img src="<%= '/api/files/' + data.profile.collection().id + '/' + data.profile.id + '/' + data.profile.getString('avatar') %>"
                              alt="Avatar" class="w-full h-full object-cover" />
                     <% } else { %>
-                        <div class="w-full h-full bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center text-primary-content text-6xl font-black">
+                        <div class="w-full h-full bg-primary text-primary-content font-extrabold text-3xl flex items-center justify-center">
                             <%= data.profile.email().slice(0, 1).toUpperCase() %>
                         </div>
                     <% } %>
                 </div>
             </div>
 
-            <!-- Right Side: User Credentials & Details -->
-            <div class="flex-grow text-center md:text-left space-y-6">
-                <div class="space-y-2">
-                    <div class="flex flex-col md:flex-row items-center gap-4">
-                        <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-base-content bg-base-200 border-2 border-neutral px-3 py-1 transform -rotate-1">
-                            <%= data.profile.getString('name') || data.profile.email().split('@')[0] %>
-                        </h2>
-                        <% if (data.profile.getString('shortHand')) { %>
-                            <span class="bg-accent text-accent-content border-2 border-neutral font-black px-3 py-0.5 text-sm uppercase transform rotate-2">
-                                @<%= data.profile.getString('shortHand') %>
-                            </span>
-                        <% } %>
-                    </div>
-                    <p class="text-base-content/80 font-bold font-mono">
-                        <%= data.profile.email() %>
-                    </p>
+            <div class="flex-grow text-center md:text-left space-y-3">
+                <div class="flex flex-col md:flex-row items-center md:items-baseline gap-3">
+                    <h2 class="text-2xl font-bold text-base-content tracking-tight">
+                        <%= data.profile.getString('name') || data.profile.email().split('@')[0] %>
+                    </h2>
+                    <% if (data.profile.getString('shortHand')) { %>
+                        <span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-semibold text-xs">
+                            @<%= data.profile.getString('shortHand') %>
+                        </span>
+                    <% } %>
                 </div>
+                <p class="text-xs text-base-content/60 font-mono">
+                    <%= data.profile.email() %>
+                </p>
 
                 <% if (data.profile.getString('bio')) { %>
-                    <div class="bg-base-200 border-4 border-neutral p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)] max-w-2xl transform rotate-1">
-                        <p class="font-bold leading-relaxed text-sm text-base-content">
-                            "<%= data.profile.getString('bio') %>"
-                        </p>
-                    </div>
+                    <p class="text-xs text-base-content/80 italic max-w-xl">
+                        "<%= data.profile.getString('bio') %>"
+                    </p>
                 <% } %>
 
-                <div class="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
-                    <div class="bg-warning text-warning-content border-2 border-neutral px-4 py-2 font-black text-xs uppercase shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
-                        Member Since: <%= data.formatDateTime(data.profile.getString('created')) %>
-                    </div>
-                    <a href="/profile/edit"
-                       class="btn btn-secondary border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-[0px_0px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase">
-                       Edit Profile
+                <div class="flex flex-wrap gap-3 items-center justify-center md:justify-start pt-1 text-xs">
+                    <span class="text-base-content/50 font-medium">
+                        Member since <%= data.formatDateTime(data.profile.getString('created')) %>
+                    </span>
+                    <a href="/profile/edit" class="btn btn-outline btn-xs rounded-lg font-semibold px-3 border-slate-300 dark:border-slate-700">
+                        Edit Profile
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- 2x2 Amazon-Style Category Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <!-- Card 1: Your Orders (Lilac bg-primary) -->
-            <a href="#order-history" 
-               class="group block bg-primary border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all duration-200 hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
-                <div class="flex items-start gap-5">
-                    <div class="bg-base-100 border-4 border-neutral p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-shrink-0 group-hover:rotate-3 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                        </svg>
+        <!-- 2x2 Navigation Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+            <!-- Card 1: Your Orders -->
+            <a href="#order-history" class="group bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition-transform">
+                        📦
                     </div>
                     <div class="space-y-1">
-                        <h3 class="text-2xl font-black uppercase text-primary-content tracking-tight">Your Orders</h3>
-                        <p class="font-bold text-sm text-primary-content/85 leading-snug">Track, return, buy again, or review your transaction receipts.</p>
+                        <h3 class="text-lg font-bold text-base-content group-hover:text-primary transition-colors">Your Orders</h3>
+                        <p class="text-xs text-base-content/60 leading-relaxed">Track packages, review order history, and buy items again.</p>
                     </div>
                 </div>
             </a>
 
-            <!-- Card 2: Login & Security (Purple bg-secondary) -->
-            <a href="/profile/edit" 
-               class="group block bg-secondary border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all duration-200 hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
-                <div class="flex items-start gap-5">
-                    <div class="bg-base-100 border-4 border-neutral p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-shrink-0 group-hover:-rotate-3 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
+            <!-- Card 2: Login & Security -->
+            <a href="/profile/edit" class="group bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition-transform">
+                        🔒
                     </div>
                     <div class="space-y-1">
-                        <h3 class="text-2xl font-black uppercase text-secondary-content tracking-tight">Login & Security</h3>
-                        <p class="font-bold text-sm text-secondary-content/85 leading-snug">Modify passwords, display name, initials, handle, and security preferences.</p>
+                        <h3 class="text-lg font-bold text-base-content group-hover:text-primary transition-colors">Login & Security</h3>
+                        <p class="text-xs text-base-content/60 leading-relaxed">Update password, email address, name, and security preferences.</p>
                     </div>
                 </div>
             </a>
 
-            <!-- Card 3: Address Book (Pink bg-accent) -->
-            <a href="/account/addresses" 
-               class="group block bg-accent border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all duration-200 hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
-                <div class="flex items-start gap-5">
-                    <div class="bg-base-100 border-4 border-neutral p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-shrink-0 group-hover:rotate-3 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+            <!-- Card 3: Address Book -->
+            <a href="/account/addresses" class="group bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition-transform">
+                        📍
                     </div>
                     <div class="space-y-1">
-                        <h3 class="text-2xl font-black uppercase text-accent-content tracking-tight">Address Book</h3>
-                        <p class="font-bold text-sm text-accent-content/85 leading-snug">Add, edit, remove, and manage shipping addresses for deliveries.</p>
+                        <h3 class="text-lg font-bold text-base-content group-hover:text-primary transition-colors">Address Book</h3>
+                        <p class="text-xs text-base-content/60 leading-relaxed">Add, edit, or remove saved shipping and billing addresses.</p>
                     </div>
                 </div>
             </a>
 
-            <!-- Card 4: Payment Options (Yellow bg-warning) -->
-            <a href="/banano" 
-               class="group block bg-warning border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all duration-200 hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
-                <div class="flex items-start gap-5">
-                    <div class="bg-base-100 border-4 border-neutral p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-shrink-0 group-hover:scale-105 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
+            <!-- Card 4: Payment Ledger -->
+            <a href="/banano" class="group bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition-transform">
+                        🍌
                     </div>
                     <div class="space-y-1">
-                        <h3 class="text-2xl font-black uppercase text-warning-content tracking-tight">Payment Ledger</h3>
-                        <p class="font-bold text-sm text-warning-content/85 leading-snug">Check available Banana coin (Banano) balance, transactions, and deposit history.</p>
+                        <h3 class="text-lg font-bold text-base-content group-hover:text-primary transition-colors">Payment Ledger</h3>
+                        <p class="text-xs text-base-content/60 leading-relaxed">Check available Banano crypto balance and deposit history.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <hr class="border-t-8 border-neutral mb-16" id="order-history">
+        <div class="divider my-8" id="order-history"></div>
 
         <!-- Order History Section -->
-        <div class="mb-12">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-8">
+        <div class="space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 class="text-4xl md:text-5xl font-black uppercase bg-base-100 text-base-content border-4 border-neutral px-4 py-2 shadow-[6px_6px_0_0_rgba(0,0,0,1)] transform -rotate-1 inline-block">
-                        Your Order History
-                    </h2>
-                    <p class="text-base-content/70 font-bold mt-3 text-sm">Review transaction statuses, total spending, and track packages in real time.</p>
+                    <h2 class="text-2xl font-bold text-base-content tracking-tight">Order History</h2>
+                    <p class="text-xs text-base-content/60 mt-0.5">Review your past transactions and track current shipments</p>
                 </div>
 
-                <!-- Client Side Real-time Search Input -->
-                <div class="w-full lg:w-80">
+                <!-- Search Input -->
+                <div class="w-full sm:w-72">
                     <div class="relative">
                         <input type="text" 
                                x-model="search"
-                               placeholder="Search orders, items..." 
-                               class="w-full bg-base-100 border-4 border-neutral px-4 py-3 font-bold placeholder:text-neutral/40 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all rounded-none" />
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 absolute right-4 top-1/2 -translate-y-1/2 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                               placeholder="Search order ID or item..." 
+                               class="input input-sm input-bordered w-full rounded-xl pl-9 bg-base-100 text-xs font-medium focus:ring-1 focus:ring-primary" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-3 top-2.5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <!-- Neo-Brutalist Filter Tabs -->
-            <div class="flex flex-wrap gap-3 mb-10">
+            <!-- Filter Tabs -->
+            <div class="flex flex-wrap gap-2">
                 <button x-on:click="activeTab = 'all'"
-                        :class="activeTab === 'all' ? 'bg-primary text-primary-content shadow-[2px_2px_0_0_rgba(0,0,0,1)]' : 'bg-base-100 text-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)]'"
-                        class="btn border-4 border-neutral rounded-none font-black text-sm uppercase px-5 transition-all hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
+                        :class="activeTab === 'all' ? 'btn-primary' : 'btn-ghost text-base-content/70 hover:bg-base-200'"
+                        class="btn btn-xs rounded-full font-semibold px-4 transition-all">
                     All Orders
                 </button>
                 <button x-on:click="activeTab = 'progress'"
-                        :class="activeTab === 'progress' ? 'bg-warning text-warning-content shadow-[2px_2px_0_0_rgba(0,0,0,1)]' : 'bg-base-100 text-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)]'"
-                        class="btn border-4 border-neutral rounded-none font-black text-sm uppercase px-5 transition-all hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
+                        :class="activeTab === 'progress' ? 'btn-primary' : 'btn-ghost text-base-content/70 hover:bg-base-200'"
+                        class="btn btn-xs rounded-full font-semibold px-4 transition-all">
                     In Progress
                 </button>
                 <button x-on:click="activeTab = 'completed'"
-                        :class="activeTab === 'completed' ? 'bg-success text-success-content shadow-[2px_2px_0_0_rgba(0,0,0,1)]' : 'bg-base-100 text-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)]'"
-                        class="btn border-4 border-neutral rounded-none font-black text-sm uppercase px-5 transition-all hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
+                        :class="activeTab === 'completed' ? 'btn-primary' : 'btn-ghost text-base-content/70 hover:bg-base-200'"
+                        class="btn btn-xs rounded-full font-semibold px-4 transition-all">
                     Completed
                 </button>
                 <button x-on:click="activeTab = 'cancelled'"
-                        :class="activeTab === 'cancelled' ? 'bg-error text-error-content shadow-[2px_2px_0_0_rgba(0,0,0,1)]' : 'bg-base-100 text-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)]'"
-                        class="btn border-4 border-neutral rounded-none font-black text-sm uppercase px-5 transition-all hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
+                        :class="activeTab === 'cancelled' ? 'btn-primary' : 'btn-ghost text-base-content/70 hover:bg-base-200'"
+                        class="btn btn-xs rounded-full font-semibold px-4 transition-all">
                     Cancelled
                 </button>
             </div>
 
             <!-- Orders Feed / Cards -->
-            <div class="space-y-8">
+            <div class="space-y-6">
                 <% if (data.orders && data.orders.length > 0) { %>
                     <% data.orders.forEach(order => { 
-                        // Concatenate product names for inline filtering
                         const itemsText = order.items.map(i => i.product_name).join(', ');
                     %>
                         <!-- Single Order Card -->
                         <div x-show="shouldShow('<%= order.id %>', '<%= order.status %>', '<%= itemsText.replace(/'/g, "\\'") %>')" 
                              x-transition
-                             class="bg-base-100 border-4 border-neutral shadow-[8px_8px_0_0_rgba(0,0,0,1)] overflow-hidden transition-shadow">
+                             class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
                             
                             <!-- Card Header Info -->
-                            <div class="bg-base-200 border-b-4 border-neutral p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-black uppercase tracking-wide">
+                            <div class="bg-base-200/50 border-b border-slate-100 dark:border-slate-800 p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                                 <div>
-                                    <span class="text-neutral/50 block text-[10px] tracking-wider mb-0.5">Order Placed</span>
-                                    <span class="text-base-content"><%= data.formatDateTime(order.created) %></span>
+                                    <span class="text-base-content/50 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Order Date</span>
+                                    <span class="font-semibold text-base-content"><%= data.formatDateTime(order.created) %></span>
                                 </div>
                                 <div>
-                                    <span class="text-neutral/50 block text-[10px] tracking-wider mb-0.5">Total Paid</span>
-                                    <span class="text-base-content text-sm font-black">$<%= order.total.toFixed(2) %></span>
+                                    <span class="text-base-content/50 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Total Amount</span>
+                                    <span class="font-bold text-base-content">$<%= order.total.toFixed(2) %></span>
                                 </div>
                                 <div>
-                                    <span class="text-neutral/50 block text-[10px] tracking-wider mb-0.5">Ship To</span>
+                                    <span class="text-base-content/50 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Shipping Address</span>
                                     <button x-on:click="toggleAddress('<%= order.id %>')" 
-                                            class="text-accent hover:underline flex items-center gap-1 font-black text-xs uppercase cursor-pointer select-none">
-                                        <%= order.shipping_address?.name || data.profile.getString('name') || data.profile.email().split('@')[0] %>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                            class="text-primary hover:underline font-semibold flex items-center gap-1 cursor-pointer">
+                                        <%= order.shipping_address?.name || data.profile.getString('name') || 'Recipient' %>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="text-right md:text-right flex flex-col items-end justify-center">
-                                    <span class="text-neutral/50 block text-[10px] tracking-wider mb-0.5">Order Reference</span>
-                                    <span class="font-mono text-xs select-all text-neutral lowercase bg-base-100 border border-neutral/20 px-1.5 py-0.5"><%= order.id %></span>
+                                <div class="text-right">
+                                    <span class="text-base-content/50 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Order ID</span>
+                                    <span class="font-mono text-xs text-base-content/80 select-all"><%= order.id %></span>
                                 </div>
                             </div>
 
-                            <!-- Address Expandable Drawer -->
+                            <!-- Address Drawer -->
                             <div x-show="showAddressId === '<%= order.id %>'" 
                                  x-transition 
-                                 class="p-4 bg-warning text-warning-content border-b-4 border-neutral text-xs font-bold shadow-inner">
-                                <div class="flex items-center gap-2 mb-2 font-black text-sm uppercase">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    </svg>
-                                    Delivery Address Summary
-                                </div>
+                                 class="p-4 bg-base-200/80 border-b border-slate-100 dark:border-slate-800 text-xs">
+                                <h4 class="font-bold text-xs text-base-content mb-1">Shipping Details:</h4>
                                 <% if (order.shipping_address) { %>
-                                    <div class="space-y-0.5 font-bold pl-7">
-                                        <div><%= order.shipping_address.name || 'Recipient' %></div>
-                                        <div><%= order.shipping_address.street || order.shipping_address.address || '' %></div>
-                                        <div><%= order.shipping_address.city || '' %>, <%= order.shipping_address.state || '' %> <%= order.shipping_address.postal_code || order.shipping_address.zip || '' %></div>
-                                        <div><%= order.shipping_address.country || 'US' %></div>
-                                    </div>
+                                    <p class="text-base-content/80 font-medium leading-relaxed">
+                                        <%= order.shipping_address.name || 'Recipient' %><br>
+                                        <%= order.shipping_address.street || order.shipping_address.address || '' %><br>
+                                        <%= order.shipping_address.city || '' %>, <%= order.shipping_address.state || '' %> <%= order.shipping_address.postal_code || order.shipping_address.zip || '' %><br>
+                                        <%= order.shipping_address.country || 'Canada' %>
+                                    </p>
                                 <% } else { %>
-                                    <div class="text-warning-content/70 pl-7">No shipping address recorded. Digital transaction or default profile delivery.</div>
+                                    <p class="text-base-content/50 italic">No address on file.</p>
                                 <% } %>
                             </div>
 
                             <!-- Card Body Grid -->
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
-                                <!-- Order Line Items (takes 2 cols) -->
-                                <div class="lg:col-span-2 space-y-4">
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-5">
+                                <!-- Order Line Items -->
+                                <div class="lg:col-span-2 space-y-3">
                                     <% if (order.items && order.items.length > 0) { %>
                                         <% order.items.forEach(item => { %>
-                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-base-200 border-2 border-neutral gap-4">
-                                                <div class="space-y-1">
-                                                    <h4 class="font-black text-xl text-base-content leading-tight hover:text-primary transition-colors">
+                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-base-200/30 rounded-2xl gap-3">
+                                                <div class="space-y-0.5">
+                                                    <h4 class="font-bold text-sm text-base-content hover:text-primary transition-colors">
                                                         <%= item.product_name %>
                                                     </h4>
                                                     
                                                     <% if (item.variant_label) { %>
-                                                        <div class="bg-accent text-accent-content border-2 border-neutral px-2 py-0.5 inline-block text-[10px] font-black uppercase tracking-wider">
+                                                        <span class="inline-block bg-primary/10 text-primary text-[10px] font-semibold px-2 py-0.5 rounded-full">
                                                             <%= item.variant_label %>
-                                                        </div>
+                                                        </span>
                                                     <% } %>
 
-                                                    <div class="text-xs font-bold text-base-content/60">
-                                                        Qty: <span class="text-base-content"><%= item.quantity %></span> &bull; 
-                                                        Unit Price: <span class="text-base-content font-mono">$<%= item.unit_price.toFixed(2) %></span>
-                                                    </div>
+                                                    <p class="text-xs text-base-content/60 font-medium">
+                                                        Qty: <strong class="text-base-content"><%= item.quantity %></strong> &bull; 
+                                                        Unit: $<%= item.unit_price.toFixed(2) %>
+                                                    </p>
                                                 </div>
 
-                                                <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-4">
-                                                    <span class="font-black text-lg font-mono text-base-content">
+                                                <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
+                                                    <span class="font-bold text-sm text-base-content">
                                                         $<%= item.total_price.toFixed(2) %>
                                                     </span>
-                                                    <a href="/shop" 
-                                                       class="btn btn-xs bg-base-100 text-neutral border-2 border-neutral shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[1px_1px_0_0_rgba(0,0,0,1)] rounded-none font-black uppercase text-[10px]">
+                                                    <a href="/shop" class="btn btn-outline btn-xs rounded-lg font-semibold text-[10px] border-slate-300 dark:border-slate-700">
                                                         Buy Again
                                                     </a>
                                                 </div>
                                             </div>
                                         <% }) %>
                                     <% } else { %>
-                                        <p class="font-bold text-base-content/60 italic">No line items recorded for this order.</p>
+                                        <p class="text-xs font-medium text-base-content/50 italic">No line items recorded for this order.</p>
                                     <% } %>
                                 </div>
 
-                                <!-- Financial Breakdown & Status Portal (takes 1 col) -->
-                                <div class="bg-base-200 border-4 border-neutral p-4 flex flex-col justify-between shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
-                                    <div class="space-y-4">
-                                        <!-- Colored Status Badge -->
+                                <!-- Financial Breakdown & Status -->
+                                <div class="bg-base-200/50 rounded-2xl p-4 flex flex-col justify-between space-y-4">
+                                    <div class="space-y-3">
+                                        <!-- Status Badge -->
                                         <div>
-                                            <span class="text-neutral/50 block text-[9px] uppercase tracking-wider font-black mb-1">Fulfillment Status</span>
+                                            <span class="text-[10px] uppercase font-bold tracking-wider text-base-content/50 block mb-1">Status</span>
                                             <% 
-                                                let badgeClass = 'bg-warning text-warning-content';
-                                                if (order.status === 'delivered') badgeClass = 'bg-success text-success-content';
-                                                else if (['paid', 'processing'].includes(order.status)) badgeClass = 'bg-info text-info-content';
-                                                else if (order.status === 'shipped') badgeClass = 'bg-primary text-primary-content';
-                                                else if (['cancelled', 'refunded'].includes(order.status)) badgeClass = 'bg-error text-error-content';
+                                                let badgeClass = 'badge-warning';
+                                                if (order.status === 'delivered') badgeClass = 'badge-success';
+                                                else if (['paid', 'processing'].includes(order.status)) badgeClass = 'badge-info';
+                                                else if (order.status === 'shipped') badgeClass = 'badge-primary';
+                                                else if (['cancelled', 'refunded'].includes(order.status)) badgeClass = 'badge-error';
                                             %>
-                                            <span class="<%= badgeClass %> border-2 border-neutral font-black px-3 py-1 text-xs uppercase inline-block shadow-[2px_2px_0_0_rgba(0,0,0,1)] transform rotate-1">
+                                            <span class="badge <%= badgeClass %> font-semibold uppercase text-[10px] px-3 py-2">
                                                 <%= order.status %>
                                             </span>
                                         </div>
 
-                                        <!-- Pricing Breakdown List -->
-                                        <div class="space-y-1.5 border-t border-b border-neutral/10 py-3 text-xs font-bold text-base-content/75 font-mono">
+                                        <!-- Pricing Breakdown -->
+                                        <div class="space-y-1 text-xs font-medium text-base-content/80 pt-2 border-t border-slate-200 dark:border-slate-700">
                                             <div class="flex justify-between">
                                                 <span>Subtotal:</span>
                                                 <span>$<%= order.subtotal.toFixed(2) %></span>
                                             </div>
                                             <div class="flex justify-between">
-                                                <span>Shipping Cost:</span>
+                                                <span>Shipping:</span>
                                                 <span>$<%= order.shipping_cost.toFixed(2) %></span>
                                             </div>
-                                            <% if (order.tax > 0) { %>
-                                                <div class="flex justify-between">
-                                                    <span>Sales Tax:</span>
-                                                    <span>$<%= order.tax.toFixed(2) %></span>
-                                                </div>
-                                            <% } %>
-                                            <% if (order.discount > 0) { %>
-                                                <div class="flex justify-between text-error font-black">
-                                                    <span>Discount Applied:</span>
-                                                    <span>-$<%= order.discount.toFixed(2) %></span>
-                                                </div>
-                                            <% } %>
-                                            <div class="flex justify-between text-sm font-black text-base-content uppercase border-t-2 border-neutral border-dashed pt-2 font-sans">
-                                                <span>Grand Total:</span>
-                                                <span class="font-mono">$<%= order.total.toFixed(2) %></span>
+                                            <div class="flex justify-between text-sm font-bold text-base-content pt-1 border-t border-slate-200 dark:border-slate-700">
+                                                <span>Total:</span>
+                                                <span>$<%= order.total.toFixed(2) %></span>
                                             </div>
                                         </div>
-
-                                        <% if (order.notes) { %>
-                                            <div class="text-[11px] bg-base-100 border border-neutral/20 p-2 font-medium italic text-base-content/70">
-                                                <strong>Note:</strong> "<%= order.notes %>"
-                                            </div>
-                                        <% } %>
                                     </div>
 
-                                    <!-- Quick Card Action Actions -->
-                                    <div class="space-y-2 pt-4">
-                                        <button x-on:click="openSupport('<%= order.id %>')"
-                                                class="w-full btn bg-base-100 hover:bg-neutral hover:text-neutral-content text-neutral border-2 border-neutral shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none btn-xs font-black uppercase py-2.5 h-auto leading-none">
-                                            Contact Support
+                                    <!-- Quick Actions -->
+                                    <div class="space-y-2 pt-2">
+                                        <button x-on:click="openSupport('<%= order.id %>')" class="btn btn-outline btn-xs w-full rounded-lg font-semibold text-xs border-slate-300 dark:border-slate-700">
+                                            Support
                                         </button>
-                                        <a href="/shop"
-                                           class="w-full btn btn-primary border-2 border-neutral shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none btn-xs font-black uppercase py-2.5 h-auto leading-none text-center">
-                                            Write Product Review
-                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     <% }) %>
                 <% } else { %>
-                    <!-- Empty Orders State Card -->
-                    <div class="bg-base-100 border-4 border-neutral p-12 text-center shadow-[8px_8px_0_0_rgba(0,0,0,1)] max-w-2xl mx-auto">
-                        <div class="w-20 h-20 bg-warning border-4 border-neutral flex items-center justify-center mx-auto mb-6 transform -rotate-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
+                    <!-- Empty Orders State -->
+                    <div class="bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 text-center max-w-xl mx-auto shadow-sm space-y-4">
+                        <div class="w-16 h-16 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto text-2xl">
+                            📦
                         </div>
-                        <h3 class="text-3xl font-black uppercase mb-3">No orders found!</h3>
-                        <p class="font-bold text-base-content/60 leading-relaxed mb-8">
-                            You have not placed any orders yet. Shop our premium collection of hilarious greetings and complete a checkout to see orders populated here.
+                        <h3 class="text-xl font-bold text-base-content">No Orders Placed Yet</h3>
+                        <p class="text-xs text-base-content/60 max-w-sm mx-auto">
+                            When you place an order in our store, your order status and receipts will appear here.
                         </p>
-                        <a href="/shop"
-                           class="btn btn-primary border-4 border-neutral shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] rounded-none font-black text-lg uppercase tracking-tight py-3 px-8 text-primary-content">
-                            Explore Shop Cards →
+                        <a href="/shop" class="btn btn-primary btn-sm rounded-xl font-semibold px-6">
+                            Start Shopping
                         </a>
                     </div>
                 <% } %>
             </div>
         </div>
 
-        <!-- Support Mock Modal (Neo-Brutalist Alert popup) -->
+        <!-- Support Modal -->
         <div x-show="supportModalOpen" 
              x-transition
-             class="fixed inset-0 z-50 flex items-center justify-center bg-neutral/60 backdrop-blur-sm p-4"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
              x-cloak>
             <div x-on:click.outside="supportModalOpen = false"
-                 class="bg-base-100 border-8 border-neutral max-w-md w-full p-6 shadow-[12px_12px_0_0_rgba(0,0,0,1)] relative">
-                <button x-on:click="supportModalOpen = false" 
-                        class="absolute top-4 right-4 text-2xl font-black text-neutral hover:text-error">
+                 class="bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-xl relative space-y-4">
+                <button x-on:click="supportModalOpen = false" class="btn btn-sm btn-circle btn-ghost absolute top-4 right-4">
                     ✕
                 </button>
-                <div class="w-14 h-14 bg-accent border-4 border-neutral flex items-center justify-center mb-4 transform -rotate-3 text-accent-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                </div>
-                <h3 class="text-2xl font-black uppercase mb-2 tracking-tight">Need help with order?</h3>
-                <p class="text-xs font-bold text-neutral/50 font-mono mb-4">
-                    Reference ID: <span x-text="supportOrderNum" class="text-neutral font-black"></span>
+                <h3 class="text-xl font-bold text-base-content">Customer Support</h3>
+                <p class="text-xs text-base-content/60 font-mono">
+                    Order Ref: <span x-text="supportOrderNum" class="text-base-content font-bold"></span>
                 </p>
-                <p class="font-bold text-sm text-base-content/80 leading-relaxed mb-6">
-                    Our support team is here to assist with tracking, card damage, incorrect variants, or refunds! Send a note to 
-                    <a href="mailto:support@cardstore.com" class="text-primary hover:underline">support@cardstore.com</a> or click the button below to open a ticket.
+                <p class="text-sm text-base-content/80 leading-relaxed">
+                    Have questions about your delivery or need to make changes to your order? Contact our support team directly.
                 </p>
-                <div class="flex gap-4">
-                    <a :href="'mailto:support@cardstore.com?subject=Support Request for Order ' + supportOrderNum"
-                       class="flex-1 btn btn-secondary border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase text-center py-2 h-auto">
-                        Send Email
+                <div class="flex gap-3 pt-2">
+                    <a :href="'mailto:support@pocketcommerce.com?subject=Support Request for Order ' + supportOrderNum"
+                       class="btn btn-primary btn-sm flex-1 rounded-xl font-semibold">
+                        Email Support
                     </a>
-                    <button x-on:click="supportModalOpen = false"
-                            class="btn bg-base-200 border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase py-2 h-auto text-neutral">
-                        Dismiss
+                    <button x-on:click="supportModalOpen = false" class="btn btn-ghost btn-sm rounded-xl font-semibold">
+                        Close
                     </button>
                 </div>
             </div>

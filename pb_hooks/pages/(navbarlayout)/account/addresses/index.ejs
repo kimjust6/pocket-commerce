@@ -1,5 +1,5 @@
 <!-- Main Container -->
-<div class="min-h-screen bg-base-100 border-b-8 border-neutral relative overflow-hidden pb-20"
+<div class="min-h-screen bg-base-100 py-12"
      x-data="{
         modalOpen: false,
         deleteModalOpen: false,
@@ -9,7 +9,7 @@
         formCity: '',
         formState: '',
         formZip: '',
-        formCountry: 'United States',
+        formCountry: 'Canada',
         formIsDefault: false,
         deleteId: '',
 
@@ -20,7 +20,7 @@
             this.formCity = '';
             this.formState = '';
             this.formZip = '';
-            this.formCountry = 'United States';
+            this.formCountry = 'Canada';
             this.formIsDefault = false;
             this.modalOpen = true;
         },
@@ -42,110 +42,92 @@
             this.deleteModalOpen = true;
         }
      }">
-    
-    <!-- Stark Linear Grid Background -->
-    <div class="absolute inset-0 pointer-events-none opacity-10"
-         style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(to right, currentColor 1px, transparent 1px); background-size: 40px 40px;">
-    </div>
 
-    <div class="container mx-auto px-4 py-12 max-w-6xl relative z-10">
+    <div class="container mx-auto px-4 md:px-8 max-w-6xl">
         
-        <!-- Breadcrumbs Neo-Brutalist -->
-        <div class="text-sm font-black uppercase tracking-wider mb-8 flex items-center gap-2 text-neutral">
-            <a href="/" class="hover:text-primary transition-colors hover:underline">Home</a>
+        <!-- Breadcrumbs -->
+        <div class="text-xs text-base-content/60 font-medium mb-6 flex items-center gap-2">
+            <a href="/" class="hover:text-primary transition-colors">Home</a>
             <span>/</span>
-            <a href="/account" class="hover:text-primary transition-colors hover:underline">Your Account</a>
+            <a href="/account" class="hover:text-primary transition-colors">Your Account</a>
             <span>/</span>
-            <span class="opacity-60">Addresses</span>
+            <span class="text-base-content/90 font-semibold">Addresses</span>
         </div>
 
-        <!-- Back Button & Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-200 dark:border-slate-800">
             <div>
-                <h1 class="text-5xl md:text-6xl font-black uppercase tracking-tighter bg-base-100 text-base-content inline-block border-4 border-neutral px-6 py-2 shadow-[8px_8px_0_0_rgba(0,0,0,1)] transform -rotate-1">
-                    Your Addresses
+                <h1 class="text-3xl md:text-4xl font-extrabold text-base-content tracking-tight">
+                    Your Saved Addresses
                 </h1>
-                <p class="text-neutral/70 font-bold mt-4 text-sm max-w-xl">
-                    Add, remove, edit or select a primary shipping address for seamless checkout and deliveries.
+                <p class="text-sm text-base-content/60 mt-1">
+                    Manage your delivery addresses for quick checkouts.
                 </p>
             </div>
             
-            <a href="/account"
-               class="btn bg-base-100 text-neutral border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-[0px_0px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase inline-flex items-center gap-2 self-start md:self-center">
+            <a href="/account" class="btn btn-outline btn-sm rounded-xl font-semibold border-slate-300 dark:border-slate-700">
                 ← Back to Account
             </a>
         </div>
 
-        <hr class="border-t-8 border-neutral mb-12">
-
-        <!-- Main Addresses Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Addresses Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <!-- Add Address Stark Card (First) -->
+            <!-- Add Address Card (First) -->
             <div x-on:click="openAddModal()"
-                 class="group bg-base-100 border-4 border-dashed border-neutral p-8 flex flex-col items-center justify-center text-center cursor-pointer select-none shadow-[8px_8px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all min-h-[300px]">
-                <div class="w-16 h-16 bg-accent/20 text-accent border-4 border-dashed border-neutral rounded-none flex items-center justify-center mb-6 group-hover:scale-105 group-hover:bg-accent/30 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-neutral" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
+                 class="bg-base-100 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition-all shadow-xs hover:shadow-md min-h-[260px]">
+                <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-2xl font-bold mb-4">
+                    ➕
                 </div>
-                <h3 class="text-2xl font-black uppercase text-neutral tracking-tight">Add New Address</h3>
-                <p class="font-bold text-xs text-neutral/50 leading-relaxed mt-2 max-w-[200px]">
-                    Create a new delivery destination for your checkouts.
+                <h3 class="text-lg font-bold text-base-content">Add New Address</h3>
+                <p class="text-xs text-base-content/60 mt-1 max-w-[200px]">
+                    Set up a new shipping or billing address for fast checkout.
                 </p>
             </div>
 
             <!-- User Address Cards -->
             <% if (data.addresses && data.addresses.length > 0) { %>
                 <% data.addresses.forEach(addr => { %>
-                    <div class="bg-base-100 border-4 border-neutral p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)] flex flex-col justify-between relative min-h-[300px] <%= addr.is_default ? 'bg-primary/5' : '' %>">
+                    <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between min-h-[260px] <%= addr.is_default ? 'ring-1 ring-primary/30 bg-primary/5' : '' %>">
                         
-                        <!-- Top Header Area of Card -->
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="bg-base-200 border-2 border-neutral font-black px-2 py-0.5 text-[10px] uppercase font-mono tracking-wider">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-base-content/50">
                                     Shipping Destination
                                 </span>
                                 
                                 <% if (addr.is_default) { %>
-                                    <span class="bg-success text-success-content border-2 border-neutral font-black px-2.5 py-0.5 text-[10px] uppercase shadow-[2px_2px_0_0_rgba(0,0,0,1)] transform rotate-1">
+                                    <span class="badge badge-success text-success-content font-bold uppercase text-[10px] px-2.5 py-1">
                                         Default
                                     </span>
                                 <% } %>
                             </div>
 
-                            <!-- Address Text -->
-                            <div class="font-bold text-neutral leading-relaxed space-y-1">
-                                <p class="text-xl font-black uppercase tracking-tight text-neutral"><%= addr.street %></p>
-                                <p class="text-sm font-bold text-neutral/80"><%= addr.city %><% if (addr.state) { %>, <%= addr.state %><% } %> <%= addr.zip %></p>
-                                <p class="text-xs font-mono font-black uppercase tracking-wider text-neutral/60"><%= addr.country %></p>
+                            <div class="space-y-1 text-sm font-medium text-base-content">
+                                <p class="font-bold text-base text-base-content"><%= addr.street %></p>
+                                <p class="text-xs text-base-content/80"><%= addr.city %><% if (addr.state) { %>, <%= addr.state %><% } %> <%= addr.zip %></p>
+                                <p class="text-xs text-base-content/60 font-semibold uppercase"><%= addr.country %></p>
                             </div>
                         </div>
 
                         <!-- Card Action Buttons -->
-                        <div class="border-t-2 border-neutral border-dashed pt-4 mt-6 space-y-3">
-                            <div class="flex gap-3">
-                                <!-- Edit Button -->
-                                <button x-on:click="openEditModal(<%= JSON.stringify(addr) %>)"
-                                        class="flex-1 btn btn-xs bg-base-100 text-neutral border-2 border-neutral shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[1px_1px_0_0_rgba(0,0,0,1)] rounded-none font-black uppercase py-2 h-auto text-[11px]">
-                                    Edit Address
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 mt-4">
+                            <div class="flex gap-2">
+                                <button x-on:click="openEditModal(<%= JSON.stringify(addr) %>)" class="btn btn-outline btn-xs flex-1 rounded-lg font-semibold border-slate-300 dark:border-slate-700">
+                                    Edit
                                 </button>
                                 
-                                <!-- Delete Button -->
-                                <button x-on:click="openDeleteModal('<%= addr.id %>')"
-                                        class="btn btn-xs bg-error text-error-content border-2 border-neutral shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[1px_1px_0_0_rgba(0,0,0,1)] rounded-none font-black uppercase py-2 px-3 h-auto text-[11px]">
+                                <button x-on:click="openDeleteModal('<%= addr.id %>')" class="btn btn-ghost btn-xs text-error rounded-lg font-semibold hover:bg-error/10">
                                     Delete
                                 </button>
                             </div>
 
-                            <!-- Set as Default (if not already default) -->
                             <% if (!addr.is_default) { %>
                                 <form action="/account/addresses" method="POST">
                                     <input type="hidden" name="action" value="set_default">
                                     <input type="hidden" name="id" value="<%= addr.id %>">
-                                    <button type="submit"
-                                            class="w-full btn btn-xs btn-primary border-2 border-neutral shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[1px_1px_0_0_rgba(0,0,0,1)] rounded-none font-black uppercase py-2 h-auto text-[11px] text-center">
-                                        Set as Default Address
+                                    <button type="submit" class="btn btn-primary btn-xs w-full rounded-lg font-semibold">
+                                        Set as Default
                                     </button>
                                 </form>
                             <% } %>
@@ -159,124 +141,72 @@
 
     </div>
 
-    <!-- 1. Add / Edit Address Dynamic Modal -->
+    <!-- Add / Edit Address Modal -->
     <div x-show="modalOpen" 
          x-transition
-         class="fixed inset-0 z-50 flex items-center justify-center bg-neutral/60 backdrop-blur-sm p-4"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
          x-cloak>
         
         <div x-on:click.outside="modalOpen = false"
-             class="bg-base-100 border-8 border-neutral max-w-lg w-full p-6 md:p-8 shadow-[12px_12px_0_0_rgba(0,0,0,1)] relative rounded-none max-h-[90vh] overflow-y-auto">
+             class="bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-xl relative max-h-[90vh] overflow-y-auto space-y-6">
             
-            <!-- Close Modal -->
-            <button x-on:click="modalOpen = false" 
-                    class="absolute top-4 right-4 text-2xl font-black text-neutral hover:text-error transition-colors select-none cursor-pointer">
+            <button x-on:click="modalOpen = false" class="btn btn-sm btn-circle btn-ghost absolute top-4 right-4">
                 ✕
             </button>
 
-            <!-- Modal Icon and Header -->
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-12 h-12 bg-primary border-4 border-neutral flex items-center justify-center text-primary-content transform -rotate-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl md:text-3xl font-black uppercase tracking-tight" x-text="isEdit ? 'Edit Address' : 'Add New Address'"></h3>
-                    <p class="text-xs font-bold text-neutral/50 font-mono mt-0.5" x-text="isEdit ? 'Update shipping details' : 'Configure a new destination'"></p>
-                </div>
-            </div>
+            <h3 class="text-xl font-bold text-base-content" x-text="isEdit ? 'Edit Address' : 'Add New Address'"></h3>
 
-            <!-- Form -->
-            <form action="/account/addresses" method="POST" class="space-y-5">
+            <form action="/account/addresses" method="POST" class="space-y-4">
                 <input type="hidden" name="action" :value="isEdit ? 'update' : 'add'">
                 <input type="hidden" name="id" :value="formId">
 
-                <!-- Street Input -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-black uppercase tracking-wider text-neutral">Street Address</label>
-                    <input type="text" 
-                           name="street" 
-                           x-model="formStreet"
-                           required
-                           placeholder="e.g. 123 Main St, Apt 4B" 
-                           class="w-full bg-base-100 border-4 border-neutral px-4 py-3 font-bold placeholder:text-neutral/30 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all rounded-none" />
+                <div class="space-y-1">
+                    <label class="text-xs font-bold uppercase tracking-wider text-base-content/70">Street Address</label>
+                    <input type="text" name="street" x-model="formStreet" required placeholder="123 Main St, Apt 4B" class="input input-sm input-bordered w-full rounded-xl bg-base-100 text-sm font-medium focus:ring-1 focus:ring-primary" />
                 </div>
 
-                <!-- City & State Inputs Grid -->
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-black uppercase tracking-wider text-neutral">City</label>
-                        <input type="text" 
-                               name="city" 
-                               x-model="formCity"
-                               required
-                               placeholder="e.g. Metropolis" 
-                               class="w-full bg-base-100 border-4 border-neutral px-4 py-3 font-bold placeholder:text-neutral/30 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all rounded-none" />
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-wider text-base-content/70">City</label>
+                        <input type="text" name="city" x-model="formCity" required placeholder="Toronto" class="input input-sm input-bordered w-full rounded-xl bg-base-100 text-sm font-medium focus:ring-1 focus:ring-primary" />
                     </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-black uppercase tracking-wider text-neutral">State / Region</label>
-                        <input type="text" 
-                               name="state" 
-                               x-model="formState"
-                               placeholder="e.g. NY" 
-                               class="w-full bg-base-100 border-4 border-neutral px-4 py-3 font-bold placeholder:text-neutral/30 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all rounded-none" />
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-wider text-base-content/70">State / Province</label>
+                        <input type="text" name="state" x-model="formState" placeholder="ON" class="input input-sm input-bordered w-full rounded-xl bg-base-100 text-sm font-medium focus:ring-1 focus:ring-primary" />
                     </div>
                 </div>
 
-                <!-- Zip & Country Inputs Grid -->
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-black uppercase tracking-wider text-neutral">Postal / ZIP Code</label>
-                        <input type="text" 
-                               name="zip" 
-                               x-model="formZip"
-                               required
-                               placeholder="e.g. 10001" 
-                               class="w-full bg-base-100 border-4 border-neutral px-4 py-3 font-bold placeholder:text-neutral/30 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all rounded-none" />
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-wider text-base-content/70">ZIP / Postal Code</label>
+                        <input type="text" name="zip" x-model="formZip" required placeholder="M5V 2T6" class="input input-sm input-bordered w-full rounded-xl bg-base-100 text-sm font-medium focus:ring-1 focus:ring-primary" />
                     </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-black uppercase tracking-wider text-neutral">Country</label>
-                        <select name="country" 
-                                x-model="formCountry"
-                                required
-                                class="w-full bg-base-100 border-4 border-neutral px-4 py-3 font-bold shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all rounded-none appearance-none cursor-pointer">
-                            <option value="United States">United States</option>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-wider text-base-content/70">Country</label>
+                        <select name="country" x-model="formCountry" required class="select select-sm select-bordered w-full rounded-xl bg-base-100 text-sm font-medium focus:ring-1 focus:ring-primary">
                             <option value="Canada">Canada</option>
+                            <option value="United States">United States</option>
                             <option value="United Kingdom">United Kingdom</option>
                             <option value="Australia">Australia</option>
-                            <option value="Germany">Germany</option>
-                            <option value="France">France</option>
-                            <option value="Japan">Japan</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Set Default Checkbox -->
-                <div class="flex items-center gap-3 pt-2">
-                    <input type="checkbox" 
-                           id="is_default_checkbox" 
-                           name="is_default" 
-                           x-model="formIsDefault"
-                           class="w-6 h-6 border-4 border-neutral text-primary focus:ring-0 rounded-none bg-base-100 cursor-pointer" />
-                    <label for="is_default_checkbox" class="text-xs font-black uppercase tracking-wide text-neutral cursor-pointer select-none">
-                        Make this my default shipping address
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="is_default_checkbox" name="is_default" x-model="formIsDefault" class="checkbox checkbox-xs checkbox-primary rounded" />
+                    <label for="is_default_checkbox" class="text-xs font-semibold text-base-content/80 cursor-pointer">
+                        Set as my default shipping address
                     </label>
                 </div>
 
-                <!-- Submit / Cancel Actions -->
-                <div class="flex gap-4 pt-6 border-t-2 border-neutral border-dashed mt-8">
-                    <button type="submit"
-                            class="flex-1 btn btn-secondary border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase py-3 h-auto text-center">
+                <div class="flex gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button type="submit" class="btn btn-primary btn-sm flex-1 rounded-xl font-semibold">
                         Save Address
                     </button>
-                    <button type="button"
-                            x-on:click="modalOpen = false"
-                            class="btn bg-base-200 border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase py-3 h-auto text-neutral">
+                    <button type="button" x-on:click="modalOpen = false" class="btn btn-ghost btn-sm rounded-xl font-semibold">
                         Cancel
                     </button>
                 </div>
@@ -285,43 +215,29 @@
         </div>
     </div>
 
-    <!-- 2. Delete Confirmation Modal -->
+    <!-- Delete Confirmation Modal -->
     <div x-show="deleteModalOpen" 
          x-transition
-         class="fixed inset-0 z-50 flex items-center justify-center bg-neutral/60 backdrop-blur-sm p-4"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
          x-cloak>
         
         <div x-on:click.outside="deleteModalOpen = false"
-             class="bg-base-100 border-8 border-neutral max-w-md w-full p-6 shadow-[12px_12px_0_0_rgba(0,0,0,1)] relative rounded-none">
+             class="bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-xl relative space-y-4">
             
-            <button x-on:click="deleteModalOpen = false" 
-                    class="absolute top-4 right-4 text-2xl font-black text-neutral hover:text-error transition-colors select-none cursor-pointer">
-                ✕
-            </button>
-
-            <div class="w-14 h-14 bg-error border-4 border-neutral flex items-center justify-center mb-4 transform -rotate-3 text-error-content">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </div>
-            
-            <h3 class="text-2xl font-black uppercase mb-2 tracking-tight">Delete Address?</h3>
-            <p class="font-bold text-sm text-base-content/85 leading-relaxed mb-6">
-                Are you absolutely sure you want to remove this address? This action is permanent and cannot be undone. If it is your default address, a new default will be calculated automatically.
+            <h3 class="text-xl font-bold text-base-content">Delete Address?</h3>
+            <p class="text-xs text-base-content/70 leading-relaxed">
+                Are you sure you want to delete this address from your saved address book?
             </p>
 
-            <form action="/account/addresses" method="POST">
+            <form action="/account/addresses" method="POST" class="pt-2">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="id" :value="deleteId">
 
-                <div class="flex gap-4">
-                    <button type="submit"
-                            class="flex-1 btn btn-xs bg-error text-error-content border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase py-3 h-auto text-center">
-                        Delete Address
+                <div class="flex gap-3">
+                    <button type="submit" class="btn btn-error btn-sm flex-1 rounded-xl font-semibold">
+                        Delete
                     </button>
-                    <button type="button"
-                            x-on:click="deleteModalOpen = false"
-                            class="btn bg-base-200 border-4 border-neutral shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] rounded-none font-black text-sm uppercase py-3 h-auto text-neutral">
+                    <button type="button" x-on:click="deleteModalOpen = false" class="btn btn-ghost btn-sm rounded-xl font-semibold">
                         Cancel
                     </button>
                 </div>

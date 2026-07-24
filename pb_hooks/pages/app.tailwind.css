@@ -37,98 +37,23 @@
 
     /* Reusable component classes */
     .section-title {
-        @apply script-font text-4xl sm:text-5xl lg:text-7xl xl:text-8xl text-center text-base-content;
+        @apply font-bold text-3xl sm:text-4xl lg:text-5xl text-center text-base-content tracking-tight;
     }
 
     .section-spacing {
         @apply scroll-mt-24 lg:scroll-mt-28;
     }
 
-    .countdown-number {
-        @apply text-3xl sm:text-5xl lg:text-7xl xl:text-8xl font-extralight text-base-content mb-1 sm:mb-2 lg:mb-4;
-    }
-
-    .countdown-label {
-        @apply text-[10px] sm:text-xs lg:text-base xl:text-lg text-base-content/60 mt-1 sm:mt-2 lg:mt-3 uppercase tracking-wider font-medium;
-    }
-
-    .schedule-time {
-        @apply font-bold text-base-content text-sm lg:text-lg xl:text-xl w-14 lg:w-24 xl:w-28 flex-shrink-0;
-    }
-
-    .schedule-title {
-        @apply font-semibold text-base-content text-sm lg:text-lg xl:text-xl;
-    }
-
-    .schedule-location {
-        @apply text-xs lg:text-base xl:text-lg text-base-content/70 flex items-center gap-1 mt-1 lg:mt-2;
-    }
-
     .gallery-image {
-        @apply aspect-square w-full object-cover rounded-btn cursor-pointer transition-all duration-100 border-2 border-black dark:border-white bg-base-100;
-        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-    }
-    .gallery-image:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-    }
-    .gallery-image:active {
-        transform: scale(0.95);
-        box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
-    }
-    .dark .gallery-image {
-        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
-    }
-    .dark .gallery-image:hover {
-        box-shadow: 6px 6px 0px 0px rgba(255,255,255,1);
-    }
-    .dark .gallery-image:active {
-        box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
+        @apply aspect-square w-full object-cover rounded-xl cursor-pointer transition-all duration-200 border border-base-200 dark:border-base-300 bg-base-100 shadow-sm hover:shadow-md;
     }
 
-    .venue-photo {
-        @apply w-full object-cover rounded-btn border-2 border-black dark:border-white;
-        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-    }
-    .dark .venue-photo {
-        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+    .store-card {
+        @apply bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col;
     }
 
-    .poi-item {
-        @apply flex items-center gap-2 sm:gap-3 lg:gap-4 xl:gap-5 text-sm lg:text-lg xl:text-xl text-base-content py-2 px-3 lg:py-4 lg:px-5 hover:bg-primary hover:text-primary-content border-2 border-transparent hover:border-black dark:hover:border-white rounded-btn transition-all duration-100;
-    }
-    .poi-item:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-    }
-    .dark .poi-item:hover {
-        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
-    }
-
-    /* Neo-Brutalism Global Overrides */
-    .btn, .card, .input, .textarea, .badge, .alert, .stats {
-        @apply border-2 border-black dark:border-white !important;
-        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
-        transition: transform 0.1s ease, box-shadow 0.1s ease !important;
-    }
-    .dark .btn, .dark .card, .dark .input, .dark .textarea, .dark .badge, .dark .alert, .dark .stats {
-        box-shadow: 4px 4px 0px 0px rgba(255,255,255,1) !important;
-    }
-
-    .btn:hover {
-        transform: translate(2px, 2px) !important;
-        box-shadow: 2px 2px 0px 0px rgba(0,0,0,1) !important;
-    }
-    .dark .btn:hover {
-        box-shadow: 2px 2px 0px 0px rgba(255,255,255,1) !important;
-    }
-
-    .btn:active {
-        transform: translate(4px, 4px) !important;
-        box-shadow: 0px 0px 0px 0px rgba(0,0,0,1) !important;
-    }
-    .dark .btn:active {
-        box-shadow: 0px 0px 0px 0px rgba(255,255,255,1) !important;
+    .store-badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide uppercase;
     }
 
 }

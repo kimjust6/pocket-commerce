@@ -17,7 +17,7 @@ module.exports = function shellData() {
         toggleTheme() {
             this.darkMode = !this.darkMode
             const theme = this.darkMode ? 'dark' : 'light'
-            const themeToken = this.darkMode ? 'neobrutalismdark' : 'neobrutalism'
+            const themeToken = this.darkMode ? 'dark' : 'light'
             localStorage.setItem('theme', theme)
             document.documentElement.setAttribute('data-theme', themeToken)
             document.documentElement.classList.toggle('dark', this.darkMode)
