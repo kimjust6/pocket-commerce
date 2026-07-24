@@ -1,6 +1,7 @@
-<!-- Top Announcement Bar -->
-<div class="bg-slate-900 text-slate-100 text-xs py-2 px-4 text-center font-medium tracking-wide">
-    <span>✨ Special Offer: Free Express Shipping on orders over $50 | 30-Day Easy Returns</span>
+<!-- Top Announcement Alert Bar -->
+<div class="alert alert-info py-2 px-4 rounded-none text-xs text-center font-medium tracking-wide justify-center shadow-xs bg-slate-900 border-none text-slate-100">
+    <span class="badge badge-accent badge-sm uppercase font-bold tracking-wider">Offer</span>
+    <span>Free Express Shipping on orders over $50 | 30-Day Easy Returns</span>
 </div>
 
 <header @toggle-mobile-header.window="headerVisible = !headerVisible" x-show="headerVisible"
@@ -8,63 +9,73 @@
     x-transition:enter-end="translate-y-0" x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="translate-y-0" x-transition:leave-end="-translate-y-full"
     class="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800 bg-base-100/90 backdrop-blur-md transition-colors">
-    <div class="container mx-auto flex items-center justify-between h-16 px-4 md:px-8">
+    
+    <div class="navbar container mx-auto px-4 md:px-8 min-h-16">
         <!-- Left: Logo & Brand -->
-        <div class="flex items-center gap-8">
-            <a href="/" class="flex items-center gap-2 group">
-                <div class="w-9 h-9 rounded-xl bg-primary text-primary-content flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+        <div class="navbar-start w-auto flex items-center gap-8">
+            <a href="/" class="flex items-center gap-2.5 group">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-pink-500 text-white flex items-center justify-center font-bold text-lg shadow-md group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </div>
-                <span class="text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors">
-                    Pocket Commerce
+                <span class="text-xl font-extrabold tracking-tight text-base-content group-hover:text-primary transition-colors">
+                    Pocket <span class="gradient-heading">Commerce</span>
                 </span>
             </a>
 
-            <!-- Desktop Navigation -->
+            <!-- Desktop Navigation Links -->
             <nav class="hidden md:flex items-center gap-6">
                 <a href="/shop" class="text-sm font-semibold text-base-content/80 hover:text-primary transition-colors">Shop All</a>
                 <a href="/shop?category=birthday" class="text-sm font-medium text-base-content/70 hover:text-primary transition-colors">Birthday</a>
                 <a href="/shop?category=thank-you" class="text-sm font-medium text-base-content/70 hover:text-primary transition-colors">Thank You</a>
-                <a href="/shop?on_sale=1" class="text-sm font-medium text-amber-600 dark:text-amber-400 hover:underline">Deals & Offers</a>
+                <a href="/shop?on_sale=1" class="text-sm font-medium text-rose-500 flex items-center gap-1 hover:underline">
+                    <span class="badge badge-error badge-xs animate-pulse"></span>
+                    Deals
+                </a>
             </nav>
         </div>
 
-        <!-- Center/Right Controls -->
-        <div class="flex items-center gap-3">
-            <!-- Search Bar Input -->
-            <div class="hidden sm:flex items-center relative" x-data="{ open: false }">
-                <form action="/shop" method="GET" class="relative">
+        <!-- Right: Controls & Actions -->
+        <div class="navbar-end flex-1 justify-end flex items-center gap-3">
+            <!-- Search Bar Input with Join & KBD -->
+            <div class="hidden sm:flex items-center" x-data="{ open: false }">
+                <form action="/shop" method="GET" class="join">
                     <input type="text" name="q"
-                        class="input input-sm input-bordered rounded-full pl-9 pr-4 w-48 lg:w-64 bg-base-200/60 focus:bg-base-100 focus:w-72 text-xs transition-all border-slate-200 dark:border-slate-700"
+                        class="input input-sm input-bordered join-item rounded-full pl-9 pr-4 w-48 lg:w-60 bg-base-200/60 focus:bg-base-100 focus:w-68 text-xs transition-all border-slate-200 dark:border-slate-700"
                         placeholder="Search products...">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-3 top-2.5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <button type="submit" class="btn btn-sm btn-ghost join-item rounded-r-full -ml-8 z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
                 </form>
             </div>
 
             <!-- Dark/Light Theme Toggle -->
             <%- include('theme-toggle') %>
 
-            <!-- Cart Link with Pill Counter Badge -->
-            <a href="/cart" class="relative p-2 rounded-full hover:bg-base-200 text-base-content transition-colors flex items-center justify-center" aria-label="Shopping Cart">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                <% if (locals.data && locals.data.totalItems > 0) { %>
-                    <span class="absolute -top-1 -right-1 bg-primary text-primary-content font-bold text-[11px] min-w-[20px] h-5 rounded-full px-1 flex items-center justify-center shadow-sm">
-                        <%= locals.data.totalItems %>
-                    </span>
-                <% } %>
-            </a>
+            <!-- Cart Link with DaisyUI Indicator & Badge -->
+            <div class="tooltip tooltip-bottom" data-tip="Cart">
+                <a href="/cart" class="btn btn-ghost btn-circle border-0 flex items-center justify-center">
+                    <div class="indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <% if (locals.data && locals.data.totalItems > 0) { %>
+                            <span class="badge badge-sm badge-primary indicator-item font-extrabold text-[10px]">
+                                <%= locals.data.totalItems %>
+                            </span>
+                        <% } %>
+                    </div>
+                </a>
+            </div>
 
-            <!-- User Auth Profile Menu -->
+            <!-- User Auth Profile Dropdown -->
             <% if (locals.auth) { %>
                 <div class="dropdown dropdown-end" x-data="{ open: false }" :class="{ 'dropdown-open': open }" @click.outside="open = false">
                     <div role="button" class="btn btn-ghost btn-circle avatar" @click="open = !open">
-                        <div class="w-9 rounded-full ring-2 ring-primary/30 overflow-hidden">
+                        <div class="w-9 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
                             <% if (auth.getString('avatar')) { %>
                                 <img src="<%= '/api/files/' + auth.collection().id + '/' + auth.id + '/' + auth.getString('avatar') %>" alt="User Avatar" class="w-full h-full object-cover" />
                             <% } else { %>
@@ -74,24 +85,25 @@
                             <% } %>
                         </div>
                     </div>
-                    <ul tabindex="0" class="menu dropdown-content z-[1] mt-2 w-56 p-2 shadow-lg bg-base-100 border border-slate-200 dark:border-slate-800 rounded-2xl">
-                        <li class="menu-title px-4 py-2 text-xs text-base-content/60 font-semibold border-b border-base-200 dark:border-slate-800">
+                    <ul tabindex="0" class="menu menu-sm dropdown-content z-[1] mt-3 w-56 p-2 shadow-xl bg-base-100 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-1">
+                        <li class="menu-title px-3 py-1.5 text-[11px] text-base-content/60 font-semibold border-b border-base-200 dark:border-slate-800">
                             <%= auth.email() %>
                         </li>
-                        <li><a href="/profile" class="py-2.5 rounded-xl">My Profile</a></li>
-                        <li><a href="/account/addresses" class="py-2.5 rounded-xl">Saved Addresses</a></li>
-                        <div class="divider my-1"></div>
-                        <li><a href="/auth/logout" class="py-2.5 text-error rounded-xl">Logout</a></li>
+                        <li><a href="/account" class="rounded-xl py-2 font-semibold">Dashboard</a></li>
+                        <li><a href="/profile" class="rounded-xl py-2 font-semibold">My Profile</a></li>
+                        <li><a href="/account/addresses" class="rounded-xl py-2 font-semibold">Saved Addresses</a></li>
+                        <div class="divider my-0.5"></div>
+                        <li><a href="/auth/logout" class="text-error rounded-xl py-2 font-semibold">Logout</a></li>
                     </ul>
                 </div>
             <% } else { %>
-                <a href="/login" class="hidden sm:inline-flex btn btn-primary btn-sm rounded-lg px-4 font-semibold shadow-sm">
+                <a href="/login" class="hidden sm:inline-flex btn btn-primary btn-sm rounded-xl font-bold px-4 shadow-sm">
                     Sign In
                 </a>
             <% } %>
 
-            <!-- Mobile Menu Toggle Button -->
-            <button class="p-2 rounded-lg text-base-content hover:bg-base-200 md:hidden" @click="navOpen = !navOpen" aria-label="Toggle Menu">
+            <!-- Mobile Menu Button -->
+            <button class="btn btn-ghost btn-circle md:hidden" @click="navOpen = !navOpen" aria-label="Toggle Menu">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>

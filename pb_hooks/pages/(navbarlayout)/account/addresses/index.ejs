@@ -76,8 +76,10 @@
             <!-- Add Address Card (First) -->
             <div x-on:click="openAddModal()"
                  class="bg-base-100 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition-all shadow-xs hover:shadow-md min-h-[260px]">
-                <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-2xl font-bold mb-4">
-                    ➕
+                <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
                 </div>
                 <h3 class="text-lg font-bold text-base-content">Add New Address</h3>
                 <p class="text-xs text-base-content/60 mt-1 max-w-[200px]">

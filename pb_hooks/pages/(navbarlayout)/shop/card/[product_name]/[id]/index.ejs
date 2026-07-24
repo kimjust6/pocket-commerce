@@ -1,27 +1,27 @@
 <div class="min-h-screen bg-base-100 py-10">
     <% if (data.product) { %>
         <div class="container mx-auto max-w-7xl px-4 md:px-8">
-            <!-- Breadcrumbs -->
-            <div class="text-xs text-base-content/60 font-medium mb-6 flex items-center gap-2">
-                <a href="/" class="hover:text-primary transition-colors">Home</a>
-                <span>/</span>
-                <a href="/shop" class="hover:text-primary transition-colors">Shop</a>
-                <% if (data.product.category) { %>
-                    <span>/</span>
-                    <a href="/shop?category=<%= data.product.category.slug %>" class="hover:text-primary transition-colors"><%= data.product.category.name %></a>
-                <% } %>
-                <span>/</span>
-                <span class="text-base-content/90 font-semibold truncate"><%= data.product.name %></span>
+            
+            <!-- DaisyUI Breadcrumbs -->
+            <div class="breadcrumbs text-xs mb-6">
+                <ul>
+                    <li><a href="/" class="hover:text-primary">Home</a></li>
+                    <li><a href="/shop" class="hover:text-primary">Shop</a></li>
+                    <% if (data.product.category) { %>
+                        <li><a href="/shop?category=<%= data.product.category.slug %>" class="hover:text-primary"><%= data.product.category.name %></a></li>
+                    <% } %>
+                    <li class="font-bold text-base-content truncate"><%= data.product.name %></li>
+                </ul>
             </div>
 
             <!-- Main Product Card -->
-            <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 lg:p-10 shadow-sm">
+            <div class="card bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 lg:p-10 shadow-sm">
                 <div class="flex flex-col lg:flex-row gap-12">
                     <!-- Image Gallery -->
                     <div class="w-full lg:w-1/2" x-data="{ activeImage: '<%= data.product.images[0] %>' }">
-                        <div class="border border-slate-200 dark:border-slate-800 bg-base-200/50 aspect-[4/5] rounded-2xl relative overflow-hidden shadow-sm">
+                        <figure class="border border-slate-200 dark:border-slate-800 bg-base-200/50 aspect-[4/5] rounded-2xl relative overflow-hidden shadow-sm">
                             <img :src="activeImage" alt="<%= data.product.name %>" class="w-full h-full object-cover">
-                        </div>
+                        </figure>
                         <% if (data.product.images && data.product.images.length > 1) { %>
                             <div class="flex gap-3 mt-4 overflow-x-auto pb-2">
                                 <% data.product.images.forEach(img => { %>
@@ -40,7 +40,7 @@
                     <div class="w-full lg:w-1/2 flex flex-col justify-between">
                         <div>
                             <% if (data.product.category) { %>
-                                <a href="/shop?category=<%= data.product.category.slug %>" class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-4 hover:bg-primary/20 transition-colors">
+                                <a href="/shop?category=<%= data.product.category.slug %>" class="badge badge-primary font-bold text-xs uppercase tracking-wider mb-4 p-3 shadow-xs">
                                     <%= data.product.category.name %>
                                 </a>
                             <% } %>
@@ -49,14 +49,14 @@
                                 <%= data.product.name %>
                             </h1>
 
-                            <!-- Rating Summary Pill -->
+                            <!-- DaisyUI Rating Summary -->
                             <div class="flex items-center gap-3 mb-6">
-                                <div class="flex text-amber-400 text-sm">
+                                <div class="rating rating-sm">
                                     <% for (let i = 1; i <= 5; i++) { %>
-                                        <%= i <= Math.round(data.averageRating || 5) ? '★' : '☆' %>
+                                        <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= Math.round(data.averageRating || 5) ? 'checked' : '' %> disabled />
                                     <% } %>
                                 </div>
-                                <span class="text-xs font-semibold text-base-content/70">
+                                <span class="text-xs font-bold text-base-content/70">
                                     <%= data.averageRating || '5.0' %> (<%= data.reviews ? data.reviews.length : 0 %> reviews)
                                 </span>
                             </div>
@@ -72,7 +72,7 @@
                             <div class="flex items-baseline gap-4 mb-6">
                                 <span class="text-3xl font-extrabold text-base-content"><%= displayPrice %></span>
                                 <% if (availableVariants.length > 0) { %>
-                                    <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full">In Stock</span>
+                                    <span class="badge badge-success text-success-content font-bold text-xs">In Stock</span>
                                 <% } %>
                             </div>
 
@@ -89,7 +89,7 @@
                             <% } %>
                         </div>
 
-                        <!-- Add to Cart / Actions Form -->
+                        <!-- Add to Cart Form -->
                         <form action="/cart" method="POST" class="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                             <input type="hidden" name="action" value="add">
                             
@@ -119,13 +119,13 @@
                                 <% } %>
 
                                 <div class="flex flex-col sm:flex-row gap-4 items-end">
-                                    <!-- Quantity Stepper -->
+                                    <!-- DaisyUI Join Quantity Modifier -->
                                     <div class="space-y-2 w-full sm:w-36">
                                         <label for="quantity" class="text-xs font-bold uppercase tracking-wider text-base-content/70">Quantity</label>
-                                        <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-base-100">
-                                            <button type="button" onclick="if(parseInt(this.nextElementSibling.value) > 1) this.nextElementSibling.value = parseInt(this.nextElementSibling.value) - 1" class="px-3 py-2 text-base-content/70 hover:bg-base-200 font-bold transition-colors">-</button>
-                                            <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-full text-center font-bold text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none py-2">
-                                            <button type="button" onclick="this.previousElementSibling.value = parseInt(this.previousElementSibling.value) + 1" class="px-3 py-2 text-base-content/70 hover:bg-base-200 font-bold transition-colors">+</button>
+                                        <div class="join border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden w-full">
+                                            <button type="button" onclick="if(parseInt(this.nextElementSibling.value) > 1) this.nextElementSibling.value = parseInt(this.nextElementSibling.value) - 1" class="btn btn-sm btn-ghost join-item font-bold px-3">-</button>
+                                            <input type="number" name="quantity" id="quantity" value="1" min="1" class="join-item w-full text-center font-bold text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none py-1">
+                                            <button type="button" onclick="this.previousElementSibling.value = parseInt(this.previousElementSibling.value) + 1" class="btn btn-sm btn-ghost join-item font-bold px-3">+</button>
                                         </div>
                                     </div>
 
@@ -135,7 +135,7 @@
                                     </button>
                                 </div>
                             <% } else { %>
-                                <p class="text-lg font-bold text-error">Currently Out of Stock</p>
+                                <div class="alert alert-error text-sm font-bold">Currently Out of Stock</div>
                             <% } %>
                         </form>
                     </div>
@@ -152,9 +152,9 @@
                                 <div class="text-5xl font-extrabold text-base-content mb-2">
                                     <%= data.averageRating || '0' %>
                                 </div>
-                                <div class="flex justify-center text-amber-400 text-2xl mb-2">
+                                <div class="rating rating-md justify-center mb-2">
                                     <% for (let i = 1; i <= 5; i++) { %>
-                                        <%= i <= Math.round(data.averageRating) ? '★' : '☆' %>
+                                        <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= Math.round(data.averageRating || 5) ? 'checked' : '' %> disabled />
                                     <% } %>
                                 </div>
                                 <div class="text-xs font-semibold text-base-content/60">
@@ -162,7 +162,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Breakdown of stars -->
+                            <!-- DaisyUI Progress Star Breakdown -->
                             <div class="space-y-2">
                                 <% for (let ratingVal = 5; ratingVal >= 1; ratingVal--) { %>
                                     <% 
@@ -171,17 +171,15 @@
                                     %>
                                     <div class="flex items-center gap-3 text-xs font-medium">
                                         <span class="w-10 text-right"><%= ratingVal %> star</span>
-                                        <div class="flex-1 h-3 bg-base-200 rounded-full overflow-hidden">
-                                            <div class="h-full bg-amber-400 rounded-full transition-all" :style="{ width: '<%= ratingPct %>' + '%' }"></div>
-                                        </div>
+                                        <progress class="progress progress-warning flex-1 h-2" value="<%= ratingPct %>" max="100"></progress>
                                         <span class="w-8 text-left text-base-content/50"><%= ratingPct %>%</span>
                                     </div>
                                 <% } %>
                             </div>
                             
                             <% if (!data.user) { %>
-                                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center bg-base-200/30">
-                                    <p class="font-semibold text-sm mb-3 text-base-content">Purchased this item?</p>
+                                <div class="card border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center bg-base-200/30 space-y-3">
+                                    <p class="font-semibold text-sm text-base-content">Purchased this item?</p>
                                     <a href="/login" class="btn btn-outline btn-primary btn-sm rounded-xl font-semibold w-full">
                                         Sign in to write a review
                                     </a>
@@ -193,11 +191,11 @@
                         <div class="w-full lg:w-2/3 space-y-6">
                             <% if (data.user) { %>
                                 <% if (data.userReview) { %>
-                                    <div x-show="!editMode" class="border border-slate-200 dark:border-slate-800 rounded-2xl p-6 bg-base-200/30">
-                                        <h3 class="text-lg font-bold text-base-content mb-1">Your Review</h3>
-                                        <p class="text-xs text-base-content/60 mb-4">You have already submitted a review for this card.</p>
+                                    <div x-show="!editMode" class="border border-slate-200 dark:border-slate-800 rounded-2xl p-6 bg-base-200/30 space-y-3">
+                                        <h3 class="text-lg font-bold text-base-content">Your Review</h3>
+                                        <p class="text-xs text-base-content/60">You have already submitted a review for this card.</p>
                                         
-                                        <div class="flex gap-3">
+                                        <div class="flex gap-3 pt-1">
                                             <button @click="editMode = true" class="btn btn-primary btn-sm rounded-xl font-semibold">
                                                 Edit Review
                                             </button>
@@ -213,8 +211,8 @@
                                 <% } %>
 
                                 <!-- Form to submit/edit a review -->
-                                <div x-show="!<%= !!data.userReview %> || editMode" id="review_form_container" class="border border-slate-200 dark:border-slate-800 rounded-2xl p-6 bg-base-200/40 space-y-4">
-                                    <h3 class="text-lg font-bold text-base-content">
+                                <div x-show="!<%= !!data.userReview %> || editMode" id="review_form_container" class="card border border-slate-200 dark:border-slate-800 rounded-2xl p-6 bg-base-200/40 space-y-4">
+                                    <h3 class="card-title text-lg font-bold text-base-content">
                                         <%= data.userReview ? 'Edit Your Review' : 'Write a Review' %>
                                     </h3>
                                     
@@ -234,12 +232,10 @@
                                         
                                         <div class="space-y-1">
                                             <label class="text-xs font-bold uppercase tracking-wider text-base-content/70">Rating</label>
-                                            <div class="flex gap-1 text-2xl" x-data="{ selectedRating: <%= data.userReview ? data.userReview.rating : 5 %> }">
+                                            <div class="rating rating-md" x-data="{ selectedRating: <%= data.userReview ? data.userReview.rating : 5 %> }">
                                                 <input type="hidden" name="rating" :value="selectedRating">
                                                 <template x-for="star in 5">
-                                                    <button type="button" @click="selectedRating = star" class="focus:outline-none transition-colors" :class="star <= selectedRating ? 'text-amber-400' : 'text-base-content/20'">
-                                                        ★
-                                                    </button>
+                                                    <input type="radio" name="rating_stars" class="mask mask-star-2 bg-amber-400 cursor-pointer" @click="selectedRating = star" :checked="star === selectedRating" />
                                                 </template>
                                             </div>
                                         </div>
@@ -254,7 +250,7 @@
                                             <textarea id="review_body" name="body" required rows="3" placeholder="What did you like or dislike about this product?" class="textarea textarea-bordered w-full rounded-xl bg-base-100 text-sm font-medium focus:ring-1 focus:ring-primary"><%= data.userReview ? data.userReview.body : '' %></textarea>
                                         </div>
                                         
-                                        <div class="flex gap-3 pt-2">
+                                        <div class="card-actions pt-2">
                                             <button type="submit" class="btn btn-primary btn-sm rounded-xl font-semibold px-6">
                                                 <%= data.userReview ? 'Update Review' : 'Submit Review' %>
                                             </button>
@@ -268,16 +264,16 @@
                                 </div>
                             <% } %>
 
-                            <!-- Review list -->
+                            <!-- Review List -->
                             <div class="space-y-4">
                                 <% if (data.reviews && data.reviews.length > 0) { %>
                                     <% data.reviews.forEach(review => { %>
-                                        <div class="border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 bg-base-100 shadow-sm space-y-2">
+                                        <div class="card border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 bg-base-100 shadow-sm space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center gap-2">
-                                                    <div class="flex text-amber-400 text-sm">
+                                                    <div class="rating rating-xs">
                                                         <% for (let i = 1; i <= 5; i++) { %>
-                                                            <%= i <= review.rating ? '★' : '☆' %>
+                                                            <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= review.rating ? 'checked' : '' %> disabled />
                                                         <% } %>
                                                     </div>
                                                     <h4 class="font-bold text-sm text-base-content"><%= review.title %></h4>
@@ -289,16 +285,16 @@
                                                 <%= review.body %>
                                             </p>
                                             
-                                            <div class="flex items-center justify-between text-xs text-base-content/60 pt-2 border-t border-slate-100 dark:border-slate-800">
-                                                <span class="font-medium">By <strong class="text-base-content"><%= review.userName %></strong></span>
+                                            <div class="card-actions items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+                                                <span class="text-xs font-medium text-base-content/60">By <strong class="text-base-content"><%= review.userName %></strong></span>
                                                 <% if (review.isVerified) { %>
-                                                    <span class="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">Verified Purchase</span>
+                                                    <span class="badge badge-success text-success-content font-bold text-[10px]">Verified Purchase</span>
                                                 <% } %>
                                             </div>
                                         </div>
                                     <% }); %>
                                 <% } else { %>
-                                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center text-sm font-medium text-base-content/60">
+                                    <div class="alert alert-info rounded-2xl p-8 text-center text-sm font-medium">
                                         No reviews yet. Be the first to share your thoughts!
                                     </div>
                                 <% } %>
@@ -310,10 +306,12 @@
         </div>
     <% } else { %>
         <div class="container mx-auto max-w-xl px-4 py-24 text-center">
-            <div class="bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 shadow-sm">
-                <h1 class="text-3xl font-bold text-base-content mb-3">Product Not Found</h1>
-                <p class="text-sm text-base-content/60 mb-6">The product you requested doesn't exist or has been removed.</p>
-                <a href="/shop" class="btn btn-primary rounded-xl font-semibold px-6">Return to Shop Catalog</a>
+            <div class="card bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 shadow-sm space-y-4">
+                <h1 class="text-3xl font-bold text-base-content">Product Not Found</h1>
+                <p class="text-sm text-base-content/60">The product you requested doesn't exist or has been removed.</p>
+                <div class="card-actions justify-center">
+                    <a href="/shop" class="btn btn-primary rounded-xl font-semibold px-6">Return to Shop Catalog</a>
+                </div>
             </div>
         </div>
     <% } %>

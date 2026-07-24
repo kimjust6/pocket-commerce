@@ -1,5 +1,15 @@
 <div class="min-h-screen bg-base-100 py-12">
     <div class="container mx-auto max-w-7xl px-4 md:px-8">
+        
+        <!-- DaisyUI Breadcrumbs -->
+        <div class="breadcrumbs text-xs mb-4">
+            <ul>
+                <li><a href="/" class="hover:text-primary">Home</a></li>
+                <li><a href="/shop" class="hover:text-primary">Shop</a></li>
+                <li class="font-bold text-base-content">Cart</li>
+            </ul>
+        </div>
+
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-6 border-b border-slate-200 dark:border-slate-800">
             <div>
@@ -21,20 +31,22 @@
         </div>
 
         <% if (!data.cartItems || data.cartItems.length === 0) { %>
-            <!-- Empty Cart State -->
-            <div class="bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center max-w-xl mx-auto my-12 shadow-sm">
-                <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6">
+            <!-- DaisyUI Empty Cart Alert Card -->
+            <div class="card bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 text-center max-w-xl mx-auto my-12 shadow-sm space-y-4">
+                <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </div>
-                <h2 class="text-2xl font-bold text-base-content mb-2">Your Shopping Cart is Empty</h2>
-                <p class="text-sm text-base-content/60 mb-8 max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-base-content">Your Shopping Cart is Empty</h2>
+                <p class="text-xs text-base-content/60 max-w-md mx-auto">
                     Looks like you haven't added any cards or products yet. Explore our store collection!
                 </p>
-                <a href="/shop" class="btn btn-primary rounded-xl font-semibold px-8 shadow-sm">
-                    Start Shopping
-                </a>
+                <div class="card-actions justify-center pt-2">
+                    <a href="/shop" class="btn btn-primary rounded-xl font-semibold px-8 shadow-sm">
+                        Start Shopping →
+                    </a>
+                </div>
             </div>
         <% } else { %>
             <!-- Grid Layout -->
@@ -43,15 +55,15 @@
                 <!-- Left: Cart Items List (2/3 width) -->
                 <div class="lg:col-span-2 space-y-4">
                     <% data.cartItems.forEach(item => { %>
-                        <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row gap-5 items-start sm:items-center">
+                        <div class="card card-side bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex-col sm:flex-row gap-5 items-start sm:items-center">
                             <!-- Product Image -->
-                            <div class="w-24 h-24 rounded-xl border border-slate-200 dark:border-slate-800 bg-base-200 flex-shrink-0 overflow-hidden">
+                            <figure class="w-24 h-24 rounded-xl border border-slate-200 dark:border-slate-800 bg-base-200 flex-shrink-0 overflow-hidden my-auto">
                                 <img src="<%= item.image %>" alt="<%= item.productName %>" class="w-full h-full object-cover">
-                            </div>
+                            </figure>
 
                             <!-- Item Info -->
-                            <div class="flex-1 min-w-0 space-y-1">
-                                <a href="/shop/card/<%= item.productSlug.replace(/\s+/g, '-') %>/<%= item.productId %>" class="text-base font-bold text-base-content hover:text-primary transition-colors line-clamp-1">
+                            <div class="card-body p-0 flex-1 min-w-0 space-y-1">
+                                <a href="/shop/card/<%= item.productSlug.replace(/\s+/g, '-') %>/<%= item.productId %>" class="card-title text-base font-bold text-base-content hover:text-primary transition-colors line-clamp-1">
                                     <%= item.productName %>
                                 </a>
                                 
@@ -64,23 +76,25 @@
                                         }
                                     }
                                 %>
-                                <p class="text-xs text-base-content/60 font-medium">
-                                    Style: <span class="font-semibold text-base-content/80"><%= variantLabel %></span>
-                                </p>
+                                <div>
+                                    <span class="badge badge-sm badge-outline badge-primary font-semibold text-[10px]">
+                                        <%= variantLabel %>
+                                    </span>
+                                </div>
                                 <p class="text-sm font-semibold text-base-content pt-1">
                                     $<%= item.price.toFixed(2) %> each
                                 </p>
                             </div>
 
-                            <!-- Quantity Controls & Subtotal -->
+                            <!-- DaisyUI Join Quantity Modifier & Subtotal -->
                             <div class="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100 dark:border-slate-800">
-                                <form action="/cart" method="POST" class="inline-flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-base-100">
+                                <form action="/cart" method="POST" class="join border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                                     <input type="hidden" name="action" value="update">
                                     <input type="hidden" name="item_id" value="<%= item.id %>">
                                     
-                                    <button type="submit" name="quantity" value="<%= item.quantity - 1 %>" class="px-3 py-1.5 text-base-content/70 hover:bg-base-200 font-bold transition-colors text-sm" aria-label="Decrease quantity">-</button>
-                                    <span class="w-8 text-center font-bold text-xs text-base-content"><%= item.quantity %></span>
-                                    <button type="submit" name="quantity" value="<%= item.quantity + 1 %>" class="px-3 py-1.5 text-base-content/70 hover:bg-base-200 font-bold transition-colors text-sm" aria-label="Increase quantity" <%= item.quantity >= item.stock ? 'disabled' : '' %>>+</button>
+                                    <button type="submit" name="quantity" value="<%= item.quantity - 1 %>" class="btn btn-xs btn-ghost join-item px-3" aria-label="Decrease quantity">-</button>
+                                    <span class="join-item px-3 py-1 text-xs font-extrabold flex items-center bg-base-100"><%= item.quantity %></span>
+                                    <button type="submit" name="quantity" value="<%= item.quantity + 1 %>" class="btn btn-xs btn-ghost join-item px-3" aria-label="Increase quantity" <%= item.quantity >= item.stock ? 'disabled' : '' %>>+</button>
                                 </form>
 
                                 <div class="text-right">
@@ -93,10 +107,8 @@
                                 <form action="/cart" method="POST">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="item_id" value="<%= item.id %>">
-                                    <button type="submit" class="p-1.5 rounded-lg text-base-content/40 hover:text-error hover:bg-error/10 transition-colors" aria-label="Delete item">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                    <button type="submit" class="btn btn-ghost btn-circle btn-xs text-error" aria-label="Delete item">
+                                        ✕
                                     </button>
                                 </form>
                             </div>
@@ -112,28 +124,26 @@
                     const progressToFree = Math.min((data.totalPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);
                     const amountNeededForFree = FREE_SHIPPING_THRESHOLD - data.totalPrice;
                 %>
-                <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-sm sticky top-24 space-y-6">
-                    <h3 class="text-xl font-bold text-base-content pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="card bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-sm sticky top-24 space-y-6">
+                    <h3 class="card-title text-xl font-bold text-base-content pb-3 border-b border-slate-100 dark:border-slate-800">
                         Order Summary
                     </h3>
 
-                    <!-- Free Shipping Bar -->
+                    <!-- DaisyUI Progress Bar for Free Shipping -->
                     <div class="bg-base-200/50 rounded-2xl p-4 space-y-2">
                         <div class="flex justify-between items-center text-xs font-semibold">
                             <span>
                                 <% if (shippingCost === 0) { %>
-                                    🎉 Free Express Shipping Unlocked!
+                                    Free Express Shipping Unlocked!
                                 <% } else { %>
-                                    🚚 Shipping Progress
+                                    Shipping Progress
                                 <% } %>
                             </span>
                             <% if (shippingCost > 0) { %>
-                                <span class="text-primary">$<%= amountNeededForFree.toFixed(2) %> away</span>
+                                <span class="text-primary font-bold">$<%= amountNeededForFree.toFixed(2) %> away</span>
                             <% } %>
                         </div>
-                        <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                            <div class="bg-primary h-full transition-all duration-300" style="width: <%= progressToFree %>%"></div>
-                        </div>
+                        <progress class="progress progress-primary w-full h-2" value="<%= progressToFree %>" max="100"></progress>
                     </div>
 
                     <!-- Breakdown -->
@@ -146,10 +156,6 @@
                             <span>Estimated Shipping</span>
                             <span class="font-bold text-base-content"><%= shippingCost === 0 ? 'FREE' : '$' + shippingCost.toFixed(2) %></span>
                         </div>
-                        <div class="flex justify-between text-base-content/80">
-                            <span>Estimated Taxes</span>
-                            <span class="font-bold text-base-content">$0.00</span>
-                        </div>
                         <div class="divider my-1"></div>
                         <div class="flex justify-between text-base font-extrabold text-base-content">
                             <span>Total</span>
@@ -157,8 +163,8 @@
                         </div>
                     </div>
 
-                    <!-- Checkout Actions -->
-                    <div class="space-y-3 pt-2">
+                    <!-- Actions -->
+                    <div class="card-actions flex-col gap-2 pt-2">
                         <a href="/checkout" class="btn btn-primary btn-lg rounded-xl shadow-md w-full font-bold">
                             Proceed to Checkout →
                         </a>

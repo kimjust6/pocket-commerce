@@ -1,14 +1,15 @@
 <div class="min-h-screen bg-base-100">
     <!-- Header Hero Banner -->
-    <div class="bg-slate-900 text-white py-12 md:py-16">
-        <div class="container mx-auto max-w-7xl px-4 md:px-8">
+    <div class="bg-slate-900 text-white py-12 md:py-16 relative overflow-hidden">
+        <div class="container mx-auto max-w-7xl px-4 md:px-8 relative z-10">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                    <!-- Breadcrumbs -->
-                    <div class="text-xs text-slate-400 font-medium mb-2 flex items-center gap-2">
-                        <a href="/" class="hover:text-white transition-colors">Home</a>
-                        <span>/</span>
-                        <span class="text-slate-200">Shop Catalog</span>
+                    <!-- DaisyUI Breadcrumbs -->
+                    <div class="breadcrumbs text-xs text-slate-400 font-medium mb-2">
+                        <ul>
+                            <li><a href="/" class="hover:text-white">Home</a></li>
+                            <li class="font-bold text-slate-200">Shop Catalog</li>
+                        </ul>
                     </div>
                     <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">
                         Product Catalog
@@ -24,12 +25,11 @@
     <!-- Catalog Content -->
     <div class="container mx-auto max-w-7xl px-4 md:px-8 py-12">
         <div class="flex flex-col lg:flex-row gap-10">
-            <!-- Sidebar Filters -->
+            <!-- Sidebar Filters (DaisyUI Card) -->
             <div class="w-full lg:w-1/4 flex-shrink-0">
-                <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm p-6 sticky top-24" x-data="{ open: window.innerWidth >= 1024 }">
-                    <!-- Mobile Toggle Header -->
+                <div class="card bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sticky top-24" x-data="{ open: window.innerWidth >= 1024 }">
                     <div class="flex justify-between items-center cursor-pointer lg:cursor-default pb-4 lg:pb-0" @click="if(window.innerWidth < 1024) open = !open">
-                        <h2 class="text-lg font-bold text-base-content flex items-center gap-2">
+                        <h2 class="card-title text-base font-bold text-base-content flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                             </svg>
@@ -40,7 +40,6 @@
                         </svg>
                     </div>
                     
-                    <!-- Categories & Filters List Form -->
                     <% const filters = data.filters || {}; %>
                     <form action="/shop" method="GET" x-show="open" x-transition.opacity class="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800 lg:border-t-0 lg:pt-4">
                         <% if (data.selectedCategory) { %>
@@ -49,17 +48,17 @@
 
                         <!-- Categories Section -->
                         <div>
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-base-content/50 mb-3">Categories</h3>
-                            <ul class="space-y-1.5 text-sm font-medium">
+                            <span class="badge badge-primary badge-outline text-[10px] font-bold uppercase tracking-wider mb-2">Categories</span>
+                            <ul class="menu menu-sm p-0 space-y-1 font-medium">
                                 <li>
-                                    <a href="/shop" data-no-link-fix class="flex items-center justify-between px-3 py-2 rounded-xl transition-colors <%= !data.selectedCategory ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/80 hover:bg-base-200' %>">
+                                    <a href="/shop" data-no-link-fix class="rounded-xl <%= !data.selectedCategory ? 'active font-bold' : '' %>">
                                         <span>All Categories</span>
                                     </a>
                                 </li>
                                 <% if (data.categories && data.categories.length > 0) { %>
                                     <% data.categories.forEach(category => { %>
                                         <li>
-                                            <a href="/shop?category=<%= category.slug %>" class="flex items-center justify-between px-3 py-2 rounded-xl transition-colors <%= data.selectedCategory === category.slug ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/80 hover:bg-base-200' %>">
+                                            <a href="/shop?category=<%= category.slug %>" class="rounded-xl <%= data.selectedCategory === category.slug ? 'active font-bold' : '' %>">
                                                 <span><%= category.name %></span>
                                             </a>
                                         </li>
@@ -70,56 +69,45 @@
 
                         <div class="divider my-1"></div>
 
-                        <!-- Price Range Accordion -->
+                        <!-- Price Range Input Group -->
                         <div x-data="{ priceOpen: true }">
-                            <button type="button" @click="priceOpen = !priceOpen" class="w-full flex justify-between items-center text-xs font-bold uppercase tracking-wider text-base-content/50 mb-3">
-                                <span>Price Range (CAD$)</span>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': priceOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div x-show="priceOpen" class="flex gap-2 items-center">
-                                <input type="number" name="min_price" placeholder="Min" value="<%= filters.minPrice || '' %>" class="input input-sm input-bordered w-full rounded-lg bg-base-100 text-xs font-medium focus:ring-1 focus:ring-primary">
-                                <span class="text-base-content/40 text-xs">-</span>
-                                <input type="number" name="max_price" placeholder="Max" value="<%= filters.maxPrice || '' %>" class="input input-sm input-bordered w-full rounded-lg bg-base-100 text-xs font-medium focus:ring-1 focus:ring-primary">
-                                <button type="submit" class="btn btn-primary btn-sm rounded-lg text-xs font-semibold px-3">Go</button>
+                            <span class="badge badge-secondary badge-outline text-[10px] font-bold uppercase tracking-wider mb-2">Price Range (CAD$)</span>
+                            <div class="join w-full pt-1">
+                                <input type="number" name="min_price" placeholder="Min" value="<%= filters.minPrice || '' %>" class="input input-sm input-bordered join-item w-full bg-base-100 text-xs font-medium">
+                                <input type="number" name="max_price" placeholder="Max" value="<%= filters.maxPrice || '' %>" class="input input-sm input-bordered join-item w-full bg-base-100 text-xs font-medium">
+                                <button type="submit" class="btn btn-primary btn-sm join-item text-xs font-bold">Go</button>
                             </div>
                         </div>
 
                         <div class="divider my-1"></div>
 
                         <!-- Availability Options -->
-                        <div x-data="{ availOpen: true }">
-                            <button type="button" @click="availOpen = !availOpen" class="w-full flex justify-between items-center text-xs font-bold uppercase tracking-wider text-base-content/50 mb-3">
-                                <span>Stock Availability</span>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': availOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div x-show="availOpen" class="space-y-2">
-                                <label class="flex items-center gap-2 cursor-pointer text-xs font-medium text-base-content/80 hover:text-base-content">
-                                    <input type="checkbox" name="availability" value="in_stock" <%= filters.availability === 'in_stock' ? 'checked' : '' %> onchange="if(this.checked) { const other = this.form.querySelector('input[value=out_of_stock]'); if(other) other.checked = false; }; this.form.submit();" class="checkbox checkbox-xs checkbox-primary rounded">
+                        <div>
+                            <span class="badge badge-accent badge-outline text-[10px] font-bold uppercase tracking-wider mb-2">Stock</span>
+                            <div class="space-y-2 pt-1">
+                                <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-base-content/80">
+                                    <input type="checkbox" name="availability" value="in_stock" <%= filters.availability === 'in_stock' ? 'checked' : '' %> onchange="if(this.checked) { const other = this.form.querySelector('input[value=out_of_stock]'); if(other) other.checked = false; }; this.form.submit();" class="checkbox checkbox-xs checkbox-primary">
                                     <span>In Stock Only</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs font-medium text-base-content/80 hover:text-base-content">
-                                    <input type="checkbox" name="availability" value="out_of_stock" <%= filters.availability === 'out_of_stock' ? 'checked' : '' %> onchange="if(this.checked) { const other = this.form.querySelector('input[value=in_stock]'); if(other) other.checked = false; }; this.form.submit();" class="checkbox checkbox-xs checkbox-primary rounded">
+                                <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-base-content/80">
+                                    <input type="checkbox" name="availability" value="out_of_stock" <%= filters.availability === 'out_of_stock' ? 'checked' : '' %> onchange="if(this.checked) { const other = this.form.querySelector('input[value=in_stock]'); if(other) other.checked = false; }; this.form.submit();" class="checkbox checkbox-xs checkbox-primary">
                                     <span>Out of Stock</span>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Sale and Deals -->
+                        <!-- Sale Deals Checkbox -->
                         <div class="pt-2">
-                            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-amber-600 dark:text-amber-400">
-                                <input type="checkbox" name="on_sale" value="1" <%= filters.onSale == '1' ? 'checked' : '' %> onchange="this.form.submit()" class="checkbox checkbox-xs checkbox-warning rounded">
-                                <span>Show On Sale Deals Only</span>
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-extrabold text-rose-500">
+                                <input type="checkbox" name="on_sale" value="1" <%= filters.onSale == '1' ? 'checked' : '' %> onchange="this.form.submit()" class="checkbox checkbox-xs checkbox-error">
+                                <span>On Sale Deals Only</span>
                             </label>
                         </div>
 
-                        <!-- Clear Filters Button -->
+                        <!-- Reset Filters -->
                         <% if (filters.minPrice || filters.maxPrice || filters.availability || filters.onSale) { %>
                             <div class="pt-2">
-                                <a href="/shop<%= data.selectedCategory ? '?category=' + data.selectedCategory : '' %>" data-no-link-fix class="btn btn-outline btn-error btn-xs w-full rounded-lg text-xs font-medium py-1.5 h-auto">
+                                <a href="/shop<%= data.selectedCategory ? '?category=' + data.selectedCategory : '' %>" data-no-link-fix class="btn btn-outline btn-error btn-xs w-full rounded-xl">
                                     Reset Filters
                                 </a>
                             </div>
@@ -133,36 +121,36 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <% if (data.products && data.products.length > 0) { %>
                         <% data.products.forEach(product => { %>
+                            <!-- DaisyUI Product Card -->
                             <a href="/shop/card/<%= product.slug.replace(/\s+/g, '-') %>/<%= product.id %>" class="block group h-full">
-                                <div class="store-card h-full" x-data="{ showSecond: false }" @mouseenter="showSecond = true" @mouseleave="showSecond = false">
-                                    <div class="aspect-[4/5] bg-base-200 relative overflow-hidden">
+                                <div class="card card-compact bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full" x-data="{ showSecond: false }" @mouseenter="showSecond = true" @mouseleave="showSecond = false">
+                                    <figure class="aspect-[4/5] bg-base-200 relative overflow-hidden">
                                         <% if (product.images && product.images.length > 1) { %>
                                             <img src="<%= product.images[0] %>" alt="<%= product.name %>" 
-                                                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0"
+                                                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-108 absolute inset-0"
                                                  :class="showSecond ? 'opacity-0' : 'opacity-100'">
                                             <img src="<%= product.images[1] %>" alt="<%= product.name %>" 
-                                                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0 opacity-0"
+                                                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-108 absolute inset-0 opacity-0"
                                                  :class="showSecond ? 'opacity-100' : 'opacity-0'">
                                         <% } else { %>
-                                            <img src="<%= product.image %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                            <img src="<%= product.image %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-300">
                                         <% } %>
                                         <% if (product.category) { %>
-                                            <span class="absolute top-3 right-3 bg-base-100/90 backdrop-blur-sm border border-slate-200 dark:border-slate-800 text-base-content text-[11px] font-semibold px-2.5 py-0.5 rounded-full shadow-sm">
+                                            <span class="badge badge-primary absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 shadow-sm">
                                                 <%= product.category.name %>
                                             </span>
                                         <% } %>
-                                    </div>
-                                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                                        <div>
-                                            <h3 class="font-bold text-base text-base-content group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                                                <%= product.name %>
-                                            </h3>
-                                        </div>
-                                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
-                                            <span class="text-lg font-bold text-base-content">
+                                    </figure>
+
+                                    <div class="card-body p-4 flex-1 flex flex-col justify-between space-y-3">
+                                        <h3 class="card-title font-bold text-sm text-base-content group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                            <%= product.name %>
+                                        </h3>
+                                        <div class="card-actions justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
+                                            <span class="text-base font-extrabold text-base-content">
                                                 <%= product.price !== null ? '$' + product.price.toFixed(2) : 'Sold Out' %>
                                             </span>
-                                            <span class="btn btn-primary btn-xs rounded-lg font-semibold px-3 group-hover:scale-105 transition-transform">
+                                            <span class="btn btn-primary btn-xs rounded-xl font-bold px-3">
                                                 Details →
                                             </span>
                                         </div>
@@ -171,13 +159,17 @@
                             </a>
                         <% }); %>
                     <% } else { %>
-                        <div class="col-span-full border border-slate-200 dark:border-slate-800 bg-base-100 rounded-3xl p-12 text-center shadow-sm">
-                            <div class="w-16 h-16 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
-                                🔍
+                        <div class="col-span-full card bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 text-center shadow-sm space-y-4">
+                            <div class="w-16 h-16 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
                             </div>
-                            <h3 class="text-xl font-bold text-base-content mb-2">No Matching Products Found</h3>
-                            <p class="text-sm text-base-content/60 max-w-sm mx-auto mb-6">Try broadening your search query or resetting active filter conditions.</p>
-                            <a href="/shop" data-no-link-fix class="btn btn-primary rounded-xl font-semibold px-6">View All Products</a>
+                            <h3 class="text-xl font-bold text-base-content">No Matching Products Found</h3>
+                            <p class="text-xs text-base-content/60 max-w-sm mx-auto">Try broadening your search query or resetting active filter conditions.</p>
+                            <div class="card-actions justify-center pt-2">
+                                <a href="/shop" data-no-link-fix class="btn btn-primary rounded-xl font-semibold px-6">View All Products</a>
+                            </div>
                         </div>
                     <% } %>
                 </div>
