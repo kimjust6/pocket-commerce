@@ -1,0 +1,67 @@
+diff --git a/node_modules/@samkirkland/ftp-deploy/src/localFiles.ts b/node_modules/@samkirkland/ftp-deploy/src/localFiles.ts
+index 9258180..7ae57db 100644
+--- a/node_modules/@samkirkland/ftp-deploy/src/localFiles.ts
++++ b/node_modules/@samkirkland/ftp-deploy/src/localFiles.ts
+@@ -5,7 +5,7 @@ import { lstatSync } from "fs";
+ import { ILogger } from "./utilities";
+ 
+ export async function getLocalFiles(args: IFtpDeployArgumentsWithDefaults, logger: ILogger): Promise<IFileList> {
+-    const files = globSync(args['include'], {ignore: args['exclude'], cwd: args['local-dir'], });
++    const files = globSync(args['include'], {ignore: args['exclude'], cwd: args['local-dir'], posix: true });
+     logger.verbose(`Local files:`, JSON.stringify({files},null,2));
+ 
+     const records: Record[] = [];
+diff --git a/node_modules/@samkirkland/ftp-deploy/src/syncProvider.ts b/node_modules/@samkirkland/ftp-deploy/src/syncProvider.ts
+index 1de126b..c415dac 100644
+--- a/node_modules/@samkirkland/ftp-deploy/src/syncProvider.ts
++++ b/node_modules/@samkirkland/ftp-deploy/src/syncProvider.ts
+@@ -55,7 +55,7 @@ export class FTPSyncProvider implements ISyncProvider {
+     private getFileBreadcrumbs(fullPath: string): IFilePath {
+         // todo see if this regex will work for nonstandard folder names
+         // todo what happens if the path is relative to the root dir? (starts with /)
+-        const pathSplit = fullPath.split("/");
++        const pathSplit = fullPath.replace(/\\/g, "/").split("/");
+         const file = pathSplit?.pop() ?? ""; // get last item
+         const folders = pathSplit.filter(folderName => folderName != "");
+ 
+diff --git a/node_modules/@samkirkland/ftp-deploy/src/utilities.ts b/node_modules/@samkirkland/ftp-deploy/src/utilities.ts
+index 76d9b30..6653438 100644
+--- a/node_modules/@samkirkland/ftp-deploy/src/utilities.ts
++++ b/node_modules/@samkirkland/ftp-deploy/src/utilities.ts
+@@ -50,26 +50,18 @@ export function formatNumber(number: number): string {
+  * 
+  * @example retryRequest(logger, async () => await item());
+  */
+-export async function retryRequest<T>(logger: ILogger, callback: () => Promise<T>): Promise<T> {
+-    try {
+-        return await callback();
+-    }
+-    catch (e: any) {
+-        if (e.code >= 400 && e.code <= 499) {
+-            logger.standard("400 level error from server when performing action - retrying...");
+-            logger.standard(e);
+-
+-            if (e.code === ErrorCode.ConnectionClosed) {
+-                logger.all("Connection closed. This library does not currently handle reconnects");
+-                // await global.reconnect();
+-                // todo reset current working dir
++export async function retryRequest<T>(logger: ILogger, callback: () => Promise<T>, maxRetries = 5): Promise<T> {
++    let attempt = 0;
++    while (true) {
++        try {
++            return await callback();
++        } catch (e: any) {
++            attempt++;
++            if (attempt >= maxRetries) {
+                 throw e;
+             }
+-
+-            return await callback();
+-        }
+-        else {
+-            throw e;
++            logger.verbose(`Request failed (attempt ${attempt}/${maxRetries}): ${e?.message || e}. Retrying in 300ms...`);
++            await new Promise(resolve => setTimeout(resolve, 300));
+         }
+     }
+ }

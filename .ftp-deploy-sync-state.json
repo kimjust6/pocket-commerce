@@ -1,13 +1,17 @@
 {
     "description": "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action",
     "version": "1.0.0",
-    "generatedTime": 1785280297929,
+    "generatedTime": 1785282970033,
     "data": [
         {
             "type": "file",
             "name": "package.json",
-            "size": 1984,
-            "hash": "efa44eec3fb03d7a92e217d68ec461ff75bc42831261ca072bda4557a2ca4cd5"
+            "size": 2159,
+            "hash": "2207c4a2af744eb67cd2ea59bcc6eec90ab20aeeea37fd8f3491088bda826600"
+        },
+        {
+            "type": "folder",
+            "name": "patches"
         },
         {
             "type": "folder",
@@ -136,8 +140,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/app.css",
-            "size": 180664,
-            "hash": "b6370117f1334485afe5e6c2535a0251e2952c24b9d4502f3f2a59b5b490625f"
+            "size": 173492,
+            "hash": "8f64e10506befc04257517324db3d98ed7c65690c4ab4834209d8d524d4eed48"
         },
         {
             "type": "file",
@@ -484,6 +488,12 @@
             "name": "pb_hooks/lib/banano.js",
             "size": 2033,
             "hash": "7428865093d77e974781689c82b5d2b929a4a03d2627d3e64d5bb58c04b54a5a"
+        },
+        {
+            "type": "file",
+            "name": "patches/@samkirkland+ftp-deploy+1.2.4.patch",
+            "size": 3311,
+            "hash": "f988603e886e03c19c2a07b42c5a54e5f0f3b8592a8147659caa0c1a8e595ea5"
         }
     ]
 }
