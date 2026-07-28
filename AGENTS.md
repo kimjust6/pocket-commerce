@@ -154,3 +154,9 @@ PocketBase runs JavaScript hooks inside **GoJA** (a Go-based ECMAScript engine),
 - `npm run test`: Runs Vitest test suite (`vitest run`).
 - `npm run typegen`: Runs `scripts/typegen.mjs` to rebuild TypeScript types.
 - `npm run wsl`: Launches `npm run dev` inside a WSL environment with `.env` variables loaded.
+
+---
+
+## 9. Git & Commit Guidelines
+
+- **No Automatic Commits**: Never run `git commit` or commit changes on behalf of the user. Always leave git commits and staging for the user to review and execute explicitly.

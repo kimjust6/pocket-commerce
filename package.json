@@ -4,14 +4,17 @@
     "version": "0.1.0",
     "scripts": {
         "dev": "concurrently \"tailwindcss -i ./pb_hooks/pages/app.tailwind.css -o ./pb_hooks/pages/app.css --watch\" \"pocketbase serve --dir=pb_data --dev\"",
-        "wsl": "wsl bash -c \"set -a && source .env && set +a && npm run dev\"",
+        "wsl": "wsl.exe bash -c \"set -a && source .env && set +a && npm run dev\"",
         "start": "pocketbase serve --dir=pb_data --dev",
         "css": "tailwindcss -i ./pb_hooks/pages/app.tailwind.css -o ./pb_hooks/pages/app.css --watch",
-        "push": "phio deploy pocket-commerce",
-        "login": "phio login",
+        "push": "npx phio deploy",
+        "login": "npx phio login",
         "update": "pocketbase update",
         "test": "vitest run",
         "typegen": "node scripts/typegen.mjs"
+    },
+    "pockethost": {
+        "instanceName": "pocket-commerce"
     },
     "description": "Commerce web app.",
     "author": {
