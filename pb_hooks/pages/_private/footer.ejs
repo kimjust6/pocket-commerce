@@ -3,24 +3,36 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
             <!-- Brand Column -->
             <div class="lg:col-span-2 space-y-4">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-primary text-primary-content flex items-center justify-center font-bold text-base">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-pink-500 text-white flex items-center justify-center font-bold shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-white">Pocket Commerce</span>
+                    <span class="text-xl font-extrabold tracking-tight text-white">
+                        Pocket <span class="bg-gradient-to-r from-indigo-400 via-violet-300 to-pink-400 bg-clip-text text-transparent">Commerce</span>
+                    </span>
                 </div>
                 <p class="text-sm text-slate-400 max-w-sm leading-relaxed">
                     Premium quality greeting cards, gifts, and stationery delivered with speed and care for all your special occasions.
                 </p>
                 <!-- Newsletter Signup -->
-                <div class="pt-2">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Subscribe to our Newsletter</p>
-                    <form onsubmit="event.preventDefault(); alert('Thank you for subscribing!');" class="flex gap-2 max-w-sm">
-                        <input type="email" placeholder="Enter your email address" required class="input input-sm bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500 rounded-lg flex-1 text-xs focus:ring-1 focus:ring-primary focus:border-primary">
-                        <button type="submit" class="btn btn-primary btn-sm rounded-lg text-xs font-semibold px-4">Subscribe</button>
-                    </form>
+                <div class="pt-2" x-data="{ subscribed: false, email: '' }">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Subscribe to newsletter</p>
+                    <template x-if="!subscribed">
+                        <form @submit.prevent="if(email) subscribed = true" class="flex gap-2 max-w-sm">
+                            <input type="email" x-model="email" placeholder="Enter your email address" required class="input input-sm bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500 rounded-lg flex-1 text-xs focus:ring-1 focus:ring-primary focus:border-primary">
+                            <button type="submit" class="btn btn-primary btn-sm rounded-lg text-xs font-semibold px-4">Subscribe</button>
+                        </form>
+                    </template>
+                    <template x-if="subscribed">
+                        <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 rounded-lg p-2.5 max-w-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>Subscribed! Check your inbox for updates.</span>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -32,7 +44,7 @@
                     <li><a href="/shop?category=birthday" class="hover:text-white transition-colors">Birthday Cards</a></li>
                     <li><a href="/shop?category=thank-you" class="hover:text-white transition-colors">Thank You Notes</a></li>
                     <li><a href="/shop?category=anniversary" class="hover:text-white transition-colors">Anniversary</a></li>
-                    <li><a href="/shop?on_sale=1" class="hover:text-white transition-colors text-amber-400">Special Deals</a></li>
+                    <li><a href="/shop?on_sale=1" class="hover:text-white transition-colors text-amber-400 font-medium">Special Deals</a></li>
                 </ul>
             </div>
 
@@ -51,18 +63,31 @@
             <!-- Column 3: Trust & Info -->
             <div class="space-y-3">
                 <h4 class="text-sm font-semibold uppercase tracking-wider text-white">Why Shop With Us</h4>
-                <ul class="space-y-2 text-sm text-slate-400">
-                    <li class="flex items-center gap-2">
-                        <span>🚀</span> Express 2-Day Shipping
+                <ul class="space-y-2.5 text-sm text-slate-400">
+                    <li class="flex items-center gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1h2.586a1 1 0 00.707-.293l3.414-3.414a1 1 0 00.293-.707V11a1 1 0 00-1-1h-1m-6-4h5" />
+                        </svg>
+                        <span>Express 2-Day Shipping</span>
                     </li>
-                    <li class="flex items-center gap-2">
-                        <span>🔒</span> 256-Bit SSL Encrypted
+                    <li class="flex items-center gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <span>256-Bit SSL Encrypted</span>
                     </li>
-                    <li class="flex items-center gap-2">
-                        <span>🍌</span> Banano Crypto Accepted
+                    <li class="flex items-center gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2m0-10a9 9 0 110 18 9 9 0 010-18z" />
+                        </svg>
+                        <span>Banano Crypto Accepted</span>
                     </li>
-                    <li class="flex items-center gap-2">
-                        <span>💯</span> 100% Quality Guaranteed
+                    <li class="flex items-center gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        </svg>
+                        <span>100% Quality Guaranteed</span>
                     </li>
                 </ul>
             </div>
@@ -71,10 +96,10 @@
         <!-- Bottom Row -->
         <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
             <p>&copy; <span x-text="new Date().getFullYear()"></span> Pocket Commerce. All rights reserved.</p>
-            <div class="flex items-center gap-4">
-                <span>Privacy Policy</span>
-                <span>Terms of Service</span>
-                <span>Shipping Info</span>
+            <div class="flex items-center gap-6">
+                <a href="#" class="hover:text-slate-300 transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-slate-300 transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-slate-300 transition-colors">Shipping Info</a>
             </div>
         </div>
     </div>
