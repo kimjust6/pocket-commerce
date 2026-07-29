@@ -149,7 +149,7 @@ const authPlugin = (config) => {
             const cookieRecordAuth = safeParseJson(getCookie(request, "pb_auth"));
             if (!cookieRecordAuth || typeof cookieRecordAuth !== "object") {
                 _dbg(`invalid auth cookie found: ${cookieRecordAuth}`);
-                response.cookie("pb_auth", "");
+                if (typeof response?.cookie === 'function') response.cookie("pb_auth", "");
                 return;
             }
 
@@ -158,7 +158,7 @@ const authPlugin = (config) => {
                     const validAuthRecord = $app.findAuthRecordByToken(cookieRecordAuth.token);
                     if (!validAuthRecord) {
                         _dbg(`invalid auth token found in cookie: ${cookieRecordAuth.token}`);
-                        response.cookie("pb_auth", "");
+                        if (typeof response?.cookie === 'function') response.cookie("pb_auth", "");
                         return;
                     }
                     $apis.enrichRecord(request.event, validAuthRecord);

@@ -1,121 +1,100 @@
 /**
  * Loader for the homepage.
- * Provides mock data for the card e-commerce site.
+ * Provides dynamic data loaded directly from the PocketBase database.
  * @type {import('pocketpages').PageDataLoaderFunc}
  */
 module.exports = function (context) {
     try {
-        const recentCards = [
-            { 
-                id: '1', 
-                title: 'Have a Mice Day', 
-                price: '$4.99', 
-                image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80&w=500', 
-                images: [
-                    'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80&w=500',
-                    'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500'
-                ],
-                slug: 'have-a-mice-day' 
-            },
-            { 
-                id: '2', 
-                title: 'Toad-ally Awesome Bday', 
-                price: '$5.50', 
-                image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=500', 
-                images: [
-                    'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=500',
-                    'https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&q=80&w=500'
-                ],
-                slug: 'toad-ally-awesome-bday' 
-            },
-            { 
-                id: '3', 
-                title: 'You Are Purrfect', 
-                price: '$4.99', 
-                image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500', 
-                images: [
-                    'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500',
-                    'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80&w=500'
-                ],
-                slug: 'you-are-purrfect' 
-            },
-            { 
-                id: '4', 
-                title: 'Donut Forget My Bday', 
-                price: '$5.00', 
-                image: 'https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=500', 
-                images: [
-                    'https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=500',
-                    'https://images.unsplash.com/photo-1514517604298-cf80e0fb7f1e?auto=format&fit=crop&q=80&w=500'
-                ],
-                slug: 'donut-forget-my-bday' 
-            },
-            { 
-                id: '5', 
-                title: 'You Guac My World', 
-                price: '$5.99', 
-                image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&q=80&w=500', 
-                images: [
-                    'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&q=80&w=500',
-                    'https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&q=80&w=500'
-                ],
-                slug: 'you-guac-my-world' 
-            },
-            { 
-                id: '6', 
-                title: 'I Loaf You', 
-                price: '$4.50', 
-                image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=500', 
-                images: [
-                    'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=500',
-                    'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=500'
-                ],
-                slug: 'i-loaf-you' 
+        let recentCards = [];
+        try {
+            const productRecords = $app.findRecordsByFilter("products", "status = 'active'", "", 6, 0);
+            $app.expandRecords(productRecords, ["category"]);
+
+            const productIds = productRecords.map(p => p.id);
+            let minPrices = {};
+            if (productIds.length > 0) {
+                const variantsFilter = productIds.map(id => `product = '${id}'`).join(' || ');
+                const variants = $app.findRecordsByFilter("product_variants", variantsFilter, "", 500, 0);
+                variants.forEach(v => {
+                    const pId = v.getString('product');
+                    const price = v.getFloat('price');
+                    if (!minPrices[pId] || price < minPrices[pId]) {
+                        minPrices[pId] = price;
+                    }
+                });
             }
-        ];
+
+            recentCards = productRecords.map(p => {
+                const name = p.getString('name');
+                const slug = p.getString('slug') || name.toLowerCase().replace(/\s+/g, '-');
+                let rawImgs = [];
+                try {
+                    const strVal = p.getString("images");
+                    if (strVal && strVal.trim()) {
+                        rawImgs = JSON.parse(strVal);
+                    }
+                } catch (e) {
+                    try {
+                        rawImgs = p.getStringSlice("images");
+                    } catch (ignore) {}
+                }
+
+                if (!Array.isArray(rawImgs)) {
+                    rawImgs = rawImgs ? [rawImgs] : [];
+                }
+
+                const imageUrls = rawImgs.map(img => {
+                    let cleanImg = (img || '').split('"').join('').trim();
+                    if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) return cleanImg;
+                    return cleanImg.startsWith('/') ? cleanImg : '/' + cleanImg;
+                });
+                const cat = p.expandedOne("category");
+                const priceVal = minPrices[p.id];
+                const priceStr = priceVal !== undefined && priceVal !== null ? '$' + priceVal.toFixed(2) : 'Sold Out';
+
+                return {
+                    id: p.id,
+                    title: name,
+                    price: priceStr,
+                    image: imageUrls[0] || '/card-birthday.webp',
+                    images: imageUrls.length > 0 ? imageUrls : ['/card-birthday.webp'],
+                    slug: slug,
+                    category: cat ? cat.getString('name') : null
+                };
+            });
+        } catch (e) {
+            console.error("Failed to load recent products from DB", e);
+        }
 
         let categoryRecords = [];
         try {
             categoryRecords = $app.findRecordsByFilter("categories", "", "name", 100, 0);
-            if (categoryRecords.length === 0) {
-                const collection = $app.findCollectionByNameOrId("categories");
-                const defaults = [
-                    { name: "Birthday", slug: "birthday" },
-                    { name: "Animals", slug: "animals" },
-                    { name: "Food", slug: "food" },
-                    { name: "Love", slug: "love" }
-                ];
-                for (const d of defaults) {
-                    const record = new Record(collection);
-                    record.set("name", d.name);
-                    record.set("slug", d.slug);
-                    $app.save(record);
-                }
-                categoryRecords = $app.findRecordsByFilter("categories", "", "name", 100, 0);
-            }
         } catch (e) {
-            console.error("Failed to load/seed categories", e);
+            console.error("Failed to load categories", e);
         }
 
         const topCollections = categoryRecords.map(c => {
             const name = c.getString('name');
             const slug = c.getString('slug');
             let description = `Hilarious ${name.toLowerCase()} greetings.`;
-            let image = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=150';
+            let image = '/card-birthday.webp';
             let count = 0;
 
             if (slug === 'birthday') {
                 description = 'Punny cards for everyone turning a year older.';
-                image = 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150';
+                image = '/card-birthday.webp';
             } else if (slug === 'animals') {
                 description = 'Hilarious greetings featuring cute critters.';
-                image = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=150';
+                image = '/card-animals.webp';
             } else if (slug === 'food') {
                 description = 'Deliciously funny cards for food lovers.';
-                image = 'https://images.unsplash.com/photo-1551024506-0cb4a1cb3613?auto=format&fit=crop&q=80&w=150';
+                image = '/card-food.webp';
             } else if (slug === 'love') {
                 description = 'Romantic puns to make your partner laugh.';
-                image = 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=150';
+                image = '/card-love.webp';
+            } else if (slug === 'thank-you') {
+                description = 'Thoughtful botanical & coffee thank you cards.';
+                image = '/card-thankyou.webp';
             }
 
             try {
@@ -133,24 +112,40 @@ module.exports = function (context) {
             };
         });
 
-        const recentReviews = [
-            { userInitials: 'JD', userName: 'John Doe', type: 'review', cardTitle: 'Toad-ally Awesome Bday', review: 'My brother loved this card! The pun is fantastic.', rating: 5 },
-            { userInitials: 'AS', userName: 'Alice Smith', type: 'rate', cardTitle: 'Have a Mice Day', rating: 4 },
-            { userInitials: 'MR', userName: 'Mike Ross', type: 'review', cardTitle: 'You Guac My World', review: 'Great card quality and fast shipping.', rating: 5 },
-            { userInitials: 'EW', userName: 'Emma Watson', type: 'review', cardTitle: 'I Loaf You', review: 'Cute, but the envelope color wasn\'t what I expected.', rating: 3.5 }
-        ];
+        let recentReviews = [];
+        try {
+            const reviewRecords = $app.findRecordsByFilter("reviews", "", "", 4, 0);
+            $app.expandRecords(reviewRecords, ["user", "product"]);
+            recentReviews = reviewRecords.map(r => {
+                const u = r.expandedOne("user");
+                const p = r.expandedOne("product");
+                const userName = u ? (u.getString("name") || u.getString("email")) : "Verified Buyer";
+                const cardTitle = p ? p.getString("name") : "Greeting Card";
+
+                return {
+                    id: r.id,
+                    userName: userName,
+                    rating: r.getInt("rating") || 5,
+                    title: r.getString("title"),
+                    review: r.getString("body"),
+                    cardTitle: cardTitle
+                };
+            });
+        } catch (e) {
+            console.error("Failed to load reviews from DB", e);
+        }
 
         return {
             recentCards,
             topCollections,
             recentReviews
-        }
+        };
     } catch (e) {
-        console.error('Failed to load homepage data:', e)
+        console.error('Failed to load homepage data:', e);
         return {
             recentCards: [],
             topCollections: [],
             recentReviews: []
-        }
+        };
     }
-}
+};

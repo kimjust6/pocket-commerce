@@ -74,17 +74,29 @@ module.exports = function (context) {
 
         products = productRecords.map(p => {
             const cat = p.expandedOne("category");
-            const imagesArray = p.getStringSlice("images");
-            let imageUrls = [];
-            
-            if (imagesArray && imagesArray.length > 0) {
-                imageUrls = imagesArray.map(img => {
-                    const cleanImg = (img || '').split('"').join('').trim();
-                    if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) return cleanImg;
-                    return `/api/files/products/${p.id}/${cleanImg}`;
-                });
-            } else {
-                imageUrls = ["https://placehold.co/400x500?text=No+Image"];
+            let rawImgs = [];
+            try {
+                const strVal = p.getString("images");
+                if (strVal && strVal.trim()) {
+                    rawImgs = JSON.parse(strVal);
+                }
+            } catch (e) {
+                try {
+                    rawImgs = p.getStringSlice("images");
+                } catch (ignore) {}
+            }
+
+            if (!Array.isArray(rawImgs)) {
+                rawImgs = rawImgs ? [rawImgs] : [];
+            }
+
+            let imageUrls = rawImgs.map(img => {
+                let cleanImg = (img || '').split('"').join('').trim();
+                if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) return cleanImg;
+                return cleanImg.startsWith('/') ? cleanImg : '/' + cleanImg;
+            });
+            if (imageUrls.length === 0) {
+                imageUrls = ["/card-birthday.webp"];
             }
 
             const price = minPrices[p.id] || null;
