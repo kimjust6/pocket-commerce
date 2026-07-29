@@ -73,33 +73,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <% if (data.recentCards && data.recentCards.length > 0) { %>
                 <% data.recentCards.slice(0, 4).forEach(card => { %>
-                    <div class="card bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md transition-all duration-300 group" x-data="{ showSecond: false }" @mouseenter="showSecond = true" @mouseleave="showSecond = false">
-                        <figure class="aspect-[4/5] bg-base-200 relative overflow-hidden">
-                            <% if (card.images && card.images.length > 1) { %>
-                                <img src="<%= card.images[0] %>" alt="<%= card.title %>" 
-                                     class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0"
-                                     :class="showSecond ? 'opacity-0' : 'opacity-100'">
-                                <img src="<%= card.images[1] %>" alt="<%= card.title %>" 
-                                     class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0 opacity-0"
-                                     :class="showSecond ? 'opacity-100' : 'opacity-0'">
-                            <% } else { %>
-                                <img src="<%= card.image %>" alt="<%= card.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            <% } %>
-                        </figure>
-
-                        <div class="card-body p-4 space-y-2">
-                            <a href="/shop/card/<%= card.slug.replace(/\s+/g, '-') %>/<%= card.id %>" class="card-title text-sm font-bold text-base-content hover:text-primary transition-colors line-clamp-2 leading-snug">
-                                <%= card.title %>
-                            </a>
-
-                            <div class="card-actions justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-                                <span class="text-base font-extrabold text-base-content"><%= card.price %></span>
-                                <a href="/shop/card/<%= card.slug.replace(/\s+/g, '-') %>/<%= card.id %>" class="btn btn-outline btn-primary btn-xs rounded-lg font-bold">
-                                    Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <%- include('../_private/product-card.ejs', { card: card }) %>
                 <% }); %>
             <% } %>
         </div>
@@ -153,24 +127,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <% if (data.recentReviews && data.recentReviews.length > 0) { %>
                 <% data.recentReviews.forEach((review) => { %>
-                    <div class="card bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-xs p-5 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-xs text-base-content"><%= review.userName %></span>
-                            <span class="text-xs text-amber-500 font-bold">★ <%= review.rating || 5 %>.0</span>
-                        </div>
-                        
-                        <% if (review.review) { %>
-                            <p class="text-xs text-base-content/75 leading-relaxed italic">
-                                "<%= review.review %>"
-                            </p>
-                        <% } %>
-                        
-                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
-                            <span class="text-[11px] font-medium text-base-content/50">
-                                Verified purchase on <%= review.cardTitle %>
-                            </span>
-                        </div>
-                    </div>
+                    <%- include('../_private/review-card.ejs', { review: review }) %>
                 <% }); %>
             <% } %>
         </div>

@@ -1,0 +1,52 @@
+<%
+    const item = typeof card !== 'undefined' ? card : (typeof product !== 'undefined' ? product : {});
+    const title = item.title || item.name || 'Greeting Card';
+    const slug = (item.slug || title).toLowerCase().replace(/\s+/g, '-');
+    const id = item.id || '';
+    const images = item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
+    const primaryImg = images[0] || '/hero-greeting-card.webp';
+    const secondaryImg = images.length > 1 ? images[1] : null;
+    const categoryName = item.category ? (typeof item.category === 'object' ? item.category.name : item.category) : null;
+    
+    let formattedPrice = 'Sold Out';
+    if (item.price !== null && item.price !== undefined) {
+        formattedPrice = typeof item.price === 'number' ? '$' + item.price.toFixed(2) : item.price;
+    }
+    const btnLabel = typeof btnText !== 'undefined' ? btnText : 'Details';
+%>
+
+<div class="card card-compact bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full group" x-data="{ showSecond: false }" @mouseenter="showSecond = true" @mouseleave="showSecond = false">
+    <figure class="aspect-[4/5] bg-base-200 relative overflow-hidden">
+        <% if (secondaryImg) { %>
+            <img src="<%= primaryImg %>" alt="<%= title %>" 
+                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0"
+                 :class="showSecond ? 'opacity-0' : 'opacity-100'">
+            <img src="<%= secondaryImg %>" alt="<%= title %>" 
+                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0 opacity-0"
+                 :class="showSecond ? 'opacity-100' : 'opacity-0'">
+        <% } else { %>
+            <img src="<%= primaryImg %>" alt="<%= title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        <% } %>
+
+        <% if (categoryName) { %>
+            <span class="badge badge-primary absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 shadow-sm">
+                <%= categoryName %>
+            </span>
+        <% } %>
+    </figure>
+
+    <div class="card-body p-4 flex-1 flex flex-col justify-between space-y-3">
+        <h3 class="card-title font-bold text-sm text-base-content group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+            <a href="/shop/card/<%= slug %>/<%= id %>" class="hover:underline">
+                <%= title %>
+            </a>
+        </h3>
+
+        <div class="card-actions justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-base font-extrabold text-base-content"><%= formattedPrice %></span>
+            <a href="/shop/card/<%= slug %>/<%= id %>" class="btn btn-outline btn-primary btn-xs rounded-lg font-bold">
+                <%= btnLabel %>
+            </a>
+        </div>
+    </div>
+</div>

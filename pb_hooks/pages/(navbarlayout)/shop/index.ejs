@@ -121,42 +121,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <% if (data.products && data.products.length > 0) { %>
                         <% data.products.forEach(product => { %>
-                            <!-- DaisyUI Product Card -->
-                            <a href="/shop/card/<%= product.slug.replace(/\s+/g, '-') %>/<%= product.id %>" class="block group h-full">
-                                <div class="card card-compact bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full" x-data="{ showSecond: false }" @mouseenter="showSecond = true" @mouseleave="showSecond = false">
-                                    <figure class="aspect-[4/5] bg-base-200 relative overflow-hidden">
-                                        <% if (product.images && product.images.length > 1) { %>
-                                            <img src="<%= product.images[0] %>" alt="<%= product.name %>" 
-                                                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-108 absolute inset-0"
-                                                 :class="showSecond ? 'opacity-0' : 'opacity-100'">
-                                            <img src="<%= product.images[1] %>" alt="<%= product.name %>" 
-                                                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-108 absolute inset-0 opacity-0"
-                                                 :class="showSecond ? 'opacity-100' : 'opacity-0'">
-                                        <% } else { %>
-                                            <img src="<%= product.image %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-300">
-                                        <% } %>
-                                        <% if (product.category) { %>
-                                            <span class="badge badge-primary absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 shadow-sm">
-                                                <%= product.category.name %>
-                                            </span>
-                                        <% } %>
-                                    </figure>
-
-                                    <div class="card-body p-4 flex-1 flex flex-col justify-between space-y-3">
-                                        <h3 class="card-title font-bold text-sm text-base-content group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                                            <%= product.name %>
-                                        </h3>
-                                        <div class="card-actions justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-                                            <span class="text-base font-extrabold text-base-content">
-                                                <%= product.price !== null ? '$' + product.price.toFixed(2) : 'Sold Out' %>
-                                            </span>
-                                            <span class="btn btn-primary btn-xs rounded-xl font-bold px-3">
-                                                Details →
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                            <%- include('../../_private/product-card.ejs', { card: product, btnText: 'Details →' }) %>
                         <% }); %>
                     <% } else { %>
                         <div class="col-span-full card bg-base-100 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 text-center shadow-sm space-y-4">

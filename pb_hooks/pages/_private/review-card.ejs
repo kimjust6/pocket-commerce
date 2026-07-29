@@ -1,0 +1,26 @@
+<%
+    const r = typeof review !== 'undefined' ? review : {};
+    const name = r.userName || 'Verified Buyer';
+    const rating = r.rating || 5;
+    const bodyText = r.review || '';
+    const itemTitle = r.cardTitle || 'Greeting Card';
+%>
+
+<div class="card bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-xs p-5 space-y-3">
+    <div class="flex items-center justify-between">
+        <span class="font-bold text-xs text-base-content"><%= name %></span>
+        <span class="text-xs text-amber-500 font-bold">★ <%= rating %>.0</span>
+    </div>
+    
+    <% if (bodyText) { %>
+        <p class="text-xs text-base-content/75 leading-relaxed italic">
+            "<%= bodyText %>"
+        </p>
+    <% } %>
+    
+    <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+        <span class="text-[11px] font-medium text-base-content/50">
+            Verified purchase on <%= itemTitle %>
+        </span>
+    </div>
+</div>

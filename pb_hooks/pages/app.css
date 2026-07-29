@@ -5009,10 +5009,6 @@ html::-webkit-scrollbar,
   aspect-ratio: 4/5;
 }
 
-.h-1\.5 {
-  height: 0.375rem;
-}
-
 .h-10 {
   height: 2.5rem;
 }
@@ -5107,10 +5103,6 @@ html::-webkit-scrollbar,
 
 .min-h-screen {
   min-height: 100vh;
-}
-
-.w-1\.5 {
-  width: 0.375rem;
 }
 
 .w-10 {
@@ -5404,10 +5396,6 @@ html::-webkit-scrollbar,
 
 .gap-1 {
   gap: 0.25rem;
-}
-
-.gap-1\.5 {
-  gap: 0.375rem;
 }
 
 .gap-10 {

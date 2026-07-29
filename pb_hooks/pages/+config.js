@@ -203,22 +203,26 @@ const authPlugin = (config) => {
                 const provider = providers.find((p) => p.name === providerName);
                 if (!provider) throw new Error(`Provider ${providerName} not found`);
 
-                // Ensure appURL has protocol
+                // Determine appURL from settings or request host
                 let appURL = $app.settings().meta.appURL;
+                if (!appURL && api.request) {
+                    const host = api.request.host || (api.request.headers && api.request.headers['host']);
+                    if (host) appURL = `http://${host}`;
+                }
                 if (appURL && !appURL.startsWith('http://') && !appURL.startsWith('https://')) {
                     appURL = 'https://' + appURL;
                 }
                 const redirectUrl = `${appURL}${options?.redirectPath ?? "/auth/oauth/confirm"}`;
                 const authUrl = provider.authURL + redirectUrl;
 
-                // Store OAuth state in cookie
+                // Store OAuth state in cookie with root path
                 api.response.cookie(options?.cookieName ?? "pp_oauth_state", {
                     name: provider.name,
                     state: provider.state,
                     codeChallenge: provider.codeChallenge,
                     codeVerifier: provider.codeVerifier,
                     redirectUrl
-                });
+                }, { path: '/', httpOnly: true, sameSite: 'lax' });
 
                 if (options?.autoRedirect ?? true) {
                     api.response.redirect(authUrl);
