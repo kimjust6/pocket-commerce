@@ -1,13 +1,13 @@
 {
     "description": "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action",
     "version": "1.0.0",
-    "generatedTime": 1785291229114,
+    "generatedTime": 1785295180430,
     "data": [
         {
             "type": "file",
             "name": "package.json",
-            "size": 2159,
-            "hash": "2207c4a2af744eb67cd2ea59bcc6eec90ab20aeeea37fd8f3491088bda826600"
+            "size": 2381,
+            "hash": "0501479c0a148590b0b29cb03c583d770f3171b2b8f5a336f97f5ae655614df9"
         },
         {
             "type": "folder",
@@ -37,15 +37,45 @@
         },
         {
             "type": "file",
-            "name": "pb_public/hero-greeting-card.png",
-            "size": 681056,
-            "hash": "d493c038f943fe05a58a1b0619ef842b494df1e2b17ebc82b4d754a652165b52"
+            "name": "pb_public/hero-greeting-card.webp",
+            "size": 91348,
+            "hash": "67c70c52449edf38466664fe101bf058d0bdf9d54fadceb79a8276ca52fc9008"
         },
         {
             "type": "file",
             "name": "pb_public/favicon.ico",
             "size": 181598,
             "hash": "42852b72e4963165d078b06d7a62a8d64d14b07ea19ad0c0aa30466079481fe8"
+        },
+        {
+            "type": "file",
+            "name": "pb_public/card-thankyou.webp",
+            "size": 97716,
+            "hash": "42db6b54f2159115b782a69fb4985e4f6d097bc64a7f13fa838bd8d3214d108c"
+        },
+        {
+            "type": "file",
+            "name": "pb_public/card-love.webp",
+            "size": 95912,
+            "hash": "5acf2ed706e10713c99e1e0ec513455840fb51a3ef584339869a9ee2b965823e"
+        },
+        {
+            "type": "file",
+            "name": "pb_public/card-food.webp",
+            "size": 61064,
+            "hash": "aaa6eb69642dd471d27ed2f2cfc97b99f8d9b105e491d5dfa23a7c25094e9ea7"
+        },
+        {
+            "type": "file",
+            "name": "pb_public/card-birthday.webp",
+            "size": 80554,
+            "hash": "d5017d6304c554c2298318d0f211dab32690a3019206e94f78b9720c5a226013"
+        },
+        {
+            "type": "file",
+            "name": "pb_public/card-animals.webp",
+            "size": 64746,
+            "hash": "6562caed59365c1437e7a9f464062bdbaf041901bf2da4e9fe464c9935885325"
         },
         {
             "type": "file",
@@ -140,8 +170,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/app.css",
-            "size": 175047,
-            "hash": "3b539b2d207d89a2eeaf4f1660cbf77a5415f4a25df2d1b70cce1b2ccb7800d1"
+            "size": 174737,
+            "hash": "2ca8d387d72cd73379c7202c54db293bc63351e32d65bc9fbbcc750e55d1336e"
         },
         {
             "type": "file",
@@ -204,8 +234,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/_private/footer.ejs",
-            "size": 8580,
-            "hash": "deaa45877ecc6d0fe642920fe6afa4757ad77c719df15fa9858a4b7da198bb52"
+            "size": 6325,
+            "hash": "900e79a9482627e8c1d0317e3733fafe7b20b8c39466734755924bdd823a473b"
         },
         {
             "type": "file",
@@ -296,8 +326,8 @@
         {
             "type": "file",
             "name": "pb_hooks/pages/(navbarlayout)/index.ejs",
-            "size": 10610,
-            "hash": "3f465e96514d787029e79ba46fd666e95621583b8e020bfeb0b118b1c7471191"
+            "size": 10611,
+            "hash": "a98d721af96a5075fbba1c47416a91c3815e845c451d410c1c28b4ff7ef69036"
         },
         {
             "type": "folder",
