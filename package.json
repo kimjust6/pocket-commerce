@@ -59,7 +59,7 @@
     },
     "overrides": {
         "minimatch": "^10.0.1",
-        "brace-expansion": "^5.0.8"
+        "brace-expansion": "^5.0.9"
     },
     "files": [
         "pb_hooks",
