@@ -3,6 +3,7 @@
     const initialCartItemsList = (locals.data && Array.isArray(locals.data.cartItems)) ? locals.data.cartItems : [];
     const initialCartCount = (locals.data && typeof locals.data.totalItems === 'number') ? locals.data.totalItems : 0;
     const initialCartTotal = (locals.data && typeof locals.data.totalPrice === 'number') ? locals.data.totalPrice : 0;
+    const isCartPage = Boolean(locals.data && locals.data.isCartPage);
     let initialCartBase64 = '';
     try {
         initialCartBase64 = Buffer.from(JSON.stringify(initialCartItemsList)).toString('base64');
@@ -19,7 +20,7 @@
 
 <body class="bg-transparent text-zinc-900 dark:text-zinc-100 min-h-screen overflow-x-hidden">
     <div class="relative min-h-screen flex flex-col transition-all duration-300"
-         :class="{ 'lg:mr-36 xl:mr-40': (cartCount > 0 || cartItems.length > 0) && sideCartOpen }">
+         :class="{ 'lg:mr-64 xl:mr-72': !isCartPage && (cartCount > 0 || cartItems.length > 0) && sideCartOpen }">
         <div x-on:click.outside="navOpen = false">
             <%- include('header') %> <%- include('mobile-menu') %>
         </div>
@@ -28,9 +29,11 @@
 
         <% if (!locals.data.list) { %>
             <%- include('footer') %>
-                <% } %>
+        <% } %>
     </div>
-    <%- include('side-cart') %>
+    <% if (!isCartPage) { %>
+        <%- include('side-cart') %>
+    <% } %>
     <%- include('../_private/link-fixer') %>
 </body>
 

@@ -463,6 +463,7 @@ module.exports = function (context) {
     }
 
     return {
+        isCartPage: true,
         cartItems,
         totalItems,
         totalPrice,
