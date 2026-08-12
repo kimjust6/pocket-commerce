@@ -1,5 +1,9 @@
 <!doctype html>
-<html lang="en" data-theme="light" x-data="shell()">
+<%
+    const initialCartItemsList = (locals.data && Array.isArray(locals.data.cartItems)) ? locals.data.cartItems : [];
+    const initialCartItemsJson = JSON.stringify(initialCartItemsList);
+%>
+<html lang="en" data-theme="light" x-data="shell(<%= (locals.data && typeof locals.data.totalItems === 'number') ? locals.data.totalItems : 0 %>, <%= (locals.data && typeof locals.data.totalPrice === 'number') ? locals.data.totalPrice : 0 %>, <%- JSON.stringify(initialCartItemsJson) %>)">
 
 <head>
     <%- include('head') %> <%- include('theme-init') %> <%- include('alpine-setup') %> <%- include('shell-init') %> <%-
@@ -19,6 +23,7 @@
             <%- include('footer') %>
                 <% } %>
     </div>
+    <%- include('side-cart') %>
     <%- include('../_private/link-fixer') %>
 </body>
 

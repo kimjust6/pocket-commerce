@@ -89,55 +89,157 @@
                             <% } %>
                         </div>
 
-                        <!-- Add to Cart Form -->
-                        <form action="/cart" method="POST" class="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <input type="hidden" name="action" value="add">
-                            
-                            <% if (availableVariants.length > 0) { %>
-                                <% if (availableVariants.length === 1) { %>
-                                    <input type="hidden" name="variant_id" value="<%= availableVariants[0].id %>">
-                                <% } else { %>
-                                    <div class="space-y-2">
-                                        <label for="variant_id" class="text-xs font-bold uppercase tracking-wider text-base-content/70">Select Option / Variant</label>
-                                        <select name="variant_id" id="variant_id" class="select select-bordered w-full rounded-xl text-sm font-semibold bg-base-100 focus:ring-1 focus:ring-primary">
-                                            <% availableVariants.forEach(variant => { %>
-                                                <%
-                                                    let attrLabel = variant.sku;
-                                                    if (variant.attributes && typeof variant.attributes === 'object') {
-                                                        const keys = Object.keys(variant.attributes);
-                                                        if (keys.length > 0) {
-                                                            attrLabel = keys.map(k => `${k}: ${variant.attributes[k]}`).join(', ');
+                        <%
+                            const variantsPayload = availableVariants.map(v => {
+                                let label = v.sku || 'Standard';
+                                if (v.attributes && typeof v.attributes === 'object') {
+                                    const keys = Object.keys(v.attributes);
+                                    if (keys.length > 0) {
+                                        label = keys.map(k => `${k}: ${v.attributes[k]}`).join(', ');
+                                    }
+                                }
+                                return {
+                                    id: v.id,
+                                    sku: v.sku,
+                                    label: label,
+                                    price: v.price
+                                };
+                            });
+                        %>
+
+                        <script>
+                            function productCartHandler(variants, productTitle, productImg) {
+                                return {
+                                    adding: false,
+                                    added: false,
+                                    errorMessage: '',
+                                    variants: variants || [],
+                                    productTitle: productTitle || '',
+                                    productImg: productImg || '',
+                                    async submitCart(e) {
+                                        if (this.adding) return;
+                                        this.adding = true;
+                                        this.errorMessage = '';
+                                        const form = e.target;
+                                        const formData = new FormData(form);
+                                        formData.append('json', '1');
+
+                                        const variantId = formData.get('variant_id');
+                                        const quantity = parseInt(formData.get('quantity') || '1', 10);
+                                        let selectedVariant = null;
+                                        if (this.variants && this.variants.length > 0) {
+                                            selectedVariant = this.variants.find(function(v) { return v.id === variantId; }) || this.variants[0];
+                                        }
+
+                                        try {
+                                            const res = await fetch(form.action, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Accept': 'application/json',
+                                                    'X-Requested-With': 'XMLHttpRequest'
+                                                },
+                                                body: formData
+                                            });
+                                            const result = await res.json();
+                                            if (result && result.success) {
+                                                this.added = true;
+                                                window.dispatchEvent(new CustomEvent('cart-updated', {
+                                                    detail: {
+                                                        totalItems: result.totalItems,
+                                                        totalPrice: result.totalPrice,
+                                                        items: result.items,
+                                                        openSideCart: true,
+                                                        item: {
+                                                            name: this.productTitle,
+                                                            image: this.productImg,
+                                                            quantity: quantity,
+                                                            variantLabel: selectedVariant ? selectedVariant.label : '',
+                                                            price: selectedVariant ? selectedVariant.price : 0
                                                         }
                                                     }
-                                                %>
-                                                <option value="<%= variant.id %>">
-                                                    <%= attrLabel %> ($<%= variant.price.toFixed(2) %>)
-                                                </option>
-                                            <% }); %>
-                                        </select>
-                                    </div>
-                                <% } %>
+                                                }));
+                                                setTimeout(() => {
+                                                    this.added = false;
+                                                }, 2500);
+                                            } else {
+                                                this.errorMessage = (result && result.message) || 'Failed to add item to cart.';
+                                            }
+                                        } catch (err) {
+                                            console.error('Error adding to cart:', err);
+                                            form.submit();
+                                        } finally {
+                                            this.adding = false;
+                                        }
+                                    }
+                                };
+                            }
+                        </script>
 
-                                <div class="flex flex-col sm:flex-row gap-4 items-end">
-                                    <!-- DaisyUI Join Quantity Modifier -->
-                                    <div class="space-y-2 w-full sm:w-36">
-                                        <label for="quantity" class="text-xs font-bold uppercase tracking-wider text-base-content/70">Quantity</label>
-                                        <div class="join border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden w-full">
-                                            <button type="button" onclick="if(parseInt(this.nextElementSibling.value) > 1) this.nextElementSibling.value = parseInt(this.nextElementSibling.value) - 1" class="btn btn-sm btn-ghost join-item font-bold px-3">-</button>
-                                            <input type="number" name="quantity" id="quantity" value="1" min="1" class="join-item w-full text-center font-bold text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none py-1">
-                                            <button type="button" onclick="this.previousElementSibling.value = parseInt(this.previousElementSibling.value) + 1" class="btn btn-sm btn-ghost join-item font-bold px-3">+</button>
+                        <!-- Add to Cart Form Container -->
+                        <div x-data="productCartHandler(<%- JSON.stringify(variantsPayload).replace(/"/g, '&quot;') %>, <%- JSON.stringify(data.product.name).replace(/"/g, '&quot;') %>, <%- JSON.stringify((data.product.images && data.product.images.length > 0) ? data.product.images[0] : '/hero-greeting-card.webp').replace(/"/g, '&quot;') %>)">
+                            <form action="/cart" method="POST" @submit.prevent="submitCart($event)" class="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                <input type="hidden" name="action" value="add">
+                                
+                                <% if (availableVariants.length > 0) { %>
+                                    <% if (availableVariants.length === 1) { %>
+                                        <input type="hidden" name="variant_id" value="<%= availableVariants[0].id %>">
+                                    <% } else { %>
+                                        <div class="space-y-2">
+                                            <label for="variant_id" class="text-xs font-bold uppercase tracking-wider text-base-content/70">Select Option / Variant</label>
+                                            <select name="variant_id" id="variant_id" class="select select-bordered w-full rounded-xl text-sm font-semibold bg-base-100 focus:ring-1 focus:ring-primary">
+                                                <% availableVariants.forEach(variant => { %>
+                                                    <%
+                                                        let attrLabel = variant.sku;
+                                                        if (variant.attributes && typeof variant.attributes === 'object') {
+                                                            const keys = Object.keys(variant.attributes);
+                                                            if (keys.length > 0) {
+                                                                attrLabel = keys.map(k => `${k}: ${variant.attributes[k]}`).join(', ');
+                                                            }
+                                                        }
+                                                    %>
+                                                    <option value="<%= variant.id %>">
+                                                        <%= attrLabel %> ($<%= variant.price.toFixed(2) %>)
+                                                    </option>
+                                                <% }); %>
+                                            </select>
                                         </div>
+                                    <% } %>
+
+                                    <div class="flex flex-col sm:flex-row gap-4 items-end">
+                                        <!-- DaisyUI Join Quantity Modifier -->
+                                        <div class="space-y-2 w-full sm:w-36">
+                                            <label for="quantity" class="text-xs font-bold uppercase tracking-wider text-base-content/70">Quantity</label>
+                                            <div class="join border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden w-full">
+                                                <button type="button" onclick="if(parseInt(this.nextElementSibling.value) > 1) this.nextElementSibling.value = parseInt(this.nextElementSibling.value) - 1" class="btn btn-sm btn-ghost join-item font-bold px-3">-</button>
+                                                <input type="number" name="quantity" id="quantity" value="1" min="1" class="join-item w-full text-center font-bold text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none py-1">
+                                                <button type="button" onclick="this.previousElementSibling.value = parseInt(this.previousElementSibling.value) + 1" class="btn btn-sm btn-ghost join-item font-bold px-3">+</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add to Cart Button -->
+                                        <button type="submit" :disabled="adding" class="btn btn-primary btn-lg rounded-xl shadow-md hover:shadow-lg font-bold flex-1 text-center w-full transition-all" :class="{ 'btn-success text-white': added }">
+                                            <span x-show="!adding && !added" class="flex items-center justify-center gap-2">
+                                                Add to Shopping Cart
+                                            </span>
+                                            <span x-show="adding" class="flex items-center justify-center gap-2" x-cloak>
+                                                <span class="loading loading-spinner loading-sm"></span>
+                                                Adding...
+                                            </span>
+                                            <span x-show="added" class="flex items-center justify-center gap-2" x-cloak>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Added to Cart!
+                                            </span>
+                                        </button>
                                     </div>
 
-                                    <!-- Add to Cart Button -->
-                                    <button type="submit" class="btn btn-primary btn-lg rounded-xl shadow-md hover:shadow-lg font-bold flex-1 text-center w-full">
-                                        🛒 Add to Shopping Cart
-                                    </button>
-                                </div>
-                            <% } else { %>
-                                <div class="alert alert-error text-sm font-bold">Currently Out of Stock</div>
-                            <% } %>
-                        </form>
+                                    <div x-show="errorMessage" x-text="errorMessage" class="alert alert-error text-xs font-semibold py-2 rounded-xl mt-2" x-cloak></div>
+                                <% } else { %>
+                                    <div class="alert alert-error text-sm font-bold">Currently Out of Stock</div>
+                                <% } %>
+                            </form>
+                        </div>
                     </div>
                 </div>
 

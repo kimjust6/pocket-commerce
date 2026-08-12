@@ -258,11 +258,94 @@ module.exports = function (context) {
                 }
             }
 
+            // Check if JSON / AJAX response is requested
+            const acceptHeader = (context.request && typeof context.request.header === 'function')
+                ? (context.request.header('Accept') || context.request.header('accept') || '')
+                : '';
+            const requestedWithHeader = (context.request && typeof context.request.header === 'function')
+                ? (context.request.header('X-Requested-With') || context.request.header('x-requested-with') || '')
+                : '';
+            const isJsonRequest = (
+                acceptHeader.includes('application/json') ||
+                requestedWithHeader === 'XMLHttpRequest' ||
+                formData.json === '1' ||
+                formData.json === 'true' ||
+                formData.ajax === '1' ||
+                formData.ajax === 'true'
+            );
+
+            if (isJsonRequest) {
+                let updatedTotalItems = 0;
+                let updatedTotalPrice = 0.0;
+                let updatedCartItems = [];
+                const activeCart = findOrCreateCart();
+                if (activeCart) {
+                    const items = $app.findRecordsByFilter("cart_items", `cart = '${activeCart.id}'`, "", 500, 0);
+                    if (items.length > 0) {
+                        $app.expandRecords(items, ["variant"]);
+                        const variantRecords = items.map(item => item.expandedOne("variant")).filter(Boolean);
+                        if (variantRecords.length > 0) {
+                            $app.expandRecords(variantRecords, ["product"]);
+                        }
+                        updatedCartItems = items.map(item => {
+                            const q = item.getInt("quantity");
+                            const v = item.expandedOne("variant");
+                            if (!v) return null;
+                            const p = v.expandedOne("product");
+                            if (!p) return null;
+                            const price = v.getFloat("price");
+                            const itemTotal = price * q;
+                            updatedTotalItems += q;
+                            updatedTotalPrice += itemTotal;
+
+                            const imagesArray = p.getStringSlice("images");
+                            let imageUrl = "/card-birthday.webp";
+                            if (imagesArray && imagesArray.length > 0) {
+                                const img = imagesArray[0];
+                                const cleanImg = (img || '').split('"').join('').trim();
+                                if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://') || cleanImg.startsWith('/')) {
+                                    imageUrl = cleanImg;
+                                } else {
+                                    imageUrl = `/api/files/products/${p.id}/${cleanImg}`;
+                                }
+                            }
+
+                            return {
+                                id: item.id,
+                                quantity: q,
+                                price: price,
+                                total: itemTotal,
+                                variantId: v.id,
+                                sku: v.getString("sku"),
+                                attributes: common.normalizeJsonField(v.get("attributes")),
+                                productId: p.id,
+                                productName: p.getString("name"),
+                                productSlug: p.getString("slug") || p.getString("name").toLowerCase().replace(/\s+/g, '-'),
+                                image: imageUrl,
+                                stock: v.getInt("stock")
+                            };
+                        }).filter(Boolean);
+                    }
+                }
+                context.response.json(200, {
+                    success: true,
+                    totalItems: updatedTotalItems,
+                    totalPrice: updatedTotalPrice,
+                    items: updatedCartItems,
+                    message: "Cart updated successfully"
+                });
+                return;
+            }
+
             // Redirect back to page to avoid form double submission and refresh state
             context.response.redirect('/cart');
             return;
         } catch (e) {
             console.error("[cart/+load.js] Action execution error:", e);
+            if (context.request && typeof context.request.header === 'function' && (context.request.header('Accept') || '').includes('application/json')) {
+                context.response.json(500, { success: false, message: e.message || "Failed to process cart action" });
+                return;
+            }
         }
     }
 
