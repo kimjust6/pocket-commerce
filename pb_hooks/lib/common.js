@@ -117,5 +117,157 @@ module.exports = {
             return value
         }
         return {}
+    },
+
+    /**
+     * Safely retrieves a cookie value from the request.
+     * Supports request.cookie / request.cookies as either a function or an object/map, plus direct header parsing.
+     * @param {any} request - The request object.
+     * @param {string} name - The name of the cookie.
+     * @returns {any} The cookie value, or null if not found.
+     */
+    getCookie: function (request, name) {
+        if (!request) return null;
+        if (typeof request.cookie === "function") {
+            try {
+                const val = request.cookie(name);
+                if (val !== undefined && val !== null) return val;
+            } catch { }
+        }
+        if (request.cookie && typeof request.cookie === "object") {
+            if (request.cookie[name] !== undefined) return request.cookie[name];
+        }
+        if (typeof request.cookies === "function") {
+            try {
+                const val = request.cookies(name);
+                if (val !== undefined && val !== null) return val;
+            } catch { }
+        }
+        if (request.cookies && typeof request.cookies === "object") {
+            if (request.cookies[name] !== undefined) return request.cookies[name];
+        }
+        try {
+            let cookieHeader = '';
+            if (typeof request.header === 'function') {
+                cookieHeader = request.header('Cookie') || request.header('cookie') || '';
+            } else if (request.headers) {
+                cookieHeader = request.headers['cookie'] || request.headers['Cookie'] || '';
+            }
+            if (cookieHeader) {
+                const parts = cookieHeader.split(';');
+                for (const part of parts) {
+                    const [k, ...v] = part.trim().split('=');
+                    if (k === name) {
+                        return decodeURIComponent(v.join('='));
+                    }
+                }
+            }
+        } catch { }
+        return null;
+    },
+
+    /**
+     * Retrieves active cart items, total count, and subtotal for current user or session.
+     * @param {object} context - PocketPages context
+     * @returns {{ cart: any, sessionId: string, cartItems: Array, totalItems: number, totalPrice: number }}
+     */
+    getCartState: function (context) {
+        const { client, user } = this.init(context);
+        let sessionId = this.getCookie(context.request, 'cart_session_id');
+
+        if (!user && !sessionId && context.response && typeof context.response.cookie === 'function') {
+            sessionId = $security.randomStringWithAlphabet(24, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+            context.response.cookie('cart_session_id', sessionId);
+        }
+
+        let cart = null;
+        let totalItems = 0;
+        let totalPrice = 0.0;
+        let cartItems = [];
+
+        try {
+            if (user) {
+                const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "", 1, 0);
+                if (records.length > 0) {
+                    cart = records[0];
+                } else if (sessionId) {
+                    const guestRecords = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
+                    if (guestRecords.length > 0) {
+                        cart = guestRecords[0];
+                        cart.set("user", user.id);
+                        cart.set("session_id", "");
+                        $app.save(cart);
+                    }
+                }
+            } else if (sessionId) {
+                const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
+                if (records.length > 0) {
+                    cart = records[0];
+                }
+            }
+
+            if (cart) {
+                const items = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}'`, "", 100, 0);
+                if (items.length > 0) {
+                    $app.expandRecords(items, ["variant"]);
+                    const variantRecords = items.map(item => item.expandedOne("variant")).filter(Boolean);
+                    if (variantRecords.length > 0) {
+                        $app.expandRecords(variantRecords, ["product"]);
+                    }
+
+                    cartItems = items.map(item => {
+                        const quantity = item.getInt("quantity");
+                        const variant = item.expandedOne("variant");
+                        if (!variant) return null;
+
+                        const product = variant.expandedOne("product");
+                        if (!product) return null;
+
+                        const price = variant.getFloat("price");
+                        const itemTotal = price * quantity;
+
+                        totalItems += quantity;
+                        totalPrice += itemTotal;
+
+                        const imagesArray = product.getStringSlice("images");
+                        let imageUrl = "/card-birthday.webp";
+                        if (imagesArray && imagesArray.length > 0) {
+                            const img = imagesArray[0];
+                            const cleanImg = (img || '').split('"').join('').trim();
+                            if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://') || cleanImg.startsWith('/')) {
+                                imageUrl = cleanImg;
+                            } else {
+                                imageUrl = `/api/files/products/${product.id}/${cleanImg}`;
+                            }
+                        }
+
+                        return {
+                            id: item.id,
+                            quantity,
+                            price,
+                            total: itemTotal,
+                            variantId: variant.id,
+                            sku: variant.getString("sku"),
+                            attributes: this.normalizeJsonField(variant.get("attributes")),
+                            productId: product.id,
+                            productName: product.getString("name"),
+                            productSlug: product.getString("slug") || product.getString("name").toLowerCase().replace(/\s+/g, '-'),
+                            image: imageUrl,
+                            stock: variant.getInt("stock")
+                        };
+                    }).filter(Boolean);
+                }
+            }
+        } catch (e) {
+            console.error("[common.js] Error in getCartState:", e);
+        }
+
+        return {
+            cart,
+            sessionId,
+            cartItems,
+            totalItems,
+            totalPrice: parseFloat(totalPrice.toFixed(2))
+        };
     }
 };

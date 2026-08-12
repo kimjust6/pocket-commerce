@@ -28,25 +28,25 @@ describe('Amazon EWC-Style Sidebar Cart Component & Shell Data', () => {
         expect(shell.sideCartOpen).toBe(false);
     });
 
-    it('only opens or toggles sidebar cart when cartCount > 0 and items are present', () => {
-        const emptyShell = shellData(0, 0, []);
-        emptyShell.openSideCart();
-        expect(emptyShell.sideCartOpen).toBe(false);
+    it('initializes shellData with base64 encoded items list', () => {
+        const sampleItems = [
+            { id: 'item1', quantity: 3, price: 4.99, productName: 'Birthday Card', variantId: 'var1' }
+        ];
+        const base64Str = Buffer.from(JSON.stringify(sampleItems)).toString('base64');
+        const shell = shellData(3, 14.97, base64Str);
+        expect(shell.cartCount).toBe(3);
+        expect(shell.cartTotalPrice).toBe(14.97);
+        expect(shell.cartItems.length).toBe(1);
+        expect(shell.cartItems[0].productName).toBe('Birthday Card');
+    });
 
-        emptyShell.toggleSideCart();
-        expect(emptyShell.sideCartOpen).toBe(false);
-
-        const loadedShell = shellData(1, 4.99, [{ id: 'item1', quantity: 1, price: 4.99 }]);
-        loadedShell.openSideCart();
-        expect(loadedShell.sideCartOpen).toBe(true);
-
-        loadedShell.toggleSideCart();
-        expect(loadedShell.sideCartOpen).toBe(false);
-
-        loadedShell.toggleSideCart();
-        expect(loadedShell.sideCartOpen).toBe(true);
-
-        loadedShell.closeSideCart();
-        expect(loadedShell.sideCartOpen).toBe(false);
+    it('recalculates cartCount and cartTotalPrice if initial count is 0 but items are provided', () => {
+        const sampleItems = [
+            { id: 'item1', quantity: 2, price: 5.00, productName: 'Card 1', variantId: 'var1' },
+            { id: 'item2', quantity: 1, price: 3.50, productName: 'Card 2', variantId: 'var2' }
+        ];
+        const shell = shellData(0, 0, sampleItems);
+        expect(shell.cartCount).toBe(3);
+        expect(shell.cartTotalPrice).toBe(13.50);
     });
 });

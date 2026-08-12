@@ -1,5 +1,5 @@
-<!-- Amazon EWC-Style Sidebar Cart Drawer (Only visible when items are in cart) -->
-<div x-cloak x-show="cartCount > 0">
+<!-- Amazon EWC-Style Sidebar Cart Drawer (Only shown when open and items exist in cart) -->
+<div x-cloak x-show="(cartCount > 0 || cartItems.length > 0) && sideCartOpen" id="nav-flyout-ewc" class="relative z-50">
     <!-- Backdrop Overlay -->
     <div x-show="sideCartOpen"
          x-transition:enter="transition-opacity ease-out duration-300"
@@ -9,7 +9,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="closeSideCart()"
-         class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50"></div>
+         class="fixed inset-0 bg-black/40 backdrop-blur-[2px]"></div>
 
     <!-- Sidebar Cart Container -->
     <aside x-show="sideCartOpen"
@@ -19,19 +19,20 @@
            x-transition:leave="transition transform ease-in duration-200"
            x-transition:leave-start="translate-x-0"
            x-transition:leave-end="translate-x-full"
-           class="fixed top-0 right-0 h-full w-full max-w-sm sm:max-w-md bg-base-100 border-l-2 border-black dark:border-slate-800 shadow-2xl z-50 flex flex-col ewc-compact sc-java-remote-feature"
-           id="ewc-content">
+           class="fixed top-0 right-0 h-full w-full max-w-sm sm:max-w-md bg-base-100 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col ewc-compact sc-java-remote-feature"
+           id="ewc-content"
+           aria-label="Shopping Cart Sidebar">
 
-        <!-- Top Header & Actions Section -->
+        <!-- Top Header & Actions Section (ewc-compact-head) -->
         <div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-base-100 space-y-4 ewc-compact-head">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                    <span class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                     </span>
-                    <span class="font-extrabold text-sm text-base-content tracking-tight uppercase">Shopping Cart</span>
+                    <span class="font-extrabold text-sm text-base-content tracking-tight">Shopping Cart</span>
                 </div>
                 <button type="button" @click="closeSideCart()" class="btn btn-ghost btn-xs btn-circle text-base-content/60 hover:text-base-content" aria-label="Close cart sidebar">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,12 +41,13 @@
                 </button>
             </div>
 
+            <!-- Subtotal & Quantity Summary -->
             <div class="ewc-cart-header space-y-1">
                 <div class="ewc-quantity">
-                    <span class="text-xs font-bold text-base-content/60 uppercase tracking-wider" x-text="cartCount === 1 ? 'One item' : cartCount + ' items'"></span>
+                    <span class="text-xs font-bold text-base-content/60 uppercase tracking-wider" x-text="cartCount === 1 ? '1 item' : cartCount + ' items'"></span>
                 </div>
                 <div class="flex items-baseline justify-between pt-1 ewc-subtotal">
-                    <span class="text-sm font-extrabold text-base-content uppercase tracking-wider ewc-subtotal-label">Subtotal</span>
+                    <span class="text-sm font-bold text-base-content uppercase tracking-wider ewc-subtotal-label">Subtotal</span>
                     <span class="ewc-subtotal-amount">
                         <h2 class="text-2xl font-black text-primary">
                             $<span x-text="cartTotalPrice.toFixed(2)"></span>
@@ -54,35 +56,38 @@
                 </div>
             </div>
 
-            <!-- Compact Actions Container -->
+            <!-- Compact Actions (ewc-compact-actions) -->
             <div id="ewc-compact-actions-container" class="space-y-2 pt-1">
+                <a href="/checkout" class="btn btn-primary btn-sm w-full rounded-xl font-extrabold tracking-wide uppercase shadow-sm hover:shadow-md transition-all text-xs flex items-center justify-center gap-1.5">
+                    Proceed to Checkout
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
                 <div id="ewc-cart-button-loaded-retail" class="ewc-go-to-cart">
-                    <a href="/cart" class="btn btn-primary w-full rounded-xl font-extrabold uppercase tracking-wider shadow-sm hover:shadow-md transition-all text-xs">
+                    <a href="/cart" class="btn btn-outline btn-sm w-full rounded-xl font-bold text-xs">
                         Go to cart
                     </a>
                 </div>
-                <a href="/checkout" class="btn btn-outline btn-sm w-full rounded-xl font-bold text-xs">
-                    Proceed to Checkout →
-                </a>
             </div>
         </div>
 
         <div class="a-row ewc-item-separator border-b border-slate-100 dark:border-slate-800"></div>
 
-        <!-- Compact Body: Scrollable Item List -->
+        <!-- Compact Body: Scrollable Item List (ewc-compact-body) -->
         <div id="ewc-compact-body" class="flex-1 overflow-y-auto p-4 space-y-3">
             <div class="ewc-scroller">
-                <ul class="space-y-3" role="list">
+                <ul class="space-y-3 a-unordered-list a-nostyle a-vertical" role="list">
                     <template x-for="item in cartItems" :key="item.id || item.variantId">
-                        <li class="p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-base-100 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors ewc-item">
-                            <div class="flex gap-3 items-start ewc-item-content">
+                        <li class="p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-base-100 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors ewc-item">
+                            <div class="flex gap-3.5 items-start ewc-item-content">
                                 <!-- Item Thumbnail -->
                                 <a :href="'/shop/card/' + (item.productSlug || 'card') + '/' + (item.productId || '')" class="w-16 h-20 bg-base-200 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 flex-shrink-0 relative group ewc-item-image">
                                     <img :src="item.image || '/card-birthday.webp'" :alt="item.productName" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
                                 </a>
 
                                 <!-- Item Details -->
-                                <div class="flex-1 min-w-0 flex flex-col justify-between h-full">
+                                <div class="flex-1 min-w-0 flex flex-col justify-between h-full space-y-1">
                                     <div>
                                         <a :href="'/shop/card/' + (item.productSlug || 'card') + '/' + (item.productId || '')" class="font-bold text-xs text-base-content hover:text-primary transition-colors line-clamp-2 leading-snug sc-product-link" x-text="item.productName"></a>
                                         <template x-if="item.attributes && Object.keys(item.attributes).length > 0">
@@ -90,6 +95,9 @@
                                         </template>
                                         <template x-if="item.variantLabel && (!item.attributes || Object.keys(item.attributes).length === 0)">
                                             <p class="text-[11px] text-base-content/60 font-medium mt-0.5" x-text="item.variantLabel"></p>
+                                        </template>
+                                        <template x-if="item.stock && item.stock <= 5">
+                                            <p class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5" x-text="'Only ' + item.stock + ' left in stock.'"></p>
                                         </template>
                                     </div>
 

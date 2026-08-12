@@ -1,9 +1,16 @@
 <!doctype html>
 <%
     const initialCartItemsList = (locals.data && Array.isArray(locals.data.cartItems)) ? locals.data.cartItems : [];
-    const initialCartItemsJson = JSON.stringify(initialCartItemsList);
+    const initialCartCount = (locals.data && typeof locals.data.totalItems === 'number') ? locals.data.totalItems : 0;
+    const initialCartTotal = (locals.data && typeof locals.data.totalPrice === 'number') ? locals.data.totalPrice : 0;
+    let initialCartBase64 = '';
+    try {
+        initialCartBase64 = Buffer.from(JSON.stringify(initialCartItemsList)).toString('base64');
+    } catch (_) {
+        initialCartBase64 = '';
+    }
 %>
-<html lang="en" data-theme="light" x-data="shell(<%= (locals.data && typeof locals.data.totalItems === 'number') ? locals.data.totalItems : 0 %>, <%= (locals.data && typeof locals.data.totalPrice === 'number') ? locals.data.totalPrice : 0 %>, <%- JSON.stringify(initialCartItemsJson) %>)">
+<html lang="en" data-theme="light" x-data="shell(<%= initialCartCount %>, <%= initialCartTotal %>, '<%= initialCartBase64 %>')">
 
 <head>
     <%- include('head') %> <%- include('theme-init') %> <%- include('alpine-setup') %> <%- include('shell-init') %> <%-
@@ -16,8 +23,7 @@
             <%- include('header') %> <%- include('mobile-menu') %>
         </div>
 
-        <main class="relative flex-grow transition-all duration-200"
-            :style="{ 'padding-top': headerVisible ? '3.3rem' : '0' }"><%- slot %></main>
+        <main class="relative flex-grow"><%- slot %></main>
 
         <% if (!locals.data.list) { %>
             <%- include('footer') %>

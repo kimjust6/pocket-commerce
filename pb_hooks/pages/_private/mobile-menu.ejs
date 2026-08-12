@@ -25,9 +25,9 @@
             </a>
             <a href="/cart" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
                 <span>Shopping Cart</span>
-                <% if (locals.data && locals.data.totalItems > 0) { %>
-                    <span class="badge badge-primary font-bold"><%= locals.data.totalItems %></span>
-                <% } %>
+                <span x-show="cartCount > 0" x-text="cartCount" class="badge badge-primary font-bold text-xs" x-cloak>
+                    <%= (locals.data && locals.data.totalItems > 0) ? locals.data.totalItems : '' %>
+                </span>
             </a>
         </nav>
 

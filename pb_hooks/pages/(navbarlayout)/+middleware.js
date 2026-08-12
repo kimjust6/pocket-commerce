@@ -46,104 +46,10 @@ const getCookie = (request, name) => {
  * @returns {Object} The metadata and data object.
  */
 module.exports = function (context) {
-    const { client, user } = common.init(context)
+    const { client, user } = common.init(context);
+    const { cart, sessionId, cartItems, totalItems, totalPrice } = common.getCartState(context);
 
-    let userOrders = []
-    let sessionId = getCookie(context.request, 'cart_session_id');
-
-    // If not logged in and no session ID cookie exists, generate one
-    if (!user && !sessionId) {
-        sessionId = $security.randomStringWithAlphabet(24, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
-        context.response.cookie('cart_session_id', sessionId);
-    }
-
-    let cart = null;
-    let totalItems = 0;
-    let totalPrice = 0.0;
-    let cartItems = [];
-
-    try {
-        if (user) {
-            // Logged in user: find by user relation
-            const records = $app.findRecordsByFilter("carts", `user = '${user.id}'`, "", 1, 0);
-            if (records.length > 0) {
-                cart = records[0];
-            } else if (sessionId) {
-                // If there's a guest cart for this session, associate it with the logged in user
-                const guestRecords = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
-                if (guestRecords.length > 0) {
-                    cart = guestRecords[0];
-                    cart.set("user", user.id);
-                    cart.set("session_id", ""); // Clear guest session ID now that it's associated with a user
-                    $app.save(cart);
-                }
-            }
-        } else if (sessionId) {
-            // Guest user: find by session_id
-            const records = $app.findRecordsByFilter("carts", `session_id = '${sessionId}'`, "", 1, 0);
-            if (records.length > 0) {
-                cart = records[0];
-            }
-        }
-
-        if (cart) {
-            const items = $app.findRecordsByFilter("cart_items", `cart = '${cart.id}'`, "", 100, 0);
-            if (items.length > 0) {
-                // Expand variants
-                $app.expandRecords(items, ["variant"]);
-
-                // Collect variant records to expand their products
-                const variantRecords = items.map(item => item.expandedOne("variant")).filter(Boolean);
-                if (variantRecords.length > 0) {
-                    $app.expandRecords(variantRecords, ["product"]);
-                }
-
-                // Construct clean cart items array and calculate aggregates
-                cartItems = items.map(item => {
-                    const quantity = item.getInt("quantity");
-                    const variant = item.expandedOne("variant");
-                    if (!variant) return null;
-
-                    const product = variant.expandedOne("product");
-                    if (!product) return null;
-
-                    const price = variant.getFloat("price");
-                    const itemTotal = price * quantity;
-
-                    totalItems += quantity;
-                    totalPrice += itemTotal;
-
-                    const imagesArray = product.getStringSlice("images");
-                    let imageUrl = "https://placehold.co/400x500?text=No+Image";
-                    if (imagesArray && imagesArray.length > 0) {
-                        const img = imagesArray[0];
-                        const cleanImg = (img || '').split('"').join('').trim();
-                        if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) {
-                            imageUrl = cleanImg;
-                        } else {
-                            imageUrl = `/api/files/products/${product.id}/${cleanImg}`;
-                        }
-                    }
-
-                    return {
-                        id: item.id,
-                        quantity,
-                        price,
-                        total: itemTotal,
-                        variantId: variant.id,
-                        sku: variant.getString("sku"),
-                        attributes: common.normalizeJsonField(variant.get("attributes")),
-                        productId: product.id,
-                        productName: product.getString("name"),
-                        productSlug: product.getString("slug"),
-                        image: imageUrl
-                    };
-                }).filter(Boolean);
-            }
-        }
-    } catch (e) {
-        console.error("[+middleware.js] Error loading active cart in middleware:", e);
-    }
+    let userOrders = [];
 
     return {
         userOrders,

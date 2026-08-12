@@ -8,13 +8,37 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         parsedItems = initialCartItems;
     } else if (typeof initialCartItems === 'string' && initialCartItems.trim()) {
         try {
-            parsedItems = JSON.parse(initialCartItems);
+            if (typeof atob === 'function') {
+                try {
+                    parsedItems = JSON.parse(decodeURIComponent(escape(atob(initialCartItems))));
+                } catch (_) {
+                    try {
+                        parsedItems = JSON.parse(atob(initialCartItems));
+                    } catch (__) {
+                        parsedItems = JSON.parse(initialCartItems);
+                    }
+                }
+            } else {
+                parsedItems = JSON.parse(initialCartItems);
+            }
         } catch (_) {}
     }
 
+    let count = typeof initialCartCount === 'number' ? initialCartCount : (parseInt(initialCartCount, 10) || 0);
+    let total = typeof initialCartTotal === 'number' ? initialCartTotal : (parseFloat(initialCartTotal) || 0.0);
+
+    if (Array.isArray(parsedItems) && parsedItems.length > 0) {
+        if (count <= 0) {
+            count = parsedItems.reduce((acc, it) => acc + (it.quantity || 1), 0);
+        }
+        if (total <= 0) {
+            total = parsedItems.reduce((acc, it) => acc + (Number(it.price || 0) * (it.quantity || 1)), 0);
+        }
+    }
+
     return {
-        cartCount: typeof initialCartCount === 'number' ? initialCartCount : 0,
-        cartTotalPrice: typeof initialCartTotal === 'number' ? initialCartTotal : 0.0,
+        cartCount: count,
+        cartTotalPrice: total,
         cartItems: parsedItems,
         navOpen: false,
         searchOpen: false,
@@ -59,14 +83,22 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
                         });
                     }
                 }
-                if (e.detail.openSideCart && this.cartCount > 0) {
+                if (this.cartItems && this.cartItems.length > 0) {
+                    if (typeof this.cartCount !== 'number' || this.cartCount <= 0) {
+                        this.cartCount = this.cartItems.reduce((acc, it) => acc + (it.quantity || 1), 0);
+                    }
+                    if (typeof this.cartTotalPrice !== 'number' || this.cartTotalPrice <= 0) {
+                        this.cartTotalPrice = this.cartItems.reduce((acc, it) => acc + (Number(it.price || 0) * (it.quantity || 1)), 0);
+                    }
+                }
+                if (e.detail.openSideCart && (this.cartCount > 0 || this.cartItems.length > 0)) {
                     this.sideCartOpen = true;
                 }
             });
         },
 
         openSideCart() {
-            if (this.cartCount > 0 && this.cartItems.length > 0) {
+            if (this.cartCount > 0 || this.cartItems.length > 0) {
                 this.sideCartOpen = true;
             }
         },
@@ -76,10 +108,10 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         },
 
         toggleSideCart() {
-            if (this.cartCount > 0 && this.cartItems.length > 0) {
-                this.sideCartOpen = !this.sideCartOpen;
-            } else {
+            if (this.sideCartOpen) {
                 this.sideCartOpen = false;
+            } else if (this.cartCount > 0 || this.cartItems.length > 0) {
+                this.sideCartOpen = true;
             }
         },
 
@@ -98,7 +130,7 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
                     formData.append('quantity', String(newQuantity));
                 }
 
-                const res = await fetch('/cart', {
+                const res = await fetch('/cart?json=1', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -106,10 +138,20 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
                     },
                     body: formData
                 });
-                const result = await res.json();
+                let result = null;
+                const rawText = await res.text();
+                try {
+                    result = JSON.parse(rawText);
+                } catch (_) {
+                    result = { success: res.ok };
+                }
                 if (result && result.success) {
-                    this.cartCount = result.totalItems;
-                    this.cartTotalPrice = result.totalPrice;
+                    if (typeof result.totalItems === 'number') {
+                        this.cartCount = result.totalItems;
+                    }
+                    if (typeof result.totalPrice === 'number') {
+                        this.cartTotalPrice = result.totalPrice;
+                    }
                     if (Array.isArray(result.items)) {
                         this.cartItems = result.items;
                     } else if (newQuantity <= 0) {
@@ -118,7 +160,7 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
                         item.quantity = newQuantity;
                         item.total = item.price * newQuantity;
                     }
-                    if (this.cartCount <= 0) {
+                    if (this.cartCount <= 0 && this.cartItems.length === 0) {
                         this.sideCartOpen = false;
                     }
                 }

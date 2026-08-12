@@ -142,7 +142,7 @@
                                         }
 
                                         try {
-                                            const res = await fetch(form.action, {
+                                            const res = await fetch('/cart?json=1', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Accept': 'application/json',
@@ -150,7 +150,18 @@
                                                 },
                                                 body: formData
                                             });
-                                            const result = await res.json();
+
+                                            let result = null;
+                                            const rawText = await res.text();
+                                            try {
+                                                result = JSON.parse(rawText);
+                                            } catch (_) {
+                                                result = {
+                                                    success: res.ok,
+                                                    message: res.ok ? 'Added to cart' : 'Failed to add item to cart'
+                                                };
+                                            }
+
                                             if (result && result.success) {
                                                 this.added = true;
                                                 window.dispatchEvent(new CustomEvent('cart-updated', {
@@ -163,6 +174,7 @@
                                                             name: this.productTitle,
                                                             image: this.productImg,
                                                             quantity: quantity,
+                                                            variantId: variantId,
                                                             variantLabel: selectedVariant ? selectedVariant.label : '',
                                                             price: selectedVariant ? selectedVariant.price : 0
                                                         }
@@ -176,7 +188,7 @@
                                             }
                                         } catch (err) {
                                             console.error('Error adding to cart:', err);
-                                            form.submit();
+                                            this.errorMessage = (err && err.message) ? err.message : 'Error adding item to cart. Please try again.';
                                         } finally {
                                             this.adding = false;
                                         }
@@ -231,13 +243,13 @@
                                             <span x-show="!adding && !added" class="flex items-center justify-center gap-2">
                                                 Add to Shopping Cart
                                             </span>
-                                            <span x-show="adding" class="flex items-center justify-center gap-2" x-cloak>
+                                            <span x-show="adding" class="flex items-center justify-center gap-2" style="display: none;" x-cloak>
                                                 <span class="loading loading-spinner loading-sm"></span>
                                                 Adding...
                                             </span>
-                                            <span x-show="added" class="flex items-center justify-center gap-2" x-cloak>
+                                            <span x-show="added" class="flex items-center justify-center gap-2" style="display: none;" x-cloak>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                                                 </svg>
                                                 Added to Cart!
                                             </span>
