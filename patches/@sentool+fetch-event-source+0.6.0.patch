@@ -1,14 +1,14 @@
 diff --git a/node_modules/@sentool/fetch-event-source/src/fetch.js b/node_modules/@sentool/fetch-event-source/src/fetch.js
 new file mode 100644
-index 0000000..b2f3979
+index 0000000..b3bd9ae
 --- /dev/null
 +++ b/node_modules/@sentool/fetch-event-source/src/fetch.js
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,138 @@
 +/**
-+ * SSE 文本解析
-+ * @param {string} chunk - decode 后的 SSE 格式数据块
++ * SSE text parser
++ * @param {string} chunk - decoded SSE data chunk
 + * @param {Function} callback
-+ * @param {Object} instance
++ * @param {Object} options
 + */
 +function eventsourceParser(chunk, callback, options = {}) {
 +  let message = {};
@@ -20,33 +20,33 @@ index 0000000..b2f3979
 +  const lines = buffer.split('\n');
 +  const onMessage = message => callback?.(message);
 +
-+  // SSE 规范要求每个事件使用空行即 \n\n 进行分割
-+  // 移除最后一行，若事件完整则为空行，若事件不完整则留作下次处理
++  // SSE specification requires each event to be separated by a blank line (\n\n)
++  // Remove the last line: if the event is complete it is empty; if incomplete, keep for next chunk
 +  instance.buffer = lines.pop();
 +
-+  // 若数据为空则直接返回
++  // If no lines to process, return
 +  if (lines.length === 0) {
 +    return onMessage(message);
 +  }
 +
-+  // 解析原始数据
++  // Parse raw lines
 +  lines.forEach(item => {
-+    // 空行表示一个完整事件的结束
++    // Blank line indicates the end of a complete event
 +    if (item.trim() === '') {
-+      // 是否自动解析 JSON
++      // Auto-parse JSON if configured
 +      if (parseJson) {
 +        try {
 +          message.data = JSON.parse(message.data);
 +        } catch (e) {}
 +      }
-+      onMessage(message); // 返回数据
-+      message = {}; // 重置事件返回的数据
++      onMessage(message); // Deliver message
++      message = {}; // Reset message state for next event
 +    } else {
-+      const fieleLength = item.indexOf(':');
-+      const field = item.substring(0, fieleLength).trim();
-+      const value = item.substring(fieleLength + 1).trim();
++      const fieldLength = item.indexOf(':');
++      const field = item.substring(0, fieldLength).trim();
++      const value = item.substring(fieldLength + 1).trim();
 +
-+      // 处理数据
++      // Process event field
 +      if (field) {
 +        switch (field) {
 +          case 'data':
@@ -54,7 +54,7 @@ index 0000000..b2f3979
 +            break;
 +          default:
 +            // id, event, retry
-+            message[field] = /^\d+$/.test(value) ? parseInt(value) : value;
++            message[field] = /^\d+$/.test(value) ? parseInt(value, 10) : value;
 +        }
 +      }
 +    }
@@ -67,7 +67,7 @@ index 0000000..b2f3979
 +  }
 +
 +  /**
-+   * 发起请求
++   * Initiate request
 +   * @param {string} url
 +   * @param {Object} options
 +   */
@@ -78,7 +78,7 @@ index 0000000..b2f3979
 +      parseJson = true
 +    } = options;
 +
-+    // 默认 headers
++    // Default headers
 +    options.headers = {
 +      "Content-Type": "application/json",
 +      "Accept": "text/event-stream",
@@ -91,7 +91,7 @@ index 0000000..b2f3979
 +      });
 +      await options.onopen?.(response);
 +
-+      // 响应异常
++      // Handle HTTP error response
 +      if (!response.ok) {
 +        const contentType = response.headers.get('content-type');
 +        const ACCEPT = options.headers['Accept'];
@@ -101,7 +101,7 @@ index 0000000..b2f3979
 +        throw new Error(`HTTP ${response.status}`);
 +      }
 +
-+      // 读取流
++      // Read response stream
 +      const reader = response.body.getReader();
 +      const decoder = new TextDecoder();
 +      async function readStream() {
@@ -112,11 +112,11 @@ index 0000000..b2f3979
 +
 +        // DONE
 +        if (done) return options.done?.(response);
-+        const chunk = decoder.decode(value); // 解码 Uint8Array
++        const chunk = decoder.decode(value); // Decode Uint8Array
 +        eventsourceParser(chunk, options.onmessage, {
 +          instance: this,
 +          parseJson
-+        }); // 解析 SSE 数据格式
++        }); // Parse SSE data format
 +
 +        await readStream();
 +      }
@@ -128,13 +128,13 @@ index 0000000..b2f3979
 +    }
 +  }
 +
-+  // 中断请求
++  // Abort active request
 +  abort() {
 +    this.controller.abort();
 +  }
 +}
 +
-+// 创建实例
++// Factory function
 +async function fetchEventSource(...args) {
 +  const eventSource = new FetchEventSource();
 +  await eventSource.fetch(...args);
@@ -142,4 +142,3 @@ index 0000000..b2f3979
 +}
 +
 +export { eventsourceParser, fetchEventSource };
-+//# sourceMappingURL=index.esm.js.map
