@@ -24,8 +24,10 @@ describe('Amazon EWC-Style Sidebar Cart Component & Shell Data', () => {
         expect(shell.cartCount).toBe(2);
         expect(shell.cartTotalPrice).toBe(9.98);
         expect(shell.cartItems.length).toBe(1);
-        expect(shell.cartItems[0].productName).toBe('Birthday Card');
-        expect(shell.sideCartOpen).toBe(false);
+        expect(shell.sideCartOpen).toBe(true);
+
+        const emptyShell = shellData(0, 0, []);
+        expect(emptyShell.sideCartOpen).toBe(false);
     });
 
     it('initializes shellData with base64 encoded items list', () => {

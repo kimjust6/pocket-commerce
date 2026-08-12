@@ -17,8 +17,9 @@
                         include('custom-styles') %>
 </head>
 
-<body class="bg-transparent text-zinc-900 dark:text-zinc-100">
-    <div class="relative min-h-screen flex flex-col">
+<body class="bg-transparent text-zinc-900 dark:text-zinc-100 min-h-screen overflow-x-hidden">
+    <div class="relative min-h-screen flex flex-col transition-all duration-300"
+         :class="{ 'lg:mr-36 xl:mr-40': (cartCount > 0 || cartItems.length > 0) && sideCartOpen }">
         <div x-on:click.outside="navOpen = false">
             <%- include('header') %> <%- include('mobile-menu') %>
         </div>

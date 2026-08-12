@@ -42,7 +42,7 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         cartItems: parsedItems,
         navOpen: false,
         searchOpen: false,
-        sideCartOpen: false,
+        sideCartOpen: count > 0 || (Array.isArray(parsedItems) && parsedItems.length > 0),
         updatingItemId: null,
         darkMode: typeof localStorage !== 'undefined' ? localStorage.getItem('theme') === 'dark' : false,
         navigation: [
