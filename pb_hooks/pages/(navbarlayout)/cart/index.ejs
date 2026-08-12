@@ -118,7 +118,7 @@
 
                 <!-- Right: Order Summary Sidebar -->
                 <%
-                    const FREE_SHIPPING_THRESHOLD = 50.00;
+                    const FREE_SHIPPING_THRESHOLD = 30.00;
                     const shippingCost = data.totalPrice >= FREE_SHIPPING_THRESHOLD ? 0.00 : 4.99;
                     const finalTotal = data.totalPrice + shippingCost;
                     const progressToFree = Math.min((data.totalPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);

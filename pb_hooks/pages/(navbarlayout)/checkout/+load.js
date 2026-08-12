@@ -111,7 +111,7 @@ module.exports = function (context) {
             }
         }
 
-        const FREE_SHIPPING_THRESHOLD = 35.00;
+        const FREE_SHIPPING_THRESHOLD = 30.00;
         const shippingCost = totalPrice >= FREE_SHIPPING_THRESHOLD ? 0.00 : 4.99;
         const finalTotal = totalPrice + shippingCost;
 
@@ -201,7 +201,7 @@ module.exports = function (context) {
                 }
             });
 
-            const FREE_SHIPPING_THRESHOLD = 35.00;
+            const FREE_SHIPPING_THRESHOLD = 30.00;
             const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0.00 : 4.99;
             const finalTotal = subtotal + shippingCost;
 

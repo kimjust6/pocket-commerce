@@ -11,8 +11,16 @@ module.exports = function shellData() {
             { title: 'Shop', href: '/shop', desktop: false, mobile: true },
         ],
         headerVisible: true,
+        bannerVisible: typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('banner_dismissed') !== 'true' : true,
 
         init() { },
+
+        dismissBanner() {
+            this.bannerVisible = false;
+            try {
+                sessionStorage.setItem('banner_dismissed', 'true');
+            } catch (_) {}
+        },
 
         toggleTheme() {
             this.darkMode = !this.darkMode
