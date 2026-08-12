@@ -11,22 +11,63 @@ module.exports = function(context) {
     let reviewSuccess = null;
     let userReview = null;
 
+    if (!productId) {
+        return {
+            product: null,
+            variants: [],
+            reviews: [],
+            averageRating: 0,
+            reviewError: null,
+            reviewSuccess: null,
+            user,
+            userReview: null
+        };
+    }
+
     try {
         const productRecord = $app.findRecordById("products", productId);
+        if (!productRecord) {
+            return {
+                product: null,
+                variants: [],
+                reviews: [],
+                averageRating: 0,
+                reviewError: "Product not found",
+                reviewSuccess: null,
+                user,
+                userReview: null
+            };
+        }
+
         $app.expandRecord(productRecord, ["category"]);
-        
         const cat = productRecord.expandedOne("category");
-        const imagesArray = productRecord.getStringSlice("images");
-        
-        let imageUrls = [];
-        if (imagesArray && imagesArray.length > 0) {
-            imageUrls = imagesArray.map(img => {
-                const cleanImg = (img || '').split('"').join('').trim();
-                if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://')) return cleanImg;
-                return `/api/files/products/${productRecord.id}/${cleanImg}`;
-            });
-        } else {
-            imageUrls = ["https://placehold.co/600x800?text=No+Image"];
+
+        let rawImgs = [];
+        try {
+            const strVal = productRecord.getString("images");
+            if (strVal && strVal.trim()) {
+                rawImgs = JSON.parse(strVal);
+            }
+        } catch (e) {
+            try {
+                rawImgs = productRecord.getStringSlice("images");
+            } catch (ignore) {}
+        }
+
+        if (!Array.isArray(rawImgs)) {
+            rawImgs = rawImgs ? [rawImgs] : [];
+        }
+
+        let imageUrls = rawImgs.map(img => {
+            let cleanImg = (img || '').split('"').join('').trim();
+            if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://') || cleanImg.startsWith('/')) {
+                return cleanImg;
+            }
+            return `/api/files/products/${productRecord.id}/${cleanImg}`;
+        });
+
+        if (imageUrls.length === 0) {
+            imageUrls = ["/card-birthday.webp"];
         }
 
         // Handle Review Submission (POST)
@@ -73,12 +114,18 @@ module.exports = function(context) {
                             // Check if purchase is verified (they ordered this product before)
                             let isVerified = false;
                             try {
-                                const orders = $app.findRecordsByFilter("orders", `user = '${user.id}'`, "", 100, 0);
-                                if (orders.length > 0) {
-                                    const orderIds = orders.map(o => o.id);
-                                    for (const oId of orderIds) {
-                                        const items = $app.findRecordsByFilter("order_items", `order = '${oId}' && product_name = '${productRecord.getString('name')}'`, "", 1, 0);
-                                        if (items.length > 0) {
+                                const matchingItems = $app.findRecordsByFilter(
+                                    "order_items",
+                                    `product_name = '${productRecord.getString('name')}'`,
+                                    "-created",
+                                    50,
+                                    0
+                                );
+                                if (matchingItems.length > 0) {
+                                    $app.expandRecords(matchingItems, ["order"]);
+                                    for (const item of matchingItems) {
+                                        const ord = item.expandedOne("order");
+                                        if (ord && ord.getString("user") === user.id) {
                                             isVerified = true;
                                             break;
                                         }
@@ -138,35 +185,30 @@ module.exports = function(context) {
             console.error("Failed to load variants", e);
         }
 
-        // Fetch logged-in user's existing review if any
-        if (user) {
-            try {
-                const userReviews = $app.findRecordsByFilter("reviews", `product = '${productId}' && user = '${user.id}'`, "", 1, 0);
-                if (userReviews.length > 0) {
-                    userReview = {
-                        id: userReviews[0].id,
-                        rating: userReviews[0].getInt("rating"),
-                        title: userReviews[0].getString("title"),
-                        body: userReviews[0].getString("body")
-                    };
-                }
-            } catch (err) {
-                console.error("Failed to fetch user review:", err);
-            }
-        }
-
         // Fetch reviews
         let ratingSum = 0;
         try {
-            console.log("REVIEWS DEBUG: productId =", productId);
             const reviewRecords = $app.findRecordsByFilter("reviews", `product = '${productId}'`, "", 100, 0);
-            console.log("REVIEWS DEBUG: reviewRecords count =", reviewRecords.length);
             if (reviewRecords.length > 0) {
                 $app.expandRecords(reviewRecords, ["user"]);
                 reviews = reviewRecords.map(r => {
                     const userRec = r.expandedOne("user");
                     const rating = r.getInt("rating");
+                    const userId = r.getString("user");
                     ratingSum += rating;
+
+                    if (user && userId === user.id && !userReview) {
+                        userReview = {
+                            id: r.id,
+                            rating: rating,
+                            title: r.getString("title"),
+                            body: r.getString("body")
+                        };
+                    }
+
+                    const rawCreated = r.getString("created");
+                    const createdStr = rawCreated ? common.formatDateTime(rawCreated) : "Verified Buyer";
+
                     return {
                         id: r.id,
                         rating: rating,
@@ -174,14 +216,30 @@ module.exports = function(context) {
                         body: r.getString("body"),
                         isVerified: r.getBool("is_verified_purchase"),
                         userName: userRec ? userRec.getString("name") || userRec.getString("username") || "Valued Customer" : "Anonymous",
-                        created: common.formatDateTime(r.getString("created"))
+                        created: createdStr
                     };
                 });
                 averageRating = parseFloat((ratingSum / reviews.length).toFixed(1));
             }
         } catch (err) {
-            console.log("REVIEWS DEBUG: Failed to load reviews:", err);
             console.error("Failed to load product reviews:", err);
+        }
+
+        // Fallback user review lookup if user's review wasn't in the top fetched list
+        if (user && !userReview) {
+            try {
+                const userReviewRecs = $app.findRecordsByFilter("reviews", `product = '${productId}' && user = '${user.id}'`, "", 1, 0);
+                if (userReviewRecs.length > 0) {
+                    userReview = {
+                        id: userReviewRecs[0].id,
+                        rating: userReviewRecs[0].getInt("rating"),
+                        title: userReviewRecs[0].getString("title"),
+                        body: userReviewRecs[0].getString("body")
+                    };
+                }
+            } catch (err) {
+                console.error("Failed to fetch user review:", err);
+            }
         }
 
         product = {

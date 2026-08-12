@@ -26,7 +26,7 @@
                         <% } %>
 
                             <title>
-                                <%= data.metadata?.find(x=> x.name === 'title')?.content || 'Dank Products' %>
+                                <%= (data.metadata && Array.isArray(data.metadata)) ? (data.metadata.find(function(x) { return x.name === 'title'; })?.content || 'Card Store') : 'Card Store' %>
                             </title>
 
                             <link href="<%=asset('/app.css')%>" rel="stylesheet" />
