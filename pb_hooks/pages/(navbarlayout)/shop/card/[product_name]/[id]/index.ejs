@@ -52,12 +52,22 @@
                             <!-- DaisyUI Rating Summary -->
                             <div class="flex items-center gap-3 mb-6">
                                 <div class="rating rating-sm">
-                                    <% for (let i = 1; i <= 5; i++) { %>
-                                        <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= Math.round(data.averageRating || 5) ? 'checked' : '' %> disabled />
+                                    <% if (data.reviews && data.reviews.length > 0) { %>
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= Math.round(data.averageRating || 0) ? 'checked' : '' %> disabled />
+                                        <% } %>
+                                    <% } else { %>
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <input type="radio" class="mask mask-star-2 bg-amber-400 opacity-20" disabled />
+                                        <% } %>
                                     <% } %>
                                 </div>
                                 <span class="text-xs font-bold text-base-content/70">
-                                    <%= data.averageRating || '5.0' %> (<%= data.reviews ? data.reviews.length : 0 %> reviews)
+                                    <% if (data.reviews && data.reviews.length > 0) { %>
+                                        <%= data.averageRating %> (<%= data.reviews.length %> <%= data.reviews.length === 1 ? 'review' : 'reviews' %>)
+                                    <% } else { %>
+                                        - (0 reviews)
+                                    <% } %>
                                 </span>
                             </div>
 
@@ -252,15 +262,21 @@
                         <div class="w-full lg:w-1/3 space-y-6">
                             <div class="bg-base-200/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center">
                                 <div class="text-5xl font-extrabold text-base-content mb-2">
-                                    <%= data.averageRating || '0' %>
+                                    <%= (data.reviews && data.reviews.length > 0) ? data.averageRating : '-' %>
                                 </div>
                                 <div class="rating rating-md justify-center mb-2">
-                                    <% for (let i = 1; i <= 5; i++) { %>
-                                        <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= Math.round(data.averageRating || 5) ? 'checked' : '' %> disabled />
+                                    <% if (data.reviews && data.reviews.length > 0) { %>
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <input type="radio" class="mask mask-star-2 bg-amber-400" <%= i <= Math.round(data.averageRating || 0) ? 'checked' : '' %> disabled />
+                                        <% } %>
+                                    <% } else { %>
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <input type="radio" class="mask mask-star-2 bg-amber-400 opacity-20" disabled />
+                                        <% } %>
                                     <% } %>
                                 </div>
                                 <div class="text-xs font-semibold text-base-content/60">
-                                    Based on <%= data.reviews.length %> review<%= data.reviews.length === 1 ? '' : 's' %>
+                                    Based on <%= (data.reviews ? data.reviews.length : 0) %> review<%= (data.reviews && data.reviews.length === 1) ? '' : 's' %>
                                 </div>
                             </div>
                             
