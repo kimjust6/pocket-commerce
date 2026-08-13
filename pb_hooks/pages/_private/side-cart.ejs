@@ -1,8 +1,14 @@
 <!-- Amazon EWC-Style Persistent Sidebar Cart Rail -->
 <aside x-cloak 
        x-show="!isCartPage && (cartCount > 0 || cartItems.length > 0) && sideCartOpen" 
+       x-transition:enter="transition ease-out duration-300 transform"
+       x-transition:enter-start="translate-x-full opacity-90"
+       x-transition:enter-end="translate-x-0 opacity-100"
+       x-transition:leave="transition ease-in duration-250 transform"
+       x-transition:leave-start="translate-x-0 opacity-100"
+       x-transition:leave-end="translate-x-full opacity-90"
        id="nav-flyout-ewc" 
-       class="fixed top-0 right-0 h-screen w-56 sm:w-60 lg:w-64 xl:w-72 bg-base-100 border-l border-slate-200 dark:border-slate-800 shadow-lg flex flex-col z-30 transition-transform duration-200 ewc-compact sc-java-remote-feature"
+       class="fixed top-0 right-0 h-screen w-56 sm:w-60 lg:w-64 xl:w-72 bg-base-100 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col z-30 ewc-compact sc-java-remote-feature"
        aria-label="Persistent Shopping Cart Sidebar">
 
     <!-- Top Subtotal & Actions Section (ewc-compact-head) -->
@@ -40,7 +46,8 @@
         <div class="ewc-scroller">
             <ul class="space-y-4 a-unordered-list a-nostyle a-vertical" role="list">
                 <template x-for="item in cartItems" :key="item.id || item.variantId">
-                    <li class="flex flex-col items-center text-center space-y-2 pb-4 border-b border-base-200 dark:border-slate-800 last:border-0 ewc-item">
+                    <li class="flex flex-col items-center text-center space-y-2 pb-4 border-b border-base-200 dark:border-slate-800 last:border-0 ewc-item transition-all duration-300 rounded-2xl"
+                        :class="{ 'animate-cart-item-slide ring-2 ring-primary/50 bg-primary/5 p-2 shadow-xs': recentlyAddedId && (recentlyAddedId === item.variantId || recentlyAddedId === item.productId || recentlyAddedId === item.id) }">
                         <!-- Product Thumbnail (Larger & Crisp) -->
                         <a :href="'/shop/card/' + (item.productSlug || 'card') + '/' + (item.productId || '')" class="w-32 h-40 sm:w-36 sm:h-44 rounded-2xl overflow-hidden bg-base-200/50 border border-base-200 dark:border-slate-700 p-1 flex items-center justify-center relative group shadow-2xs ewc-item-image">
                             <img :src="item.image || '/card-birthday.webp'" :alt="item.productName" class="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-300">

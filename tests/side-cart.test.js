@@ -51,4 +51,32 @@ describe('Amazon EWC-Style Sidebar Cart Component & Shell Data', () => {
         expect(shell.cartCount).toBe(3);
         expect(shell.cartTotalPrice).toBe(13.50);
     });
+
+    it('updates cart state when fetchLatestCart resolves with latest server data', async () => {
+        const shell = shellData(0, 0, []);
+        expect(shell.cartCount).toBe(0);
+
+        // Mock global fetch for testing
+        const originalFetch = global.fetch;
+        global.fetch = async () => ({
+            ok: true,
+            json: async () => ({
+                success: true,
+                totalItems: 4,
+                totalPrice: 20.00,
+                items: [
+                    { id: 'i1', quantity: 4, price: 5.00, productName: 'Bear Card', variantId: 'v1' }
+                ]
+            })
+        });
+
+        try {
+            await shell.fetchLatestCart();
+            expect(shell.cartCount).toBe(4);
+            expect(shell.cartTotalPrice).toBe(20.00);
+            expect(shell.cartItems.length).toBe(1);
+        } finally {
+            global.fetch = originalFetch;
+        }
+    });
 });

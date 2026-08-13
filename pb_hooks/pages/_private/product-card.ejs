@@ -3,6 +3,8 @@
     const title = item.title || item.name || 'Greeting Card';
     const slug = (item.slug || title).toLowerCase().replace(/\s+/g, '-');
     const id = item.id || '';
+    const variantId = item.variantId || item.defaultVariantId || '';
+    const inStock = item.inStock !== false && item.price !== 'Sold Out' && item.price !== null;
     const productUrl = `/shop/card/${slug}/${id}`;
     const images = item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
     const primaryImg = images[0] || '/hero-greeting-card.webp';
@@ -17,13 +19,71 @@
     if (item.price !== null && item.price !== undefined) {
         formattedPrice = typeof item.price === 'number' ? '$' + item.price.toFixed(2) : item.price;
     }
-    const btnLabel = typeof btnText !== 'undefined' ? btnText : 'Details';
+    const rawPrice = typeof item.price === 'number' ? item.price : (item.priceNum || 0);
 %>
 
 <div class="card card-compact bg-base-100 border border-base-200/90 dark:border-slate-800 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 h-full group cursor-pointer flex flex-col justify-between rounded-3xl overflow-hidden" 
-     x-data="{ showSecond: false }" 
+     x-data="{ 
+         showSecond: false,
+         loading: false,
+         added: false,
+         async addToCart(e) {
+             e.preventDefault();
+             e.stopPropagation();
+             if (this.loading) return;
+             this.loading = true;
+             try {
+                 const formData = new FormData();
+                 formData.append('action', 'add');
+                 <% if (variantId) { %>
+                 formData.append('variant_id', '<%= variantId %>');
+                 <% } %>
+                 formData.append('product_id', '<%= id %>');
+                 formData.append('quantity', '1');
+
+                 const res = await fetch('/cart?json=1', {
+                     method: 'POST',
+                     headers: {
+                         'Accept': 'application/json',
+                         'X-Requested-With': 'XMLHttpRequest'
+                     },
+                     body: formData
+                 });
+                 let result = null;
+                 try {
+                     result = await res.json();
+                 } catch (_) {}
+
+                 if (result && result.success) {
+                     this.added = true;
+                     window.dispatchEvent(new CustomEvent('cart-updated', {
+                         detail: {
+                             totalItems: result.totalItems,
+                             totalPrice: result.totalPrice,
+                             items: result.items,
+                             openSideCart: true,
+                             item: {
+                                 productId: '<%= id %>',
+                                 productName: '<%= title.replace(/\'/g, "\\'") %>',
+                                 image: '<%= primaryImg %>',
+                                 price: <%= rawPrice %>,
+                                 quantity: 1
+                             }
+                         }
+                     }));
+                     setTimeout(() => { this.added = false; }, 2000);
+                 } else {
+                     window.location.href = '<%= productUrl %>';
+                 }
+             } catch (err) {
+                 window.location.href = '<%= productUrl %>';
+             } finally {
+                 this.loading = false;
+             }
+         }
+     }" 
      @mouseenter="showSecond = true" 
-     @mouseleave="showSecond = false"
+     @mouseleave="showSecond = false" 
      @click="if (!$event.target.closest('a') && !$event.target.closest('button')) window.location.href = '<%= productUrl %>'">
     
     <div class="relative">
@@ -78,9 +138,38 @@
                     <span class="text-xs text-base-content/40 line-through"><%= compareAt %></span>
                 <% } %>
             </div>
-            <a href="<%= productUrl %>" class="btn btn-outline btn-primary btn-xs rounded-full font-bold px-3.5 shadow-2xs hover:shadow-xs transition-all">
-                <%= btnLabel %>
-            </a>
+            <% if (inStock) { %>
+                <button type="button" 
+                        @click="addToCart($event)" 
+                        :disabled="loading"
+                        class="btn btn-xs rounded-full font-bold px-3.5 shadow-2xs transition-all duration-300 flex items-center justify-center gap-1.5 min-h-0 h-7 active:scale-95"
+                        :class="added ? 'bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-500 scale-105 shadow-sm' : 'btn-primary hover:scale-[1.03]'"
+                        aria-label="Add <%= title %> to cart">
+                    <template x-if="loading">
+                        <span class="loading loading-spinner loading-xs"></span>
+                    </template>
+                    <template x-if="!loading && added">
+                        <span class="flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>Added!</span>
+                        </span>
+                    </template>
+                    <template x-if="!loading && !added">
+                        <span class="flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Add to Cart</span>
+                        </span>
+                    </template>
+                </button>
+            <% } else { %>
+                <a href="<%= productUrl %>" class="btn btn-ghost btn-xs rounded-full font-bold px-3 text-base-content/50 pointer-events-none min-h-0 h-7">
+                    Sold Out
+                </a>
+            <% } %>
         </div>
     </div>
 </div>

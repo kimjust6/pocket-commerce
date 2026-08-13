@@ -51,11 +51,11 @@
             <!-- Cart Link with DaisyUI Indicator & Badge -->
             <div class="tooltip tooltip-bottom" data-tip="Cart">
                 <a href="/cart" @click="if (cartCount > 0 || cartItems.length > 0) { $event.preventDefault(); toggleSideCart(); }" class="btn btn-ghost btn-circle border-0 flex items-center justify-center hover:scale-105 transition-transform" aria-label="Shopping Cart">
-                    <div class="indicator">
+                    <div class="indicator" :class="{ 'scale-110': cartPulsing }" class="transition-transform duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
-                        <span x-show="cartCount > 0" x-text="cartCount" class="badge badge-sm bg-accent text-white indicator-item font-extrabold text-[10px] rounded-full border-none shadow-xs" x-cloak>
+                        <span x-show="cartCount > 0" x-text="cartCount" class="badge badge-sm bg-accent text-white indicator-item font-extrabold text-[10px] rounded-full border-none shadow-xs transition-all duration-300" :class="{ 'scale-125 ring-2 ring-accent/60': cartPulsing }" x-cloak>
                             <%= (locals.data && locals.data.totalItems > 0) ? locals.data.totalItems : '' %>
                         </span>
                     </div>

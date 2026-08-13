@@ -42,6 +42,7 @@ module.exports = function (context) {
         let minPrices = {}; // productId -> price
         let totalStocks = {}; // productId -> stock
         let isOnSale = {}; // productId -> bool
+        let defaultVariantIds = {}; // productId -> variantId
 
         try {
             if (productIds.length > 0) {
@@ -60,8 +61,12 @@ module.exports = function (context) {
 
                         if (!minPrices[pId] || price < minPrices[pId]) {
                             minPrices[pId] = price;
+                            defaultVariantIds[pId] = v.id;
                         }
                         totalStocks[pId] = (totalStocks[pId] || 0) + stock;
+                        if (!defaultVariantIds[pId]) {
+                            defaultVariantIds[pId] = v.id;
+                        }
                         if (compareAt > price) {
                             isOnSale[pId] = true;
                         }
@@ -106,6 +111,7 @@ module.exports = function (context) {
 
             return {
                 id: p.id,
+                variantId: defaultVariantIds[p.id] || null,
                 name: p.getString('name'),
                 slug: p.getString('slug'),
                 description: p.getString('description'),

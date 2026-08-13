@@ -16,6 +16,7 @@ module.exports = function (context) {
             let minPrices = {};
             let compareAtPrices = {};
             let totalStocks = {};
+            let defaultVariantIds = {};
 
             if (productIds.length > 0) {
                 const variantsFilter = productIds.map(id => `product = '${id}'`).join(' || ');
@@ -28,11 +29,15 @@ module.exports = function (context) {
 
                     if (!minPrices[pId] || price < minPrices[pId]) {
                         minPrices[pId] = price;
+                        defaultVariantIds[pId] = v.id;
                     }
                     if (compareAt && compareAt > price) {
                         compareAtPrices[pId] = compareAt;
                     }
                     totalStocks[pId] = (totalStocks[pId] || 0) + stock;
+                    if (!defaultVariantIds[pId]) {
+                        defaultVariantIds[pId] = v.id;
+                    }
                 });
             }
 
@@ -77,6 +82,7 @@ module.exports = function (context) {
 
                 return {
                     id: p.id,
+                    variantId: defaultVariantIds[p.id] || null,
                     title: name,
                     description: p.getString('description') || 'Handcrafted greeting card printed on recycled cardstock.',
                     price: priceStr,

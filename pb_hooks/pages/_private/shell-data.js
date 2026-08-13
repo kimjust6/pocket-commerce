@@ -1,5 +1,7 @@
 /**
  * Shell Alpine.js component for navigation, theme management, and sidebar compact cart.
+ * Implements a Stale-While-Revalidate caching pattern: loads immediately from initial/local cache,
+ * but continuously fetches the latest cart from the server in the background.
  * @returns {Object} The Alpine.js component data.
  */
 module.exports = function shellData(initialCartCount, initialCartTotal, initialCartItems, isCartPage) {
@@ -27,6 +29,7 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
     let count = typeof initialCartCount === 'number' ? initialCartCount : (parseInt(initialCartCount, 10) || 0);
     let total = typeof initialCartTotal === 'number' ? initialCartTotal : (parseFloat(initialCartTotal) || 0.0);
 
+    // If SSR provided items but count/total were 0, derive from items
     if (Array.isArray(parsedItems) && parsedItems.length > 0) {
         if (count <= 0) {
             count = parsedItems.reduce((acc, it) => acc + (it.quantity || 1), 0);
@@ -34,6 +37,21 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         if (total <= 0) {
             total = parsedItems.reduce((acc, it) => acc + (Number(it.price || 0) * (it.quantity || 1)), 0);
         }
+    }
+
+    // Client-side cache fallback: if SSR values are empty, read from localStorage
+    if (typeof localStorage !== 'undefined' && count <= 0 && parsedItems.length === 0) {
+        try {
+            const cachedStr = localStorage.getItem('pocket_cart_cache');
+            if (cachedStr) {
+                const cached = JSON.parse(cachedStr);
+                if (cached && Array.isArray(cached.items) && cached.items.length > 0) {
+                    parsedItems = cached.items;
+                    count = typeof cached.totalItems === 'number' ? cached.totalItems : (typeof cached.count === 'number' ? cached.count : parsedItems.reduce((acc, it) => acc + (it.quantity || 1), 0));
+                    total = typeof cached.totalPrice === 'number' ? cached.totalPrice : (typeof cached.total === 'number' ? cached.total : parsedItems.reduce((acc, it) => acc + (Number(it.price || 0) * (it.quantity || 1)), 0));
+                }
+            }
+        } catch (_) {}
     }
 
     const isCart = Boolean(isCartPage);
@@ -48,6 +66,10 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         searchOpen: false,
         sideCartOpen: !isCart && hasItems,
         updatingItemId: null,
+        isFetchingCart: false,
+        cartPulsing: false,
+        recentlyAddedId: null,
+        recentlyAddedTimer: null,
         darkMode: typeof localStorage !== 'undefined' ? localStorage.getItem('theme') === 'dark' : false,
         navigation: [
             { title: 'Shop', href: '/shop', desktop: false, mobile: true },
@@ -56,6 +78,7 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         bannerVisible: typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('banner_dismissed') !== 'true' : true,
 
         init() {
+            // 1. Listen for cart-updated events from cards, PDPs, and modals
             window.addEventListener('cart-updated', (e) => {
                 if (!e.detail) return;
                 if (typeof e.detail.totalItems !== 'undefined') {
@@ -95,10 +118,113 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
                         this.cartTotalPrice = this.cartItems.reduce((acc, it) => acc + (Number(it.price || 0) * (it.quantity || 1)), 0);
                     }
                 }
-                if (e.detail.openSideCart && (this.cartCount > 0 || this.cartItems.length > 0)) {
+                this.saveCartToCache();
+                this.cartPulsing = true;
+                setTimeout(() => { this.cartPulsing = false; }, 800);
+
+                // Set recentlyAddedId to trigger the slide-in animation on the newly added item
+                if (e.detail.item) {
+                    const targetId = e.detail.item.variantId || e.detail.item.productId || (this.cartItems[0] ? this.cartItems[0].id : null);
+                    this.recentlyAddedId = targetId;
+                    if (this.recentlyAddedTimer) clearTimeout(this.recentlyAddedTimer);
+                    this.recentlyAddedTimer = setTimeout(() => {
+                        if (this.recentlyAddedId === targetId) {
+                            this.recentlyAddedId = null;
+                        }
+                    }, 2500);
+                }
+
+                if (e.detail.openSideCart && !this.isCartPage && (this.cartCount > 0 || this.cartItems.length > 0)) {
                     this.sideCartOpen = true;
+                    // Auto-scroll the sidebar scroller to top so the new item is front and center
+                    setTimeout(() => {
+                        if (typeof document !== 'undefined') {
+                            const scroller = document.getElementById('ewc-compact-body');
+                            if (scroller) scroller.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    }, 100);
                 }
             });
+
+            // 2. Fetch latest cart from server immediately on initialization
+            this.fetchLatestCart();
+
+            // 3. Keep cart fresh when window gains focus or becomes visible
+            if (typeof window !== 'undefined') {
+                window.addEventListener('focus', () => {
+                    this.fetchLatestCart();
+                });
+                if (typeof document !== 'undefined') {
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.visibilityState === 'visible') {
+                            this.fetchLatestCart();
+                        }
+                    });
+                }
+                // 4. Cross-tab synchronization via localStorage
+                window.addEventListener('storage', (e) => {
+                    if (e.key === 'pocket_cart_cache' && e.newValue) {
+                        try {
+                            const cached = JSON.parse(e.newValue);
+                            if (cached) {
+                                this.cartCount = typeof cached.totalItems === 'number' ? cached.totalItems : 0;
+                                this.cartTotalPrice = typeof cached.totalPrice === 'number' ? cached.totalPrice : 0;
+                                this.cartItems = Array.isArray(cached.items) ? cached.items : [];
+                                if (this.cartCount <= 0 && this.cartItems.length === 0) {
+                                    this.sideCartOpen = false;
+                                }
+                            }
+                        } catch (_) {}
+                    }
+                });
+            }
+        },
+
+        saveCartToCache() {
+            if (typeof localStorage === 'undefined') return;
+            try {
+                localStorage.setItem('pocket_cart_cache', JSON.stringify({
+                    totalItems: this.cartCount,
+                    totalPrice: this.cartTotalPrice,
+                    items: this.cartItems,
+                    updatedAt: Date.now()
+                }));
+            } catch (_) {}
+        },
+
+        async fetchLatestCart() {
+            if (typeof fetch !== 'function' || this.isFetchingCart) return;
+            this.isFetchingCart = true;
+            try {
+                const res = await fetch('/cart?json=1', {
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && data.success) {
+                    const latestCount = typeof data.totalItems === 'number' ? data.totalItems : 0;
+                    const latestTotal = typeof data.totalPrice === 'number' ? data.totalPrice : 0.0;
+                    const latestItems = Array.isArray(data.items) ? data.items : (Array.isArray(data.cartItems) ? data.cartItems : []);
+
+                    this.cartCount = latestCount;
+                    this.cartTotalPrice = latestTotal;
+                    this.cartItems = latestItems;
+                    this.saveCartToCache();
+
+                    if (latestCount <= 0 && latestItems.length === 0) {
+                        this.sideCartOpen = false;
+                    }
+                }
+            } catch (err) {
+                // Silently fallback to current/cached state
+            } finally {
+                this.isFetchingCart = false;
+            }
         },
 
         openSideCart() {
@@ -164,6 +290,7 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
                         item.quantity = newQuantity;
                         item.total = item.price * newQuantity;
                     }
+                    this.saveCartToCache();
                     if (this.cartCount <= 0 && this.cartItems.length === 0) {
                         this.sideCartOpen = false;
                     }
@@ -183,29 +310,33 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         },
 
         toggleTheme() {
-            this.darkMode = !this.darkMode
-            const theme = this.darkMode ? 'dark' : 'light'
-            const themeToken = this.darkMode ? 'dark' : 'light'
-            localStorage.setItem('theme', theme)
-            document.documentElement.setAttribute('data-theme', themeToken)
-            document.documentElement.classList.toggle('dark', this.darkMode)
+            this.darkMode = !this.darkMode;
+            const theme = this.darkMode ? 'dark' : 'light';
+            const themeToken = this.darkMode ? 'dark' : 'light';
+            try {
+                localStorage.setItem('theme', theme);
+            } catch (_) {}
+            if (typeof document !== 'undefined') {
+                document.documentElement.setAttribute('data-theme', themeToken);
+                document.documentElement.classList.toggle('dark', this.darkMode);
+            }
         },
 
         scrollTo(target) {
-            const el = document.getElementById(target)
+            if (typeof document === 'undefined') return;
+            const el = document.getElementById(target);
             if (el) {
-                const headerOffset = 80
-                const elementPosition = el.getBoundingClientRect().top
+                const headerOffset = 80;
+                const elementPosition = el.getBoundingClientRect().top;
                 const offsetPosition =
-                    elementPosition + window.pageYOffset - headerOffset
+                    elementPosition + window.pageYOffset - headerOffset;
 
                 window.scrollTo({
                     top: offsetPosition,
                     behavior: 'smooth',
-                })
-                this.navOpen = false
+                });
+                this.navOpen = false;
             }
         },
-    }
-}
-
+    };
+};

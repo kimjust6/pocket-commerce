@@ -214,6 +214,7 @@ module.exports = function (context) {
                 formData = {
                     action: getRequestFormValue('action'),
                     variant_id: getRequestFormValue('variant_id'),
+                    product_id: getRequestFormValue('product_id'),
                     quantity: getRequestFormValue('quantity'),
                     item_id: getRequestFormValue('item_id')
                 };
@@ -221,8 +222,24 @@ module.exports = function (context) {
             const action = getFormValue(formData, 'action');
 
             if (action === 'add') {
-                const variantId = getFormValue(formData, 'variant_id');
+                let variantId = getFormValue(formData, 'variant_id');
+                const productId = getFormValue(formData, 'product_id');
                 const quantity = parseInt(getFormValue(formData, 'quantity', '1'), 10);
+
+                if (!variantId && productId) {
+                    try {
+                        const inStockVariants = $app.findRecordsByFilter("product_variants", `product = '${productId}' && stock > 0`, "price", 1, 0);
+                        if (inStockVariants.length > 0) {
+                            variantId = inStockVariants[0].id;
+                        } else {
+                            const allVariants = $app.findRecordsByFilter("product_variants", `product = '${productId}'`, "price", 1, 0);
+                            if (allVariants.length > 0) {
+                                variantId = allVariants[0].id;
+                            }
+                        }
+                    } catch (_) {}
+                }
+
                 if (variantId && quantity > 0) {
                     let variant = null;
                     try {
@@ -460,6 +477,17 @@ module.exports = function (context) {
         }
     } catch (e) {
         console.error("[cart/+load.js] GET fetch error:", e);
+    }
+
+    if (isJsonRequest()) {
+        context.response.json(200, {
+            success: true,
+            totalItems,
+            totalPrice,
+            items: cartItems,
+            cartItems
+        });
+        return;
     }
 
     return {

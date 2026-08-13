@@ -239,7 +239,7 @@
                                         </div>
 
                                         <!-- Add to Cart Button -->
-                                        <button type="submit" :disabled="adding" class="btn btn-primary btn-lg rounded-xl shadow-md hover:shadow-lg font-bold flex-1 text-center w-full transition-all" :class="{ 'btn-success text-white': added }">
+                                        <button type="submit" :disabled="adding" class="btn btn-primary btn-lg rounded-xl shadow-md hover:shadow-lg font-bold flex-1 text-center w-full transition-all duration-300 active:scale-[0.98]" :class="{ 'bg-emerald-500 hover:bg-emerald-600 border-emerald-500 text-white scale-[1.02] shadow-emerald-500/20': added }">
                                             <span x-show="!adding && !added" class="flex items-center justify-center gap-2">
                                                 Add to Shopping Cart
                                             </span>
