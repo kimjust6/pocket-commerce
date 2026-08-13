@@ -1,17 +1,17 @@
 <%- include('banner') %>
 
-<header class="sticky top-0 z-40 border-b border-slate-200/80 dark:border-slate-800 bg-base-100/90 backdrop-blur-md transition-colors">
+<header class="sticky top-0 z-40 border-b border-base-200/80 dark:border-slate-800 bg-base-100/90 backdrop-blur-md transition-colors">
     <div class="navbar container mx-auto px-4 md:px-8 min-h-16">
         <!-- Left: Logo & Brand -->
         <div class="navbar-start w-auto flex items-center gap-8">
             <a href="/" class="flex items-center gap-2.5 group">
-                <div class="w-10 h-10 rounded-2xl bg-primary text-primary-content flex items-center justify-center font-bold text-lg shadow-md group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
+                <div class="w-10 h-10 rounded-2xl bg-primary text-primary-content flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </div>
                 <span class="text-xl font-extrabold tracking-tight text-base-content group-hover:text-primary transition-colors">
-                    Pocket <span class="gradient-heading">Commerce</span>
+                    Pocket <span class="text-primary font-bold">Commerce</span>
                 </span>
             </a>
 
@@ -22,8 +22,8 @@
                 <a href="/shop?category=thank-you" class="font-medium text-base-content/75 hover:text-primary transition-colors">Thank You</a>
                 <a href="/shop?category=love" class="font-medium text-base-content/75 hover:text-primary transition-colors hidden xl:inline-block">Love</a>
                 <a href="/shop?category=animals" class="font-medium text-base-content/75 hover:text-primary transition-colors hidden xl:inline-block">Animals</a>
-                <a href="/shop?on_sale=1" class="font-bold text-[#e60012] dark:text-rose-400 flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-                    <span class="w-2 h-2 rounded-full bg-[#e60012] animate-pulse"></span>
+                <a href="/shop?on_sale=1" class="font-bold text-accent flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                    <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
                     Limited Offers
                 </a>
             </nav>
@@ -35,7 +35,7 @@
             <div class="hidden sm:flex items-center" x-data="{ open: false }">
                 <form action="/shop" method="GET" class="join">
                     <input type="text" name="q"
-                        class="input input-sm input-bordered join-item rounded-full pl-9 pr-4 w-48 lg:w-60 bg-base-200/60 focus:bg-base-100 focus:w-68 text-xs transition-all border-slate-200 dark:border-slate-700"
+                        class="input input-sm input-bordered join-item rounded-full pl-9 pr-4 w-48 lg:w-60 bg-base-200/50 focus:bg-base-100 focus:w-68 text-xs transition-all border-base-200 dark:border-slate-700"
                         placeholder="Search products...">
                     <button type="submit" class="btn btn-sm btn-ghost join-item rounded-r-full -ml-8 z-10" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,12 +50,12 @@
 
             <!-- Cart Link with DaisyUI Indicator & Badge -->
             <div class="tooltip tooltip-bottom" data-tip="Cart">
-                <a href="/cart" @click="if (cartCount > 0 || cartItems.length > 0) { $event.preventDefault(); toggleSideCart(); }" class="btn btn-ghost btn-circle border-0 flex items-center justify-center" aria-label="Shopping Cart">
+                <a href="/cart" @click="if (cartCount > 0 || cartItems.length > 0) { $event.preventDefault(); toggleSideCart(); }" class="btn btn-ghost btn-circle border-0 flex items-center justify-center hover:scale-105 transition-transform" aria-label="Shopping Cart">
                     <div class="indicator">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
-                        <span x-show="cartCount > 0" x-text="cartCount" class="badge badge-sm badge-primary indicator-item font-extrabold text-[10px]" x-cloak>
+                        <span x-show="cartCount > 0" x-text="cartCount" class="badge badge-sm bg-accent text-white indicator-item font-extrabold text-[10px] rounded-full border-none shadow-xs" x-cloak>
                             <%= (locals.data && locals.data.totalItems > 0) ? locals.data.totalItems : '' %>
                         </span>
                     </div>
@@ -76,19 +76,19 @@
                             <% } %>
                         </div>
                     </div>
-                    <ul tabindex="0" class="menu menu-sm dropdown-content z-[1] mt-3 w-56 p-2 shadow-xl bg-base-100 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-1">
+                    <ul tabindex="0" class="menu menu-sm dropdown-content z-[1] mt-3 w-56 p-2 shadow-xl bg-base-100 border border-base-200 dark:border-slate-800 rounded-3xl space-y-1">
                         <li class="menu-title px-3 py-1.5 text-[11px] text-base-content/60 font-semibold border-b border-base-200 dark:border-slate-800">
                             <%= auth.email() %>
                         </li>
-                        <li><a href="/account" class="rounded-xl py-2 font-semibold">Dashboard</a></li>
-                        <li><a href="/profile" class="rounded-xl py-2 font-semibold">My Profile</a></li>
-                        <li><a href="/account/addresses" class="rounded-xl py-2 font-semibold">Saved Addresses</a></li>
+                        <li><a href="/account" class="rounded-2xl py-2 font-semibold">Dashboard</a></li>
+                        <li><a href="/profile" class="rounded-2xl py-2 font-semibold">My Profile</a></li>
+                        <li><a href="/account/addresses" class="rounded-2xl py-2 font-semibold">Saved Addresses</a></li>
                         <div class="divider my-0.5"></div>
-                        <li><a href="/auth/logout" class="text-error rounded-xl py-2 font-semibold">Logout</a></li>
+                        <li><a href="/auth/logout" class="text-error rounded-2xl py-2 font-semibold">Logout</a></li>
                     </ul>
                 </div>
             <% } else { %>
-                <a href="/login" class="hidden sm:inline-flex btn btn-primary btn-sm rounded-xl font-bold px-4 shadow-sm">
+                <a href="/login" class="hidden sm:inline-flex btn btn-primary btn-sm rounded-full font-bold px-5 shadow-xs hover:shadow-md transition-all">
                     Sign In
                 </a>
             <% } %>

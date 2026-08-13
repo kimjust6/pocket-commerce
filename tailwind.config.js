@@ -12,73 +12,73 @@ export default {
     daisyui: {
         themes: [
             {
-                // "Glacier Mist" — blue pastel light theme
+                // "Glacier Mist" — cute blue pastel light theme
                 light: {
-                    'primary': '#2D6392',           // rich ocean blue
+                    'primary': '#3B7BA8',           // cheerful ocean periwinkle
                     'primary-content': '#ffffff',
-                    'secondary': '#5B9ED4',          // sky blue — hover/interactive highlight
+                    'secondary': '#78B2E8',          // soft powder sky blue
                     'secondary-content': '#ffffff',
-                    'accent': '#D94F68',             // coral rose — warm focal point
+                    'accent': '#FA6B86',             // sweet strawberry blush
                     'accent-content': '#ffffff',
-                    'neutral': '#1C2938',
+                    'neutral': '#1C2A39',
                     'neutral-content': '#ffffff',
-                    'base-100': '#EBF2FA',           // fresh sky pastel — page bg
-                    'base-200': '#D8E5F3',           // medium sky pastel
-                    'base-300': '#ADC7E3',           // deeper mist blue — cards, navbar, footer
-                    'base-content': '#13253A',       // dark slate navy
-                    'info': '#4A8FC2',
+                    'base-100': '#F4F8FD',           // fresh cloud pastel — page bg
+                    'base-200': '#E3EEFA',           // soft marshmallow mist
+                    'base-300': '#BED8F4',           // deeper mist blue — cards, navbar, borders
+                    'base-content': '#142436',       // dark slate navy
+                    'info': '#5CA6E8',
                     'info-content': '#ffffff',
-                    'success': '#358A60',
+                    'success': '#43B581',            // fresh mint
                     'success-content': '#ffffff',
-                    'warning': '#C4923A',            // warm golden amber
+                    'warning': '#F5A623',            // warm honey sunshine
                     'warning-content': '#ffffff',
-                    'error': '#C05050',
+                    'error': '#E5566E',              // soft strawberry red
                     'error-content': '#ffffff',
-                    "--rounded-box": "1.25rem",
-                    "--rounded-btn": "0.75rem",
+                    "--rounded-box": "1.5rem",
+                    "--rounded-btn": "9999px",
                     "--rounded-badge": "9999px",
                     "--animation-btn": "0.2s",
                     "--animation-input": "0.2s",
                     "--btn-focus-scale": "0.97",
-                    "--tab-radius": "0.75rem",
+                    "--tab-radius": "9999px",
                 },
                 nord: {
-                    'primary': '#2D6392',           // rich ocean blue
+                    'primary': '#3B7BA8',           // cheerful ocean periwinkle
                     'primary-content': '#ffffff',
-                    'secondary': '#5B9ED4',          // sky blue — hover/interactive highlight
+                    'secondary': '#78B2E8',          // soft powder sky blue
                     'secondary-content': '#ffffff',
-                    'accent': '#D94F68',             // coral rose — warm focal point
+                    'accent': '#FA6B86',             // sweet strawberry blush
                     'accent-content': '#ffffff',
-                    'neutral': '#1C2938',
+                    'neutral': '#1C2A39',
                     'neutral-content': '#ffffff',
-                    'base-100': '#EBF2FA',           // fresh sky pastel — page bg
-                    'base-200': '#D8E5F3',           // medium sky pastel
-                    'base-300': '#ADC7E3',           // deeper mist blue — cards, navbar, footer
-                    'base-content': '#13253A',       // dark slate navy
-                    'info': '#4A8FC2',
+                    'base-100': '#F4F8FD',           // fresh cloud pastel — page bg
+                    'base-200': '#E3EEFA',           // soft marshmallow mist
+                    'base-300': '#BED8F4',           // deeper mist blue — cards, navbar, borders
+                    'base-content': '#142436',       // dark slate navy
+                    'info': '#5CA6E8',
                     'info-content': '#ffffff',
-                    'success': '#358A60',
+                    'success': '#43B581',            // fresh mint
                     'success-content': '#ffffff',
-                    'warning': '#C4923A',            // warm golden amber
+                    'warning': '#F5A623',            // warm honey sunshine
                     'warning-content': '#ffffff',
-                    'error': '#C05050',
+                    'error': '#E5566E',              // soft strawberry red
                     'error-content': '#ffffff',
-                    "--rounded-box": "1.25rem",
-                    "--rounded-btn": "0.75rem",
+                    "--rounded-box": "1.5rem",
+                    "--rounded-btn": "9999px",
                     "--rounded-badge": "9999px",
                     "--animation-btn": "0.2s",
                     "--animation-input": "0.2s",
                     "--btn-focus-scale": "0.97",
-                    "--tab-radius": "0.75rem",
+                    "--tab-radius": "9999px",
                 },
                 // "Midnight Studio" — deep navy dark theme
                 dark: {
                     'color-scheme': 'dark',
-                    'primary': '#5B9BD5',           // vivid electric blue — buttons, links
+                    'primary': '#68A8E2',           // vivid friendly electric blue
                     'primary-content': '#06111f',
-                    'secondary': '#90C3E8',          // pale sky blue — lighter than primary, clear hover target
+                    'secondary': '#9FD2F6',          // pale sky blue
                     'secondary-content': '#071624',
-                    'accent': '#E8A833',             // saffron-amber — warm focal point against cool bg
+                    'accent': '#F8B146',             // honey sunshine warm focal point
                     'accent-content': '#1a1000',
                     'neutral': '#1e2535',
                     'neutral-content': '#a6adbb',
@@ -86,21 +86,21 @@ export default {
                     'base-200': '#0b0f16',           // darker navy
                     'base-300': '#070a11',           // near-black navy — cards, navbar
                     'base-content': '#b0bdd4',       // soft blue-grey text
-                    'info': '#5B9BD5',
+                    'info': '#68A8E2',
                     'info-content': '#06111f',
                     'success': '#5cb88a',
                     'success-content': '#061a0f',
-                    'warning': '#E8A833',
+                    'warning': '#F8B146',
                     'warning-content': '#1a1000',
-                    'error': '#d46b6b',
+                    'error': '#E56D6D',
                     'error-content': '#200808',
-                    "--rounded-box": "1.25rem",
-                    "--rounded-btn": "0.75rem",
+                    "--rounded-box": "1.5rem",
+                    "--rounded-btn": "9999px",
                     "--rounded-badge": "9999px",
                     "--animation-btn": "0.2s",
                     "--animation-input": "0.2s",
                     "--btn-focus-scale": "0.97",
-                    "--tab-radius": "0.75rem",
+                    "--tab-radius": "9999px",
                 },
             },
             'light', 'dark', 'corporate', 'nord'

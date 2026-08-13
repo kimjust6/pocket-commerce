@@ -11,7 +11,7 @@
         initialCartBase64 = '';
     }
 %>
-<html lang="en" data-theme="light" x-data="shell(<%= initialCartCount %>, <%= initialCartTotal %>, '<%= initialCartBase64 %>')">
+<html lang="en" data-theme="light" x-data="shell(<%= initialCartCount %>, <%= initialCartTotal %>, '<%= initialCartBase64 %>', <%= isCartPage %>)">
 
 <head>
     <%- include('head') %> <%- include('theme-init') %> <%- include('alpine-setup') %> <%- include('shell-init') %> <%-

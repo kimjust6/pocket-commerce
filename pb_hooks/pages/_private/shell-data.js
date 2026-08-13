@@ -2,7 +2,7 @@
  * Shell Alpine.js component for navigation, theme management, and sidebar compact cart.
  * @returns {Object} The Alpine.js component data.
  */
-module.exports = function shellData(initialCartCount, initialCartTotal, initialCartItems) {
+module.exports = function shellData(initialCartCount, initialCartTotal, initialCartItems, isCartPage) {
     let parsedItems = [];
     if (Array.isArray(initialCartItems)) {
         parsedItems = initialCartItems;
@@ -36,13 +36,17 @@ module.exports = function shellData(initialCartCount, initialCartTotal, initialC
         }
     }
 
+    const isCart = Boolean(isCartPage);
+    const hasItems = count > 0 || (Array.isArray(parsedItems) && parsedItems.length > 0);
+
     return {
+        isCartPage: isCart,
         cartCount: count,
         cartTotalPrice: total,
         cartItems: parsedItems,
         navOpen: false,
         searchOpen: false,
-        sideCartOpen: count > 0 || (Array.isArray(parsedItems) && parsedItems.length > 0),
+        sideCartOpen: !isCart && hasItems,
         updatingItemId: null,
         darkMode: typeof localStorage !== 'undefined' ? localStorage.getItem('theme') === 'dark' : false,
         navigation: [

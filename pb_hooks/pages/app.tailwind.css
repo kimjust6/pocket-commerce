@@ -68,12 +68,12 @@
     }
 
     .store-card {
-        @apply bg-base-100 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col;
+        @apply bg-base-100 border border-base-200/80 dark:border-slate-800/80 rounded-3xl shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col;
         corner-shape: squircle;
     }
 
     .store-badge {
-        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase;
+        @apply inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase;
         corner-shape: squircle;
     }
 
@@ -88,6 +88,10 @@
     .glow-card {
         @apply border border-primary/20 shadow-lg dark:border-primary/30;
         corner-shape: squircle;
+    }
+
+    .cute-pill {
+        @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-all;
     }
 
 }
