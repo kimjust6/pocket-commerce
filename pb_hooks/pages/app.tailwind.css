@@ -78,29 +78,15 @@
     }
 
     .gradient-heading {
-        @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent;
+        @apply text-primary font-bold;
     }
 
     .mesh-gradient-bg {
-        background-color: hsla(240, 100%, 99%, 1);
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(243, 75%, 59%, 0.12) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, hsla(263, 70%, 50%, 0.1) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, hsla(339, 80%, 55%, 0.08) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, hsla(187, 85%, 53%, 0.1) 0px, transparent 50%);
-    }
-
-    .dark .mesh-gradient-bg {
-        background-color: hsla(222, 47%, 6%, 1);
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(243, 75%, 59%, 0.2) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, hsla(263, 70%, 50%, 0.15) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, hsla(339, 80%, 55%, 0.12) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, hsla(187, 85%, 53%, 0.15) 0px, transparent 50%);
+        @apply bg-base-200/50 dark:bg-base-200/40;
     }
 
     .glow-card {
-        @apply border border-indigo-500/20 shadow-[0_10px_35px_-15px_rgba(99,102,241,0.2)] dark:shadow-[0_10px_35px_-15px_rgba(99,102,241,0.3)];
+        @apply border border-primary/20 shadow-lg dark:border-primary/30;
         corner-shape: squircle;
     }
 

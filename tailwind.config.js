@@ -12,23 +12,28 @@ export default {
     daisyui: {
         themes: [
             {
+                // "Glacier Mist" — blue pastel light theme
                 light: {
-                    "primary": "#4f46e5",           // Indigo 600
-                    "primary-content": "#ffffff",
-                    "secondary": "#7c3aed",         // Violet 600
-                    "secondary-content": "#ffffff",
-                    "accent": "#06b6d4",            // Cyan / Emerald
-                    "accent-content": "#ffffff",
-                    "neutral": "#0f172a",           // Slate 900
-                    "neutral-content": "#f8fafc",
-                    "base-100": "#ffffff",          // Clean Surface
-                    "base-200": "#f8fafc",          // Soft Tint
-                    "base-300": "#f1f5f9",          // Border Tint
-                    "base-content": "#0f172a",      // Text
-                    "info": "#3b82f6",
-                    "success": "#10b981",
-                    "warning": "#f59e0b",
-                    "error": "#f43f5e",
+                    'primary': '#2D6392',           // rich ocean blue
+                    'primary-content': '#ffffff',
+                    'secondary': '#5B9ED4',          // sky blue — hover/interactive highlight
+                    'secondary-content': '#ffffff',
+                    'accent': '#D94F68',             // coral rose — warm focal point
+                    'accent-content': '#ffffff',
+                    'neutral': '#1C2938',
+                    'neutral-content': '#ffffff',
+                    'base-100': '#EBF2FA',           // fresh sky pastel — page bg
+                    'base-200': '#D8E5F3',           // medium sky pastel
+                    'base-300': '#ADC7E3',           // deeper mist blue — cards, navbar, footer
+                    'base-content': '#13253A',       // dark slate navy
+                    'info': '#4A8FC2',
+                    'info-content': '#ffffff',
+                    'success': '#358A60',
+                    'success-content': '#ffffff',
+                    'warning': '#C4923A',            // warm golden amber
+                    'warning-content': '#ffffff',
+                    'error': '#C05050',
+                    'error-content': '#ffffff',
                     "--rounded-box": "1.25rem",
                     "--rounded-btn": "0.75rem",
                     "--rounded-badge": "9999px",
@@ -37,23 +42,58 @@ export default {
                     "--btn-focus-scale": "0.97",
                     "--tab-radius": "0.75rem",
                 },
+                nord: {
+                    'primary': '#2D6392',           // rich ocean blue
+                    'primary-content': '#ffffff',
+                    'secondary': '#5B9ED4',          // sky blue — hover/interactive highlight
+                    'secondary-content': '#ffffff',
+                    'accent': '#D94F68',             // coral rose — warm focal point
+                    'accent-content': '#ffffff',
+                    'neutral': '#1C2938',
+                    'neutral-content': '#ffffff',
+                    'base-100': '#EBF2FA',           // fresh sky pastel — page bg
+                    'base-200': '#D8E5F3',           // medium sky pastel
+                    'base-300': '#ADC7E3',           // deeper mist blue — cards, navbar, footer
+                    'base-content': '#13253A',       // dark slate navy
+                    'info': '#4A8FC2',
+                    'info-content': '#ffffff',
+                    'success': '#358A60',
+                    'success-content': '#ffffff',
+                    'warning': '#C4923A',            // warm golden amber
+                    'warning-content': '#ffffff',
+                    'error': '#C05050',
+                    'error-content': '#ffffff',
+                    "--rounded-box": "1.25rem",
+                    "--rounded-btn": "0.75rem",
+                    "--rounded-badge": "9999px",
+                    "--animation-btn": "0.2s",
+                    "--animation-input": "0.2s",
+                    "--btn-focus-scale": "0.97",
+                    "--tab-radius": "0.75rem",
+                },
+                // "Midnight Studio" — deep navy dark theme
                 dark: {
-                    "primary": "#6366f1",           // Vibrant Indigo 500
-                    "primary-content": "#ffffff",
-                    "secondary": "#8b5cf6",         // Vivid Violet 500
-                    "secondary-content": "#ffffff",
-                    "accent": "#22d3ee",            // Bright Cyan 400
-                    "accent-content": "#0f172a",
-                    "neutral": "#030712",           // Darkest Slate
-                    "neutral-content": "#f9fafb",
-                    "base-100": "#0b0f19",          // Deep Slate Dark Base
-                    "base-200": "#111827",          // Dark Surface Card
-                    "base-300": "#1f2937",          // Dark Surface Elevated
-                    "base-content": "#f9fafb",      // Bright Text
-                    "info": "#38bdf8",
-                    "success": "#34d399",
-                    "warning": "#fbbf24",
-                    "error": "#fb7185",
+                    'color-scheme': 'dark',
+                    'primary': '#5B9BD5',           // vivid electric blue — buttons, links
+                    'primary-content': '#06111f',
+                    'secondary': '#90C3E8',          // pale sky blue — lighter than primary, clear hover target
+                    'secondary-content': '#071624',
+                    'accent': '#E8A833',             // saffron-amber — warm focal point against cool bg
+                    'accent-content': '#1a1000',
+                    'neutral': '#1e2535',
+                    'neutral-content': '#a6adbb',
+                    'base-100': '#0f141c',           // deep navy — main bg
+                    'base-200': '#0b0f16',           // darker navy
+                    'base-300': '#070a11',           // near-black navy — cards, navbar
+                    'base-content': '#b0bdd4',       // soft blue-grey text
+                    'info': '#5B9BD5',
+                    'info-content': '#06111f',
+                    'success': '#5cb88a',
+                    'success-content': '#061a0f',
+                    'warning': '#E8A833',
+                    'warning-content': '#1a1000',
+                    'error': '#d46b6b',
+                    'error-content': '#200808',
                     "--rounded-box": "1.25rem",
                     "--rounded-btn": "0.75rem",
                     "--rounded-badge": "9999px",
