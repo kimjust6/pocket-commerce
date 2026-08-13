@@ -1,6 +1,6 @@
 <%
-    const badge = (typeof badgeText !== 'undefined' && badgeText) ? badgeText : 'Offer';
-    const bannerMessage = (typeof message !== 'undefined' && message) ? message : 'Free Shipping on orders over $30 | Final Sale';
+    const badge = (typeof badgeText !== 'undefined' && badgeText) ? badgeText : 'SPECIAL OFFER';
+    const bannerMessage = (typeof message !== 'undefined' && message) ? message : 'Free Shipping on orders over $30 | 100% Recycled Cotton Cardstock';
 %>
 <!-- Top Announcement Alert Bar (Dismissable, Session-persisted) -->
 <div x-show="bannerVisible" x-cloak
@@ -12,8 +12,8 @@
     x-transition:leave-end="opacity-0 -translate-y-2 max-h-0"
     class="alert alert-info py-2 px-4 rounded-none text-xs text-center font-medium tracking-wide justify-between shadow-xs bg-slate-900 border-none text-slate-100 flex items-center overflow-hidden">
     <div class="flex-1 flex items-center justify-center gap-2">
-        <span class="badge badge-accent badge-sm uppercase font-bold tracking-wider"><%= badge %></span>
-        <span><%= bannerMessage %></span>
+        <span class="badge bg-[#e60012] text-white border-none badge-sm uppercase font-black tracking-wider text-[10px]"><%= badge %></span>
+        <span class="font-semibold text-xs tracking-tight"><%= bannerMessage %></span>
     </div>
     <button @click="dismissBanner()" type="button" class="btn btn-ghost btn-xs btn-circle text-slate-400 hover:text-white hover:bg-slate-800 shrink-0" aria-label="Dismiss banner" title="Dismiss banner">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

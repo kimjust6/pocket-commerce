@@ -1,10 +1,19 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#FFFFFF" />
+
+<!-- App Identity & Icons -->
+<meta name="apple-mobile-web-app-title" content="Pocket Commerce" />
+<meta name="application-name" content="Pocket Commerce" />
+<meta property="og:site_name" content="Pocket Commerce" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
     rel="stylesheet" />
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -15,19 +24,34 @@
 <!-- PocketBase SDK for realtime subscriptions -->
 <script src="https://unpkg.com/pocketbase@0.21.1/dist/pocketbase.umd.js"></script>
 
-<% if (data.metadata) { %>
-    <% data.metadata.forEach(function(tag) { %>
+<% 
+    const metaList = (locals.data && Array.isArray(locals.data.metadata)) ? locals.data.metadata : [];
+    const metaMap = {};
+    metaList.forEach(m => { if (m.name && m.content) metaMap[m.name] = m.content; });
+
+    const pageTitle = metaMap['title'] || (locals.data && locals.data.title) || 'Pocket Commerce | Handcrafted Greeting Cards & Art';
+    const pageDescription = metaMap['description'] || 'Shop handcrafted greeting cards, humorous stationery, and custom illustrations made locally on 100% recycled paper stock.';
+    const pageImage = metaMap['og:image'] || '/og-image.webp';
+%>
+
+<title><%= pageTitle %></title>
+<meta name="description" content="<%= pageDescription %>" />
+<meta property="og:title" content="<%= pageTitle %>" />
+<meta property="og:description" content="<%= pageDescription %>" />
+<meta property="og:image" content="<%= pageImage %>" />
+<meta name="twitter:title" content="<%= pageTitle %>" />
+<meta name="twitter:description" content="<%= pageDescription %>" />
+<meta name="twitter:image" content="<%= pageImage %>" />
+
+<% metaList.forEach(function(tag) { %>
+    <% if (!['title', 'description', 'og:title', 'og:description', 'og:image', 'twitter:title', 'twitter:description', 'twitter:image'].includes(tag.name)) { %>
         <% if (tag.name.startsWith('og:') || tag.name.startsWith('twitter:')) { %>
             <meta property="<%= tag.name %>" content="<%= tag.content %>" />
-            <% } else { %>
-                <meta name="<%= tag.name %>" content="<%= tag.content %>" />
-                <% } %>
-                    <% }); %>
-                        <% } %>
+        <% } else { %>
+            <meta name="<%= tag.name %>" content="<%= tag.content %>" />
+        <% } %>
+    <% } %>
+<% }); %>
 
-                            <title>
-                                <%= (data.metadata && Array.isArray(data.metadata)) ? (data.metadata.find(function(x) { return x.name === 'title'; })?.content || 'Card Store') : 'Card Store' %>
-                            </title>
-
-                            <link href="<%=asset('/app.css')%>" rel="stylesheet" />
-                            <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<link href="<%=asset('/app.css')%>" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />

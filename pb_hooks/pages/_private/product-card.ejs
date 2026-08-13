@@ -8,6 +8,10 @@
     const primaryImg = images[0] || '/hero-greeting-card.webp';
     const secondaryImg = images.length > 1 ? images[1] : null;
     const categoryName = item.category ? (typeof item.category === 'object' ? item.category.name : item.category) : null;
+    const tag = item.tag || (item.onSale ? 'SALE' : null);
+    const compareAt = item.compareAtPrice || null;
+    const rating = item.rating || 5;
+    const reviewsCount = item.reviewCount || null;
     
     let formattedPrice = 'Sold Out';
     if (item.price !== null && item.price !== undefined) {
@@ -16,40 +20,65 @@
     const btnLabel = typeof btnText !== 'undefined' ? btnText : 'Details';
 %>
 
-<div class="card card-compact bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full group cursor-pointer" 
+<div class="card card-compact bg-base-100 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full group cursor-pointer flex flex-col justify-between" 
      x-data="{ showSecond: false }" 
      @mouseenter="showSecond = true" 
      @mouseleave="showSecond = false"
-     @click="if (!$event.target.closest('a')) window.location.href = '<%= productUrl %>'">
-    <a href="<%= productUrl %>" class="aspect-[4/5] bg-base-200 relative overflow-hidden block">
-        <% if (secondaryImg) { %>
-            <img src="<%= primaryImg %>" alt="<%= title %>" 
-                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0"
-                 :class="showSecond ? 'opacity-0' : 'opacity-100'">
-            <img src="<%= secondaryImg %>" alt="<%= title %>" 
-                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 absolute inset-0 opacity-0"
-                 :class="showSecond ? 'opacity-100' : 'opacity-0'">
-        <% } else { %>
-            <img src="<%= primaryImg %>" alt="<%= title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-        <% } %>
+     @click="if (!$event.target.closest('a') && !$event.target.closest('button')) window.location.href = '<%= productUrl %>'">
+    
+    <div class="relative">
+        <a href="<%= productUrl %>" class="aspect-[4/5] bg-base-200/60 relative overflow-hidden block">
+            <% if (secondaryImg) { %>
+                <img src="<%= primaryImg %>" alt="<%= title %>" 
+                     class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 absolute inset-0"
+                     :class="showSecond ? 'opacity-0 scale-95' : 'opacity-100 scale-100'">
+                <img src="<%= secondaryImg %>" alt="<%= title %>" 
+                     class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 absolute inset-0 opacity-0"
+                     :class="showSecond ? 'opacity-100 scale-100' : 'opacity-0 scale-95'">
+            <% } else { %>
+                <img src="<%= primaryImg %>" alt="<%= title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <% } %>
 
-        <% if (categoryName) { %>
-            <span class="badge badge-primary absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 shadow-sm z-10">
-                <%= categoryName %>
-            </span>
-        <% } %>
-    </a>
+            <!-- Top Left: Tag Badge (Uniqlo Red / Accent) -->
+            <% if (tag) { %>
+                <span class="absolute top-2.5 left-2.5 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-xs z-10 <%= tag.includes('SALE') || tag.includes('OFFER') ? 'bg-[#e60012] text-white' : 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' %>">
+                    <%= tag %>
+                </span>
+            <% } %>
 
-    <div class="card-body p-4 flex-1 flex flex-col justify-between space-y-3">
-        <h3 class="card-title font-bold text-sm text-base-content group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-            <a href="<%= productUrl %>" class="hover:underline">
-                <%= title %>
-            </a>
-        </h3>
+            <!-- Top Right: Category Pill -->
+            <% if (categoryName) { %>
+                <span class="badge badge-sm badge-ghost bg-base-100/90 dark:bg-base-900/90 backdrop-blur-xs text-[10px] font-semibold text-base-content/80 absolute top-2.5 right-2.5 px-2 py-0.5 shadow-xs z-10 border border-slate-200/60 dark:border-slate-700">
+                    <%= categoryName %>
+                </span>
+            <% } %>
+        </a>
+    </div>
 
-        <div class="card-actions justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-base font-extrabold text-base-content"><%= formattedPrice %></span>
-            <a href="<%= productUrl %>" class="btn btn-outline btn-primary btn-xs rounded-lg font-bold">
+    <div class="card-body p-4 flex-1 flex flex-col justify-between space-y-2.5">
+        <div class="space-y-1">
+            <% if (reviewsCount) { %>
+                <div class="flex items-center gap-1 text-[11px] font-semibold text-amber-500">
+                    <span>★ <%= rating.toFixed(1) %></span>
+                    <span class="text-base-content/50 font-normal">(<%= reviewsCount %>)</span>
+                </div>
+            <% } %>
+
+            <h3 class="card-title font-bold text-sm text-base-content group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                <a href="<%= productUrl %>" class="hover:underline">
+                    <%= title %>
+                </a>
+            </h3>
+        </div>
+
+        <div class="card-actions justify-between items-center pt-2.5 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-baseline gap-1.5">
+                <span class="text-base font-extrabold text-base-content tracking-tight"><%= formattedPrice %></span>
+                <% if (compareAt) { %>
+                    <span class="text-xs text-base-content/40 line-through"><%= compareAt %></span>
+                <% } %>
+            </div>
+            <a href="<%= productUrl %>" class="btn btn-outline btn-primary btn-xs rounded-lg font-bold px-3">
                 <%= btnLabel %>
             </a>
         </div>

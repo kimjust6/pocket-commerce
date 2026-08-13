@@ -11,19 +11,34 @@
         </form>
 
         <nav class="flex flex-col space-y-1 pt-2">
-            <a href="/shop" class="flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-base-content hover:bg-base-200 transition-colors" @click="navOpen = false">
+            <a href="/shop" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-semibold text-base-content hover:bg-base-200 transition-colors" @click="navOpen = false">
                 <span>Browse All Products</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </a>
-            <a href="/shop?category=birthday" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+            <a href="/shop?category=birthday" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
                 <span>Birthday Cards</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </a>
-            <a href="/shop?category=thank-you" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+            <a href="/shop?category=thank-you" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
                 <span>Thank You Notes</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </a>
-            <a href="/cart" class="flex items-center justify-between px-4 py-3 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+            <a href="/shop?category=love" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+                <span>Love & Romance</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </a>
+            <a href="/shop?category=animals" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
+                <span>Animals</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </a>
+            <a href="/shop?on_sale=1" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-bold text-[#e60012] bg-[#e60012]/10 hover:bg-[#e60012]/20 transition-colors" @click="navOpen = false">
+                <span class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#e60012] animate-pulse"></span>
+                    Limited Offers & Deals
+                </span>
+                <span class="badge bg-[#e60012] text-white text-[10px] font-extrabold border-none">Sale</span>
+            </a>
+            <a href="/cart" class="flex items-center justify-between px-4 py-2.5 rounded-xl font-medium text-base-content/80 hover:bg-base-200 transition-colors" @click="navOpen = false">
                 <span>Shopping Cart</span>
                 <span x-show="cartCount > 0" x-text="cartCount" class="badge badge-primary font-bold text-xs" x-cloak>
                     <%= (locals.data && locals.data.totalItems > 0) ? locals.data.totalItems : '' %>
