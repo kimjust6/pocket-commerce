@@ -14,6 +14,10 @@
         Secure Checkout
       </h1>
 
+      <div v-if="route.query.canceled === 'true'" class="alert alert-warning text-xs rounded-xl font-semibold mb-6">
+        Your Stripe payment was canceled. You can review your details and try again.
+      </div>
+
       <div v-if="cartStore.items.length === 0" class="text-center py-16 space-y-4">
         <p class="text-base text-base-content/70">Your cart is currently empty.</p>
         <router-link to="/shop" class="btn btn-primary rounded-xl font-bold">
@@ -147,12 +151,12 @@
               <label
                 :class="[
                   'cursor-pointer border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all',
-                  paymentMethod === 'card' ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-slate-200 dark:border-slate-800'
+                  paymentMethod === 'stripe' ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-slate-200 dark:border-slate-800'
                 ]"
               >
-                <input type="radio" value="card" v-model="paymentMethod" class="hidden" />
+                <input type="radio" value="stripe" v-model="paymentMethod" class="hidden" />
                 <CreditCard class="w-6 h-6 text-primary" />
-                <span class="text-xs font-bold text-base-content">Credit / Debit Card</span>
+                <span class="text-xs font-bold text-base-content">Stripe Checkout</span>
               </label>
 
               <label
@@ -167,39 +171,12 @@
               </label>
             </div>
 
-            <!-- Card inputs -->
-            <div v-if="paymentMethod === 'card'" class="space-y-3 pt-2">
-              <div>
-                <label class="text-xs font-bold text-base-content block mb-1">Card Number</label>
-                <input
-                  v-model="card.number"
-                  type="text"
-                  placeholder="4242 •••• •••• 4242"
-                  class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="text-xs font-bold text-base-content block mb-1">Exp Date (MM/YY)</label>
-                  <input
-                    v-model="card.expiry"
-                    type="text"
-                    placeholder="12/28"
-                    class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs font-bold text-base-content block mb-1">Security Code (CVC)</label>
-                  <input
-                    v-model="card.cvc"
-                    type="password"
-                    maxlength="4"
-                    placeholder="123"
-                    class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
-                  />
-                </div>
-              </div>
+            <!-- Stripe Info -->
+            <div v-if="paymentMethod === 'stripe'" class="p-4 bg-primary/5 border border-primary/20 rounded-2xl space-y-1.5 text-xs">
+              <p class="font-bold text-base-content">Encrypted Stripe Checkout</p>
+              <p class="text-base-content/70">
+                You will be redirected to Stripe to complete your payment securely using Credit/Debit Card, Apple Pay, or Google Pay.
+              </p>
             </div>
 
             <!-- Banano Crypto Info -->
@@ -257,24 +234,25 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { CreditCard, Coins } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'
 import { formatPrice } from '../utils/formatters'
-import { createOrder, getUserAddresses, createAddress } from '../services/pocketbase'
+import { createOrder, getUserAddresses, createAddress, createStripeCheckoutSession } from '../services/pocketbase'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 import CartItemRow from '../components/cart/CartItemRow.vue'
 import OrderSummary from '../components/cart/OrderSummary.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const toastStore = useToastStore()
 
 const savedAddresses = ref([])
-const paymentMethod = ref('card')
+const paymentMethod = ref('stripe')
 const processingOrder = ref(false)
 const errorMessage = ref('')
 
@@ -286,12 +264,6 @@ const form = ref({
   state: '',
   zip: '',
   saveAddress: false,
-})
-
-const card = ref({
-  number: '4242 •••• •••• 4242',
-  expiry: '12/28',
-  cvc: '123',
 })
 
 function selectSavedAddress(addressId) {
@@ -339,6 +311,23 @@ async function handlePlaceOrder() {
 
     const orderRecord = await createOrder(orderPayload, cartStore.items)
 
+    if (paymentMethod.value === 'stripe') {
+      const session = await createStripeCheckoutSession({
+        orderId: orderRecord.id,
+        email: form.value.email,
+        items: cartStore.items,
+        shippingAmount: cartStore.shippingAmount,
+        taxAmount: cartStore.taxAmount,
+        discountAmount: cartStore.discountAmount,
+      })
+
+      if (session?.url) {
+        window.location.href = session.url
+        return
+      }
+      throw new Error('Stripe did not return a checkout URL.')
+    }
+
     cartStore.clearCart()
     toastStore.success('Your order has been placed!')
     router.push({
@@ -347,7 +336,7 @@ async function handlePlaceOrder() {
     })
   } catch (err) {
     console.error('Checkout error:', err)
-    errorMessage.value = 'We could not process your order. Please verify your details and try again.'
+    errorMessage.value = err?.response?.error || err?.message || 'We could not process your order. Please verify your details and try again.'
   } finally {
     processingOrder.value = false
   }
