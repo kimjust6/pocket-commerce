@@ -29,6 +29,13 @@ export const useAuthStore = defineStore('auth', () => {
     return authData
   }
 
+  async function loginWithGoogle() {
+    const authData = await pb.collection('users').authWithOAuth2({ provider: 'google' })
+    user.value = authData.record
+    token.value = authData.token
+    return authData
+  }
+
   async function register({ email, password, passwordConfirm, name, username }) {
     // 1. Create account
     const cleanUsername = username || email.split('@')[0] + Math.floor(Math.random() * 1000)
@@ -63,6 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     avatarUrl,
     login,
+    loginWithGoogle,
     register,
     logout,
     updateProfile,

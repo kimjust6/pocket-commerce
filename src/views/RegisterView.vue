@@ -14,6 +14,14 @@
           {{ errorMessage }}
         </div>
 
+        <GoogleAuthButton
+          label="Sign up with Google"
+          @success="onGoogleSuccess"
+          @error="onGoogleError"
+        />
+
+        <div class="divider text-xs font-medium text-base-content/40 my-1">OR</div>
+
         <form @submit.prevent="handleRegister" class="space-y-4">
           <div>
             <label class="text-xs font-bold text-base-content block mb-1">Full Name</label>
@@ -98,6 +106,7 @@ import { useRouter } from 'vue-router'
 import { UserPlus } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
+import GoogleAuthButton from '../components/auth/GoogleAuthButton.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -135,6 +144,15 @@ async function handleRegister() {
   } finally {
     loading.value = false
   }
+}
+
+function onGoogleSuccess() {
+  toastStore.success('Welcome to Pocket Commerce!')
+  router.push('/account')
+}
+
+function onGoogleError(msg) {
+  errorMessage.value = msg
 }
 </script>
 
