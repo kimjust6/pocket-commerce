@@ -5,15 +5,23 @@
         <!-- Brand Summary -->
         <div class="lg:col-span-2 space-y-4">
           <router-link to="/" class="flex items-center gap-2 text-2xl font-black text-base-content">
-            <span class="p-1.5 bg-primary text-primary-content rounded-xl shadow-xs">💌</span>
+            <span class="p-2 bg-primary text-primary-content rounded-xl shadow-xs flex items-center justify-center">
+              <Mail class="w-5 h-5" />
+            </span>
             <span>Pocket<span class="text-primary">Commerce</span></span>
           </router-link>
           <p class="text-sm text-base-content/70 max-w-sm leading-relaxed font-medium">
-            Handcrafted, thoughtful, and witty greeting cards printed locally on 100% recycled paper stock. Celebrating life's big and small moments.
+            Handcrafted, thoughtful, and witty greeting cards printed locally on 100% recycled paper stock. Celebrating life's meaningful moments.
           </p>
-          <div class="flex items-center gap-3 pt-2 text-base-content/60">
-            <span class="badge badge-outline text-xs font-semibold py-3 px-3">🌱 100% Recycled Paper</span>
-            <span class="badge badge-outline text-xs font-semibold py-3 px-3">⚡ Fast Shipping</span>
+          <div class="flex flex-wrap items-center gap-3 pt-2 text-base-content/70">
+            <span class="badge badge-outline text-xs font-semibold py-3 px-3 gap-1.5">
+              <Leaf class="w-3.5 h-3.5 text-emerald-500" />
+              100% Recycled Paper
+            </span>
+            <span class="badge badge-outline text-xs font-semibold py-3 px-3 gap-1.5">
+              <Truck class="w-3.5 h-3.5 text-primary" />
+              Fast Shipping
+            </span>
           </div>
         </div>
 
@@ -44,7 +52,7 @@
         <div class="space-y-3">
           <h4 class="text-xs font-bold uppercase tracking-wider text-base-content">Stay in the Loop</h4>
           <p class="text-xs text-base-content/70">
-            Receive special discounts, new card releases, and punny jokes directly to your inbox.
+            Receive special promotions, new card releases, and seasonal updates directly in your inbox.
           </p>
           <form @submit.prevent="handleNewsletter" class="space-y-2">
             <div class="join w-full">
@@ -81,6 +89,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Mail, Leaf, Truck } from 'lucide-vue-next'
 
 const newsletterEmail = ref('')
 const subscribed = ref(false)

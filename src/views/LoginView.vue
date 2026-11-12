@@ -3,7 +3,9 @@
     <div class="container mx-auto px-4 max-w-md">
       <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-md space-y-6">
         <div class="text-center space-y-2">
-          <span class="text-3xl">💌</span>
+          <div class="inline-flex p-3 rounded-2xl bg-primary/10 text-primary">
+            <Mail class="w-7 h-7" />
+          </div>
           <h1 class="text-2xl font-black text-base-content tracking-tight">Welcome Back</h1>
           <p class="text-xs text-base-content/60">Sign in to your Pocket Commerce account</p>
         </div>
@@ -61,6 +63,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { Mail } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
 

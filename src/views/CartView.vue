@@ -13,10 +13,10 @@
         v-if="cartStore.items.length === 0"
         class="text-center py-20 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-4 max-w-lg mx-auto"
       >
-        <div class="text-6xl">🛍️</div>
+        <ShoppingBag class="w-12 h-12 text-base-content/30 mx-auto" />
         <h2 class="text-xl font-extrabold text-base-content">Your cart is empty</h2>
         <p class="text-xs text-base-content/70">
-          Looks like you haven't added any cards yet. Explore our handcrafted cards to brighten someone's day!
+          Your shopping cart currently has no items. Explore our collection of handcrafted cards.
         </p>
         <router-link to="/shop" class="btn btn-primary rounded-xl font-bold px-8 shadow-sm">
           Browse Cards
@@ -70,6 +70,7 @@
 </template>
 
 <script setup>
+import { ShoppingBag } from 'lucide-vue-next'
 import { useCartStore } from '../stores/cart'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 import CartItemRow from '../components/cart/CartItemRow.vue'

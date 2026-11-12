@@ -126,26 +126,32 @@
       <div class="container mx-auto px-4 md:px-8 max-w-7xl">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
           <div class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3">
-            <span class="text-3xl">🌱</span>
+            <div class="inline-flex p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <Leaf class="w-6 h-6" />
+            </div>
             <h3 class="font-extrabold text-base text-base-content">100% Recycled Paper</h3>
             <p class="text-xs text-base-content/70 leading-relaxed">
-              Every single card is printed with non-toxic soy ink on post-consumer recycled premium cardstock.
+              Every card is printed with non-toxic soy ink on post-consumer recycled premium cardstock.
             </p>
           </div>
 
           <div class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3">
-            <span class="text-3xl">🎨</span>
+            <div class="inline-flex p-2.5 rounded-xl bg-primary/10 text-primary">
+              <Palette class="w-6 h-6" />
+            </div>
             <h3 class="font-extrabold text-base text-base-content">Handcrafted Original Art</h3>
             <p class="text-xs text-base-content/70 leading-relaxed">
-              Designed by independent illustrators, bringing you unique and memorable humor you won't find at big-box stores.
+              Designed by independent illustrators, offering unique craftsmanship you will not find in mass-market stores.
             </p>
           </div>
 
           <div class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3">
-            <span class="text-3xl">🚀</span>
+            <div class="inline-flex p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+              <Truck class="w-6 h-6" />
+            </div>
             <h3 class="font-extrabold text-base text-base-content">Fast Shipping</h3>
             <p class="text-xs text-base-content/70 leading-relaxed">
-              Orders ship out within 24 hours in sturdy protective rigid mailers to keep your cards crisp and bend-free.
+              Orders ship within 24 hours in rigid protective mailers to ensure every card arrives in pristine condition.
             </p>
           </div>
         </div>
@@ -156,6 +162,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { Leaf, Palette, Truck } from 'lucide-vue-next'
 import { getProducts, getCategories } from '../services/pocketbase'
 import ProductCard from '../components/products/ProductCard.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'

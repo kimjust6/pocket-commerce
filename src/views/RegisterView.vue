@@ -3,9 +3,11 @@
     <div class="container mx-auto px-4 max-w-md">
       <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-md space-y-6">
         <div class="text-center space-y-2">
-          <span class="text-3xl">🎉</span>
+          <div class="inline-flex p-3 rounded-2xl bg-primary/10 text-primary">
+            <UserPlus class="w-7 h-7" />
+          </div>
           <h1 class="text-2xl font-black text-base-content tracking-tight">Create Account</h1>
-          <p class="text-xs text-base-content/60">Join Pocket Commerce for easy card shopping</p>
+          <p class="text-xs text-base-content/60">Create an account to manage your orders and saved addresses</p>
         </div>
 
         <div v-if="errorMessage" class="alert alert-error text-xs rounded-xl font-bold">
@@ -40,7 +42,7 @@
             <input
               v-model="username"
               type="text"
-              placeholder="coolpaperlover"
+              placeholder="johndoe"
               class="input input-sm input-bordered w-full rounded-xl text-xs"
             />
           </div>
@@ -93,6 +95,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { UserPlus } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
 

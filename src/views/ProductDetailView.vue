@@ -16,7 +16,7 @@
 
       <!-- Product NotFound -->
       <div v-else-if="!product" class="text-center py-20 space-y-4">
-        <div class="text-5xl">💌</div>
+        <Mail class="w-12 h-12 text-base-content/30 mx-auto" />
         <h2 class="text-2xl font-extrabold text-base-content">Greeting Card Not Found</h2>
         <p class="text-sm text-base-content/60">The card you are looking for does not exist or has been retired.</p>
         <router-link to="/shop" class="btn btn-primary rounded-xl font-bold">
@@ -166,21 +166,21 @@
             <!-- Product Perks / Details -->
             <div class="p-5 bg-base-200/50 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3 text-xs">
               <div class="flex items-center gap-3">
-                <span class="text-lg">🌿</span>
+                <Leaf class="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 <div>
                   <span class="font-bold text-base-content">Eco-Friendly Cardstock:</span>
                   <span class="text-base-content/70 ml-1">Printed on 300gsm 100% post-consumer recycled paper.</span>
                 </div>
               </div>
               <div class="flex items-center gap-3">
-                <span class="text-lg">✉️</span>
+                <Mail class="w-4 h-4 text-primary flex-shrink-0" />
                 <div>
                   <span class="font-bold text-base-content">Kraft Envelope Included:</span>
-                  <span class="text-base-content/70 ml-1">Includes a matching high-quality natural brown kraft paper envelope.</span>
+                  <span class="text-base-content/70 ml-1">Includes a matching natural brown kraft paper envelope.</span>
                 </div>
               </div>
               <div class="flex items-center gap-3">
-                <span class="text-lg">📏</span>
+                <Ruler class="w-4 h-4 text-indigo-500 flex-shrink-0" />
                 <div>
                   <span class="font-bold text-base-content">Standard Size:</span>
                   <span class="text-base-content/70 ml-1">A2 Greeting Card (4.25" x 5.5" folded). Blank inside.</span>
@@ -283,6 +283,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Mail, Leaf, Ruler } from 'lucide-vue-next'
 import { getProduct, createReview } from '../services/pocketbase'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'

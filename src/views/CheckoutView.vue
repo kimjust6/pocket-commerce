@@ -151,7 +151,7 @@
                 ]"
               >
                 <input type="radio" value="card" v-model="paymentMethod" class="hidden" />
-                <span class="text-2xl">💳</span>
+                <CreditCard class="w-6 h-6 text-primary" />
                 <span class="text-xs font-bold text-base-content">Credit / Debit Card</span>
               </label>
 
@@ -162,7 +162,7 @@
                 ]"
               >
                 <input type="radio" value="banano" v-model="paymentMethod" class="hidden" />
-                <span class="text-2xl">🍌</span>
+                <Coins class="w-6 h-6 text-amber-500" />
                 <span class="text-xs font-bold text-base-content">Banano Crypto</span>
               </label>
             </div>
@@ -258,6 +258,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { CreditCard, Coins } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'

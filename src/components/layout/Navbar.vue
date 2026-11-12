@@ -32,7 +32,9 @@
 
           <!-- Brand Logo -->
           <router-link to="/" class="flex items-center gap-2 text-xl sm:text-2xl font-black text-base-content tracking-tight">
-            <span class="p-1.5 bg-primary text-primary-content rounded-xl shadow-xs">💌</span>
+            <span class="p-2 bg-primary text-primary-content rounded-xl shadow-xs flex items-center justify-center">
+              <Mail class="w-5 h-5" />
+            </span>
             <span>Pocket<span class="text-primary">Commerce</span></span>
           </router-link>
         </div>
@@ -79,12 +81,13 @@
 
           <!-- Theme toggle -->
           <button
+            type="button"
             @click="themeStore.toggleTheme"
             class="btn btn-ghost btn-circle btn-sm"
             aria-label="Toggle dark/light theme"
           >
-            <span v-if="themeStore.currentTheme === 'dark'" class="text-amber-400">☀️</span>
-            <span v-else class="text-slate-600">🌙</span>
+            <Sun v-if="themeStore.currentTheme === 'dark'" class="w-4 h-4 text-amber-400" />
+            <Moon v-else class="w-4 h-4 text-slate-600" />
           </button>
 
           <!-- Cart Drawer Button -->
@@ -143,6 +146,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Mail, Sun, Moon } from 'lucide-vue-next'
 import { useAuthStore } from '../../stores/auth'
 import { useCartStore } from '../../stores/cart'
 import { useThemeStore } from '../../stores/theme'

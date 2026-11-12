@@ -67,9 +67,9 @@
         </div>
 
         <div v-else-if="orders.length === 0" class="text-center py-16 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-3">
-          <div class="text-4xl">📦</div>
+          <Package class="w-10 h-10 text-base-content/30 mx-auto" />
           <h3 class="font-extrabold text-base text-base-content">No orders placed yet</h3>
-          <p class="text-xs text-base-content/60">When you purchase cards, your receipts and tracking will appear here.</p>
+          <p class="text-xs text-base-content/60">When you purchase cards, your order history and receipts will appear here.</p>
           <router-link to="/shop" class="btn btn-primary btn-sm rounded-xl font-bold mt-2">
             Start Shopping
           </router-link>
@@ -124,9 +124,9 @@
         </div>
 
         <div v-else-if="addresses.length === 0" class="text-center py-12 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-3">
-          <div class="text-3xl">📍</div>
+          <MapPin class="w-10 h-10 text-base-content/30 mx-auto" />
           <h4 class="font-bold text-sm text-base-content">No saved addresses</h4>
-          <p class="text-xs text-base-content/60">Save an address to breeze through checkout next time.</p>
+          <p class="text-xs text-base-content/60">Save an address for faster checkout on future orders.</p>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -240,6 +240,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { Package, MapPin } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
 import { formatPrice, formatDate } from '../utils/formatters'

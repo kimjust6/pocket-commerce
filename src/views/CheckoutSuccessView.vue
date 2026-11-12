@@ -1,16 +1,16 @@
 <template>
   <div class="py-16 bg-base-100 min-h-screen">
     <div class="container mx-auto px-4 max-w-xl text-center space-y-6">
-      <div class="inline-flex p-4 rounded-3xl bg-success/10 text-success text-5xl">
-        🎉
+      <div class="inline-flex p-4 rounded-3xl bg-success/10 text-success">
+        <CheckCircle2 class="w-12 h-12" />
       </div>
 
       <h1 class="text-3xl sm:text-4xl font-black text-base-content tracking-tight">
-        Thank You for Your Order!
+        Order Confirmed
       </h1>
 
       <p class="text-sm text-base-content/70 leading-relaxed max-w-md mx-auto">
-        We've received your greeting card order and are already getting your cards packaged with care on 100% recycled paper stock.
+        Thank you for your purchase. We have received your order and are preparing your cards for shipment on 100% recycled paper stock.
       </p>
 
       <div class="p-6 bg-base-200/50 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-3 text-left">
@@ -43,8 +43,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { CheckCircle2 } from 'lucide-vue-next'
 
 const route = useRoute()
 const orderId = computed(() => route.query.order_id || '')
 </script>
-

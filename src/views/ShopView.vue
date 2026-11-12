@@ -127,7 +127,7 @@
 
           <!-- Empty State -->
           <div v-else-if="products.length === 0" class="text-center py-16 bg-base-200/40 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-8 space-y-3">
-            <div class="text-4xl">🔍</div>
+            <Search class="w-10 h-10 text-base-content/30 mx-auto" />
             <h3 class="font-extrabold text-lg text-base-content">No greeting cards found</h3>
             <p class="text-xs text-base-content/60">Try adjusting your filters or search keywords.</p>
             <button @click="clearAllFilters" class="btn btn-primary btn-sm rounded-xl font-bold mt-2">
@@ -148,6 +148,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Search } from 'lucide-vue-next'
 import { getProducts, getCategories } from '../services/pocketbase'
 import ProductCard from '../components/products/ProductCard.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'

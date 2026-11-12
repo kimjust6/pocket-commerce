@@ -29,11 +29,12 @@
         <!-- Free shipping progress bar -->
         <div class="bg-base-200/60 px-6 py-3 border-b border-slate-100 dark:border-slate-800 text-xs">
           <div v-if="cartStore.subtotal >= 35" class="text-success font-bold flex items-center gap-1.5">
-            <span>🎉</span> You unlocked Free Standard Shipping!
+            <CheckCircle2 class="w-4 h-4" />
+            You have unlocked Free Standard Shipping.
           </div>
           <div v-else class="text-base-content/70">
             Add <span class="font-bold text-primary">{{ formatPrice(35 - cartStore.subtotal) }}</span> more for
-            <span class="font-bold">Free Shipping</span>!
+            <span class="font-bold">Free Shipping</span>
             <progress
               class="progress progress-primary w-full mt-2"
               :value="Math.min(100, (cartStore.subtotal / 35) * 100)"
@@ -45,9 +46,9 @@
         <!-- Cart Items List -->
         <div class="flex-1 overflow-y-auto p-6 space-y-4">
           <div v-if="cartStore.items.length === 0" class="text-center py-12 space-y-4">
-            <div class="text-5xl">🛒</div>
+            <ShoppingBag class="w-12 h-12 text-base-content/30 mx-auto" />
             <p class="text-base font-bold text-base-content">Your cart is currently empty</p>
-            <p class="text-xs text-base-content/60">Discover our lovely handcrafted stationery cards.</p>
+            <p class="text-xs text-base-content/60">Explore our collection of handcrafted stationery cards.</p>
             <router-link
               to="/shop"
               @click="cartStore.isDrawerOpen = false"
@@ -99,6 +100,7 @@
 </template>
 
 <script setup>
+import { CheckCircle2, ShoppingBag } from 'lucide-vue-next'
 import { useCartStore } from '../../stores/cart'
 import { formatPrice } from '../../utils/formatters'
 import CartItemRow from './CartItemRow.vue'
