@@ -17,6 +17,7 @@
             <span class="badge badge-primary font-bold text-xs">{{ cartStore.totalItems }}</span>
           </div>
           <button
+            type="button"
             @click="cartStore.isDrawerOpen = false"
             class="btn btn-ghost btn-sm btn-circle"
             aria-label="Close cart"
@@ -31,7 +32,7 @@
             <span>🎉</span> You unlocked Free Standard Shipping!
           </div>
           <div v-else class="text-base-content/70">
-            Add <span class="font-bold text-primary">${{ (35 - cartStore.subtotal).toFixed(2) }}</span> more for
+            Add <span class="font-bold text-primary">{{ formatPrice(35 - cartStore.subtotal) }}</span> more for
             <span class="font-bold">Free Shipping</span>!
             <progress
               class="progress progress-primary w-full mt-2"
@@ -56,54 +57,15 @@
             </router-link>
           </div>
 
-          <div
-            v-for="item in cartStore.items"
-            :key="item.id"
-            class="flex items-center gap-4 bg-base-200/40 p-3 rounded-xl border border-slate-200/60 dark:border-slate-800"
-          >
-            <img
-              :src="item.image"
-              :alt="item.name"
-              class="w-16 h-16 object-cover rounded-lg bg-base-100 flex-shrink-0 border border-slate-200/60 dark:border-slate-800"
+          <div v-else class="space-y-3">
+            <CartItemRow
+              v-for="item in cartStore.items"
+              :key="item.id"
+              :item="item"
+              mode="drawer"
+              @update-quantity="cartStore.updateQuantity"
+              @remove="cartStore.removeFromCart"
             />
-            <div class="flex-1 min-w-0">
-              <router-link
-                :to="`/shop/card/${item.slug}`"
-                @click="cartStore.isDrawerOpen = false"
-                class="font-bold text-sm text-base-content hover:text-primary truncate block"
-              >
-                {{ item.name }}
-              </router-link>
-              <span class="text-xs text-base-content/60 block">{{ item.format }}</span>
-              <span class="text-sm font-bold text-primary block mt-1">${{ item.price.toFixed(2) }}</span>
-            </div>
-
-            <!-- Quantity modifier -->
-            <div class="flex flex-col items-end gap-2">
-              <div class="join border border-slate-200 dark:border-slate-700 rounded-lg bg-base-100">
-                <button
-                  @click="cartStore.updateQuantity(item.id, item.quantity - 1)"
-                  class="join-item btn btn-ghost btn-xs px-2"
-                >
-                  -
-                </button>
-                <span class="join-item px-2 py-0.5 text-xs font-bold flex items-center">
-                  {{ item.quantity }}
-                </span>
-                <button
-                  @click="cartStore.updateQuantity(item.id, item.quantity + 1)"
-                  class="join-item btn btn-ghost btn-xs px-2"
-                >
-                  +
-                </button>
-              </div>
-              <button
-                @click="cartStore.removeFromCart(item.id)"
-                class="text-[11px] text-error hover:underline font-semibold"
-              >
-                Remove
-              </button>
-            </div>
           </div>
         </div>
 
@@ -111,7 +73,7 @@
         <div v-if="cartStore.items.length > 0" class="p-6 border-t border-slate-100 dark:border-slate-800 bg-base-100 space-y-4">
           <div class="flex justify-between items-center text-sm">
             <span class="text-base-content/70">Subtotal</span>
-            <span class="text-lg font-extrabold text-base-content">${{ cartStore.subtotal.toFixed(2) }}</span>
+            <span class="text-lg font-extrabold text-base-content">{{ formatPrice(cartStore.subtotal) }}</span>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -138,7 +100,8 @@
 
 <script setup>
 import { useCartStore } from '../../stores/cart'
+import { formatPrice } from '../../utils/formatters'
+import CartItemRow from './CartItemRow.vue'
 
 const cartStore = useCartStore()
 </script>
-

@@ -2,12 +2,7 @@
   <div class="py-12 bg-base-100 min-h-screen">
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
       <!-- Breadcrumbs -->
-      <div class="text-xs breadcrumbs text-base-content/60 mb-6">
-        <ul>
-          <li><router-link to="/">Home</router-link></li>
-          <li class="font-bold text-base-content">My Account</li>
-        </ul>
-      </div>
+      <Breadcrumbs :items="[{ label: 'Home', to: '/' }, { label: 'My Account' }]" />
 
       <!-- Account Header Banner -->
       <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
@@ -31,7 +26,11 @@
           <router-link to="/profile" class="btn btn-outline btn-sm rounded-xl font-bold text-xs">
             Edit Profile
           </router-link>
-          <button @click="handleLogout" class="btn btn-ghost btn-sm rounded-xl text-error font-bold text-xs">
+          <button
+            type="button"
+            @click="handleLogout"
+            class="btn btn-ghost btn-sm rounded-xl text-error font-bold text-xs"
+          >
             Sign Out
           </button>
         </div>
@@ -40,6 +39,7 @@
       <!-- Navigation Tabs -->
       <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 mb-8">
         <button
+          type="button"
           @click="activeTab = 'orders'"
           :class="[
             'pb-3 px-4 font-bold text-sm border-b-2 transition-all',
@@ -49,6 +49,7 @@
           Order History ({{ orders.length }})
         </button>
         <button
+          type="button"
           @click="activeTab = 'addresses'"
           :class="[
             'pb-3 px-4 font-bold text-sm border-b-2 transition-all',
@@ -90,7 +91,7 @@
                   {{ order.status || 'Pending' }}
                 </span>
                 <span class="font-black text-sm text-base-content">
-                  ${{ Number(order.total_amount || 0).toFixed(2) }}
+                  {{ formatPrice(order.total_amount) }}
                 </span>
               </div>
             </div>
@@ -110,6 +111,7 @@
             <p class="text-xs text-base-content/60">Manage your delivery destinations for quick checkout.</p>
           </div>
           <button
+            type="button"
             @click="showAddressModal = true"
             class="btn btn-primary btn-sm rounded-xl font-bold text-xs"
           >
@@ -139,6 +141,7 @@
               <p>{{ addr.city }}, {{ addr.state }} {{ addr.zip }}</p>
             </div>
             <button
+              type="button"
               @click="handleDeleteAddress(addr.id)"
               class="btn btn-ghost btn-circle btn-xs text-error"
               aria-label="Delete address"
@@ -150,86 +153,87 @@
       </div>
     </div>
 
-    <!-- Add Address Modal -->
-    <div v-if="showAddressModal" class="modal modal-open">
-      <div class="modal-box rounded-3xl border border-slate-200 dark:border-slate-800 max-w-md">
-        <h3 class="font-extrabold text-lg text-base-content mb-4">Add Shipping Address</h3>
-        <form @submit.prevent="saveNewAddress" class="space-y-3">
+    <!-- Reusable Add Address Modal -->
+    <Modal
+      :is-open="showAddressModal"
+      title="Add Shipping Address"
+      @close="showAddressModal = false"
+    >
+      <form @submit.prevent="saveNewAddress" id="address-form" class="space-y-3">
+        <div>
+          <label class="text-xs font-bold text-base-content block mb-1">Full Name</label>
+          <input
+            v-model="newAddr.name"
+            type="text"
+            required
+            placeholder="Recipient Name"
+            class="input input-sm input-bordered w-full rounded-xl text-xs"
+          />
+        </div>
+
+        <div>
+          <label class="text-xs font-bold text-base-content block mb-1">Street Address</label>
+          <input
+            v-model="newAddr.street"
+            type="text"
+            required
+            placeholder="123 Example Street"
+            class="input input-sm input-bordered w-full rounded-xl text-xs"
+          />
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Full Name</label>
+            <label class="text-xs font-bold text-base-content block mb-1">City</label>
             <input
-              v-model="newAddr.name"
+              v-model="newAddr.city"
               type="text"
               required
-              placeholder="Recipient Name"
+              placeholder="City"
               class="input input-sm input-bordered w-full rounded-xl text-xs"
             />
           </div>
-
           <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Street Address</label>
+            <label class="text-xs font-bold text-base-content block mb-1">State</label>
             <input
-              v-model="newAddr.street"
+              v-model="newAddr.state"
               type="text"
               required
-              placeholder="123 Example Street"
+              placeholder="NY"
               class="input input-sm input-bordered w-full rounded-xl text-xs"
             />
           </div>
-
-          <div class="grid grid-cols-3 gap-2">
-            <div>
-              <label class="text-xs font-bold text-base-content block mb-1">City</label>
-              <input
-                v-model="newAddr.city"
-                type="text"
-                required
-                placeholder="City"
-                class="input input-sm input-bordered w-full rounded-xl text-xs"
-              />
-            </div>
-            <div>
-              <label class="text-xs font-bold text-base-content block mb-1">State</label>
-              <input
-                v-model="newAddr.state"
-                type="text"
-                required
-                placeholder="NY"
-                class="input input-sm input-bordered w-full rounded-xl text-xs"
-              />
-            </div>
-            <div>
-              <label class="text-xs font-bold text-base-content block mb-1">ZIP</label>
-              <input
-                v-model="newAddr.zip"
-                type="text"
-                required
-                placeholder="10001"
-                class="input input-sm input-bordered w-full rounded-xl text-xs"
-              />
-            </div>
+          <div>
+            <label class="text-xs font-bold text-base-content block mb-1">ZIP</label>
+            <input
+              v-model="newAddr.zip"
+              type="text"
+              required
+              placeholder="10001"
+              class="input input-sm input-bordered w-full rounded-xl text-xs"
+            />
           </div>
+        </div>
+      </form>
 
-          <div class="modal-action flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              @click="showAddressModal = false"
-              class="btn btn-ghost btn-sm rounded-xl font-bold"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              :disabled="savingAddress"
-              class="btn btn-primary btn-sm rounded-xl font-bold"
-            >
-              {{ savingAddress ? 'Saving...' : 'Save Address' }}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div class="modal-backdrop" @click="showAddressModal = false"></div>
-    </div>
+      <template #actions>
+        <button
+          type="button"
+          @click="showAddressModal = false"
+          class="btn btn-ghost btn-sm rounded-xl font-bold"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          form="address-form"
+          :disabled="savingAddress"
+          class="btn btn-primary btn-sm rounded-xl font-bold"
+        >
+          {{ savingAddress ? 'Saving...' : 'Save Address' }}
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -238,7 +242,10 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
+import { formatPrice, formatDate } from '../utils/formatters'
 import { getUserOrders, getUserAddresses, createAddress, deleteAddress } from '../services/pocketbase'
+import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
+import Modal from '../components/ui/Modal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -309,21 +316,7 @@ function handleLogout() {
   router.push('/')
 }
 
-function formatDate(dateStr) {
-  if (!dateStr) return '-'
-  try {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return dateStr
-  }
-}
-
 onMounted(() => {
   loadData()
 })
 </script>
-

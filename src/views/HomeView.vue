@@ -75,7 +75,7 @@
         </div>
 
         <div v-if="loading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <div v-for="n in 4" :key="n" class="skeleton h-80 w-full rounded-2xl"></div>
+          <ProductCardSkeleton v-for="n in 4" :key="n" />
         </div>
 
         <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -158,6 +158,7 @@
 import { ref, onMounted } from 'vue'
 import { getProducts, getCategories } from '../services/pocketbase'
 import ProductCard from '../components/products/ProductCard.vue'
+import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 
 const loading = ref(true)
 const bestSellers = ref([])

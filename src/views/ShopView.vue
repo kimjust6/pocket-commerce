@@ -3,12 +3,7 @@
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
       <!-- Breadcrumb and Title Header -->
       <div class="mb-8">
-        <div class="text-xs breadcrumbs text-base-content/60 mb-2">
-          <ul>
-            <li><router-link to="/">Home</router-link></li>
-            <li class="font-bold text-base-content">Shop All Cards</li>
-          </ul>
-        </div>
+        <Breadcrumbs :items="[{ label: 'Home', to: '/' }, { label: 'Shop All Cards' }]" />
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-base-content tracking-tight">
@@ -127,7 +122,7 @@
         <main class="lg:col-span-3">
           <!-- Loading Skeletons -->
           <div v-if="loading" class="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div v-for="n in 6" :key="n" class="skeleton h-80 w-full rounded-2xl"></div>
+            <ProductCardSkeleton v-for="n in 6" :key="n" />
           </div>
 
           <!-- Empty State -->
@@ -155,6 +150,8 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts, getCategories } from '../services/pocketbase'
 import ProductCard from '../components/products/ProductCard.vue'
+import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
+import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 
 const route = useRoute()
 const router = useRouter()

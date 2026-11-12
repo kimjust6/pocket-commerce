@@ -12,8 +12,7 @@
         "login": "node ./node_modules/tsx/dist/cli.mjs ./node_modules/phio/src/cli.ts login",
         "update": "pocketbase update",
         "test": "vitest run",
-        "typegen": "node scripts/typegen.mjs",
-        "postinstall": "node node_modules/patch-package/dist/index.js"
+        "typegen": "node scripts/typegen.mjs"
     },
     "pockethost": {
         "instanceName": "pocket-commerce"
@@ -55,7 +54,7 @@
         "baseline-browser-mapping": "^2.9.17",
         "caniuse-lite": "^1.0.30001765",
         "lucide-vue-next": "^1.0.0",
-        "phio": "^0.3.5",
+        "phio": "^0.4.0",
         "pinia": "^4.1.0",
         "pocketbase": "^0.26.5",
         "pocketpages": "^0.22.3",

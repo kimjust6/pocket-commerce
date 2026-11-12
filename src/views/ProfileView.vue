@@ -2,13 +2,13 @@
   <div class="py-12 bg-base-100 min-h-screen">
     <div class="container mx-auto px-4 md:px-8 max-w-3xl">
       <!-- Breadcrumbs -->
-      <div class="text-xs breadcrumbs text-base-content/60 mb-6">
-        <ul>
-          <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/account">Account</router-link></li>
-          <li class="font-bold text-base-content">Profile Settings</li>
-        </ul>
-      </div>
+      <Breadcrumbs
+        :items="[
+          { label: 'Home', to: '/' },
+          { label: 'Account', to: '/account' },
+          { label: 'Profile Settings' }
+        ]"
+      />
 
       <h1 class="text-3xl font-extrabold text-base-content tracking-tight mb-8">
         Profile Settings
@@ -146,6 +146,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
+import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 
 const authStore = useAuthStore()
 const toastStore = useToastStore()

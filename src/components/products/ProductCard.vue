@@ -32,7 +32,7 @@
     <div class="p-4 flex flex-col flex-1 justify-between gap-3">
       <div class="space-y-1">
         <div class="flex items-center justify-between text-xs text-base-content/60 font-semibold">
-          <span class="text-amber-500 font-bold flex items-center gap-1">★ 5.0</span>
+          <RatingStars :value="5" size="xs" :show-score="true" />
           <span>100% Recycled</span>
         </div>
 
@@ -52,17 +52,18 @@
       <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
         <div class="flex items-baseline gap-1.5">
           <span class="text-base font-extrabold text-base-content">
-            ${{ Number(product.price).toFixed(2) }}
+            {{ formatPrice(product.price) }}
           </span>
           <span
             v-if="product.compareAtPrice && product.compareAtPrice > product.price"
             class="text-xs text-base-content/40 line-through font-medium"
           >
-            ${{ Number(product.compareAtPrice).toFixed(2) }}
+            {{ formatPrice(product.compareAtPrice) }}
           </span>
         </div>
 
         <button
+          type="button"
           @click="handleAddToCart"
           class="btn btn-primary btn-sm rounded-xl font-bold px-3 text-xs shadow-xs"
         >
@@ -76,6 +77,8 @@
 <script setup>
 import { useCartStore } from '../../stores/cart'
 import { useToastStore } from '../../stores/toast'
+import { formatPrice } from '../../utils/formatters'
+import RatingStars from '../ui/RatingStars.vue'
 
 const props = defineProps({
   product: {
@@ -93,4 +96,3 @@ function handleAddToCart() {
   toastStore.success(`Added "${props.product.name}" to your cart!`)
 }
 </script>
-

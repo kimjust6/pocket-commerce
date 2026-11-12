@@ -1,11 +1,7 @@
 <template>
   <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-3">
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-1 text-amber-500 text-sm">
-        <span v-for="star in 5" :key="star">
-          {{ star <= (review.rating || 5) ? '★' : '☆' }}
-        </span>
-      </div>
+      <RatingStars :value="review.rating || 5" size="sm" />
       <span
         v-if="review.is_verified_purchase"
         class="badge badge-success badge-outline text-[10px] font-bold py-2"
@@ -27,21 +23,13 @@
 </template>
 
 <script setup>
+import RatingStars from '../ui/RatingStars.vue'
+import { formatDate } from '../../utils/formatters'
+
 defineProps({
   review: {
     type: Object,
     required: true,
   },
 })
-
-function formatDate(dateStr) {
-  if (!dateStr) return 'Recently'
-  try {
-    const d = new Date(dateStr)
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  } catch {
-    return 'Recently'
-  }
-}
 </script>
-

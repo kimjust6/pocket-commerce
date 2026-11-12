@@ -2,13 +2,13 @@
   <div class="py-12 bg-base-100 min-h-screen">
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
       <!-- Breadcrumbs -->
-      <div class="text-xs breadcrumbs text-base-content/60 mb-6">
-        <ul>
-          <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/cart">Cart</router-link></li>
-          <li class="font-bold text-base-content">Checkout</li>
-        </ul>
-      </div>
+      <Breadcrumbs
+        :items="[
+          { label: 'Home', to: '/' },
+          { label: 'Cart', to: '/cart' },
+          { label: 'Checkout' }
+        ]"
+      />
 
       <h1 class="text-3xl sm:text-4xl font-extrabold text-base-content tracking-tight mb-8">
         Secure Checkout
@@ -32,7 +32,8 @@
                 Contact Information
               </h2>
               <span v-if="!authStore.isAuthenticated" class="text-xs text-base-content/60">
-                Already have an account? <router-link to="/login" class="text-primary font-bold hover:underline">Sign In</router-link>
+                Already have an account?
+                <router-link to="/login" class="text-primary font-bold hover:underline">Sign In</router-link>
               </span>
             </div>
 
@@ -142,7 +143,6 @@
               Payment Method
             </h2>
 
-            <!-- Payment tabs / options -->
             <div class="grid grid-cols-2 gap-3">
               <label
                 :class="[
@@ -174,7 +174,7 @@
                 <input
                   v-model="card.number"
                   type="text"
-                  placeholder="4000 1234 5678 9010"
+                  placeholder="4242 •••• •••• 4242"
                   class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
                 />
               </div>
@@ -221,71 +221,34 @@
 
           <!-- Place Order Button -->
           <button
+            type="button"
             @click="handlePlaceOrder"
             :disabled="processingOrder"
             class="btn btn-primary btn-lg w-full rounded-2xl font-black text-base shadow-md"
           >
             <span v-if="processingOrder" class="loading loading-spinner"></span>
-            <span v-else>Place Order • ${{ cartStore.total.toFixed(2) }}</span>
+            <span v-else>Place Order • {{ formatPrice(cartStore.total) }}</span>
           </button>
         </div>
 
-        <!-- Order Summary Sidebar -->
+        <!-- Order Summary Column -->
         <div class="lg:col-span-5 space-y-6">
           <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-xs space-y-5">
             <h2 class="text-lg font-extrabold text-base-content tracking-tight">In Your Order</h2>
 
-            <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
-              <div
+            <!-- Reused CartItemRow with mode="review" -->
+            <div class="space-y-1 max-h-72 overflow-y-auto pr-1">
+              <CartItemRow
                 v-for="item in cartStore.items"
                 :key="item.id"
-                class="flex items-center gap-3 py-2 border-b border-slate-200/60 dark:border-slate-800"
-              >
-                <div class="relative w-14 h-14 rounded-lg bg-base-100 overflow-hidden flex-shrink-0 border border-slate-200/60 dark:border-slate-800">
-                  <img :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
-                  <span class="absolute top-0 right-0 badge badge-primary badge-xs font-bold text-[9px]">
-                    {{ item.quantity }}
-                  </span>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="font-bold text-xs text-base-content truncate">{{ item.name }}</h4>
-                  <span class="text-[11px] text-base-content/60 block">{{ item.format }}</span>
-                </div>
-                <span class="text-xs font-bold text-base-content">
-                  ${{ (item.price * item.quantity).toFixed(2) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Price Breakdown -->
-            <div class="space-y-2 text-xs pt-2 border-t border-slate-200 dark:border-slate-700">
-              <div class="flex justify-between text-base-content/70">
-                <span>Subtotal</span>
-                <span class="font-bold text-base-content">${{ cartStore.subtotal.toFixed(2) }}</span>
-              </div>
-
-              <div v-if="cartStore.discountAmount > 0" class="flex justify-between text-success">
-                <span>Discount</span>
-                <span class="font-bold">-${{ cartStore.discountAmount.toFixed(2) }}</span>
-              </div>
-
-              <div class="flex justify-between text-base-content/70">
-                <span>Shipping</span>
-                <span v-if="cartStore.shippingAmount === 0" class="font-bold text-success">FREE</span>
-                <span v-else class="font-bold text-base-content">${{ cartStore.shippingAmount.toFixed(2) }}</span>
-              </div>
-
-              <div class="flex justify-between text-base-content/70">
-                <span>Estimated Tax (8%)</span>
-                <span class="font-bold text-base-content">${{ cartStore.taxAmount.toFixed(2) }}</span>
-              </div>
-
-              <div class="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between items-baseline">
-                <span class="text-sm font-extrabold text-base-content">Total</span>
-                <span class="text-2xl font-black text-primary">${{ cartStore.total.toFixed(2) }}</span>
-              </div>
+                :item="item"
+                mode="review"
+              />
             </div>
           </div>
+
+          <!-- Reused OrderSummary (without coupon input since it's final checkout review) -->
+          <OrderSummary :show-coupon="false" title="Payment Summary" />
         </div>
       </div>
     </div>
@@ -298,7 +261,11 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'
+import { formatPrice } from '../utils/formatters'
 import { createOrder, getUserAddresses, createAddress } from '../services/pocketbase'
+import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
+import CartItemRow from '../components/cart/CartItemRow.vue'
+import OrderSummary from '../components/cart/OrderSummary.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -348,7 +315,6 @@ async function handlePlaceOrder() {
   try {
     const shippingString = `${form.value.fullName}, ${form.value.street}, ${form.value.city}, ${form.value.state} ${form.value.zip}`
 
-    // 1. Optionally save address if requested
     if (form.value.saveAddress && authStore.isAuthenticated) {
       try {
         await createAddress({
@@ -363,7 +329,6 @@ async function handlePlaceOrder() {
       }
     }
 
-    // 2. Create Order in PocketBase
     const orderPayload = {
       totalAmount: cartStore.total,
       shippingAddress: shippingString,
@@ -373,7 +338,6 @@ async function handlePlaceOrder() {
 
     const orderRecord = await createOrder(orderPayload, cartStore.items)
 
-    // 3. Clear cart and redirect
     cartStore.clearCart()
     toastStore.success('Your order has been placed!')
     router.push({
@@ -401,4 +365,3 @@ onMounted(async () => {
   }
 })
 </script>
-

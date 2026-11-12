@@ -2,18 +2,7 @@
   <div class="py-12 bg-base-100 min-h-screen">
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
       <!-- Breadcrumbs -->
-      <div class="text-xs breadcrumbs text-base-content/60 mb-8">
-        <ul>
-          <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/shop">Shop</router-link></li>
-          <li v-if="product?.categoryName">
-            <router-link :to="`/shop?category=${product.categorySlug}`">
-              {{ product.categoryName }}
-            </router-link>
-          </li>
-          <li class="font-bold text-base-content truncate max-w-xs">{{ product?.name || 'Card' }}</li>
-        </ul>
-      </div>
+      <Breadcrumbs :items="breadcrumbItems" />
 
       <!-- Loading skeleton -->
       <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -53,11 +42,13 @@
               <button
                 v-for="(img, idx) in product.images"
                 :key="idx"
+                type="button"
                 @click="selectedImage = img"
                 :class="[
                   'w-20 h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all',
                   selectedImage === img ? 'border-primary shadow-sm scale-95' : 'border-transparent opacity-70 hover:opacity-100'
                 ]"
+                :aria-label="`Thumbnail ${idx + 1}`"
               >
                 <img :src="img" :alt="product.name" class="w-full h-full object-cover" />
               </button>
@@ -77,9 +68,7 @@
 
               <!-- Star Rating -->
               <div class="flex items-center gap-3 pt-1">
-                <div class="flex text-amber-500 text-sm">
-                  <span>★★★★★</span>
-                </div>
+                <RatingStars :value="5" size="sm" />
                 <span class="text-xs text-base-content/70 font-semibold">
                   5.0 ({{ product.reviews?.length || 4 }} customer reviews)
                 </span>
@@ -89,13 +78,13 @@
             <!-- Price -->
             <div class="flex items-baseline gap-3 py-2 border-y border-slate-100 dark:border-slate-800">
               <span class="text-3xl font-black text-base-content">
-                ${{ currentPrice.toFixed(2) }}
+                {{ formatPrice(currentPrice) }}
               </span>
               <span
                 v-if="product.compareAtPrice && product.compareAtPrice > currentPrice"
                 class="text-base text-base-content/40 line-through font-semibold"
               >
-                ${{ Number(product.compareAtPrice).toFixed(2) }}
+                {{ formatPrice(product.compareAtPrice) }}
               </span>
               <span class="badge badge-success badge-outline font-bold text-xs">
                 In Stock
@@ -116,6 +105,7 @@
                 <button
                   v-for="variant in product.variants"
                   :key="variant.id"
+                  type="button"
                   @click="selectedVariant = variant"
                   :class="[
                     'btn btn-sm rounded-xl font-bold text-xs',
@@ -123,7 +113,7 @@
                   ]"
                 >
                   {{ variant.attributes?.Format || variant.sku || 'Option' }}
-                  - ${{ variant.price.toFixed(2) }}
+                  - {{ formatPrice(variant.price) }}
                 </button>
               </div>
             </div>
@@ -134,8 +124,10 @@
                 <label class="text-xs font-bold text-base-content">Quantity:</label>
                 <div class="join border border-slate-200 dark:border-slate-700 rounded-xl bg-base-100">
                   <button
+                    type="button"
                     @click="quantity = Math.max(1, quantity - 1)"
                     class="join-item btn btn-ghost btn-sm px-3"
+                    aria-label="Decrease quantity"
                   >
                     -
                   </button>
@@ -143,8 +135,10 @@
                     {{ quantity }}
                   </span>
                   <button
+                    type="button"
                     @click="quantity++"
                     class="join-item btn btn-ghost btn-sm px-3"
+                    aria-label="Increase quantity"
                   >
                     +
                   </button>
@@ -153,12 +147,14 @@
 
               <div class="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
+                  type="button"
                   @click="handleAddToCart"
                   class="btn btn-primary btn-lg rounded-xl font-bold flex-1 shadow-sm"
                 >
-                  Add to Cart • ${{ (currentPrice * quantity).toFixed(2) }}
+                  Add to Cart • {{ formatPrice(currentPrice * quantity) }}
                 </button>
                 <button
+                  type="button"
                   @click="handleBuyNow"
                   class="btn btn-neutral btn-lg rounded-xl font-bold flex-1"
                 >
@@ -202,6 +198,7 @@
               <p class="text-xs text-base-content/60 mt-1">Real ratings from verified paper lovers</p>
             </div>
             <button
+              type="button"
               @click="showReviewModal = true"
               class="btn btn-outline btn-sm rounded-xl font-bold text-xs"
             >
@@ -220,64 +217,66 @@
       </div>
     </div>
 
-    <!-- Write a Review Modal -->
-    <div v-if="showReviewModal" class="modal modal-open">
-      <div class="modal-box rounded-3xl border border-slate-200 dark:border-slate-800 max-w-md">
-        <h3 class="font-extrabold text-lg text-base-content mb-4">Write a Review</h3>
-        <form @submit.prevent="submitReview" class="space-y-4">
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Rating</label>
-            <select v-model.number="newReview.rating" class="select select-bordered select-sm w-full rounded-xl text-xs">
-              <option :value="5">★★★★★ - 5 Stars</option>
-              <option :value="4">★★★★☆ - 4 Stars</option>
-              <option :value="3">★★★☆☆ - 3 Stars</option>
-              <option :value="2">★★☆☆☆ - 2 Stars</option>
-              <option :value="1">★☆☆☆☆ - 1 Star</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Title</label>
-            <input
-              v-model="newReview.title"
-              type="text"
-              placeholder="e.g. Loved this hilarious card!"
-              required
-              class="input input-bordered input-sm w-full rounded-xl text-xs"
+    <!-- Reusable Review Modal -->
+    <Modal
+      :is-open="showReviewModal"
+      title="Write a Review"
+      @close="showReviewModal = false"
+    >
+      <form @submit.prevent="submitReview" id="review-form" class="space-y-4">
+        <div>
+          <label class="text-xs font-bold text-base-content block mb-1">Your Rating</label>
+          <div class="flex items-center gap-2">
+            <RatingStars
+              v-model="newReview.rating"
+              size="md"
+              :interactive="true"
             />
+            <span class="text-xs font-bold text-base-content/60">{{ newReview.rating }} of 5 Stars</span>
           </div>
+        </div>
 
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Review</label>
-            <textarea
-              v-model="newReview.body"
-              rows="3"
-              placeholder="What made this greeting card special?"
-              required
-              class="textarea textarea-bordered w-full rounded-xl text-xs"
-            ></textarea>
-          </div>
+        <div>
+          <label class="text-xs font-bold text-base-content block mb-1">Title</label>
+          <input
+            v-model="newReview.title"
+            type="text"
+            placeholder="e.g. Loved this hilarious card!"
+            required
+            class="input input-bordered input-sm w-full rounded-xl text-xs"
+          />
+        </div>
 
-          <div class="modal-action flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              @click="showReviewModal = false"
-              class="btn btn-ghost btn-sm rounded-xl font-bold"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              :disabled="submittingReview"
-              class="btn btn-primary btn-sm rounded-xl font-bold"
-            >
-              {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div class="modal-backdrop" @click="showReviewModal = false"></div>
-    </div>
+        <div>
+          <label class="text-xs font-bold text-base-content block mb-1">Review</label>
+          <textarea
+            v-model="newReview.body"
+            rows="3"
+            placeholder="What made this greeting card special?"
+            required
+            class="textarea textarea-bordered w-full rounded-xl text-xs"
+          ></textarea>
+        </div>
+      </form>
+
+      <template #actions>
+        <button
+          type="button"
+          @click="showReviewModal = false"
+          class="btn btn-ghost btn-sm rounded-xl font-bold"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          form="review-form"
+          :disabled="submittingReview"
+          class="btn btn-primary btn-sm rounded-xl font-bold"
+        >
+          {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -287,7 +286,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { getProduct, createReview } from '../services/pocketbase'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'
+import { formatPrice } from '../utils/formatters'
 import ReviewCard from '../components/products/ReviewCard.vue'
+import RatingStars from '../components/ui/RatingStars.vue'
+import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
+import Modal from '../components/ui/Modal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -310,6 +313,18 @@ const newReview = ref({
 
 const currentPrice = computed(() => {
   return selectedVariant.value?.price || product.value?.price || 4.99
+})
+
+const breadcrumbItems = computed(() => {
+  const items = [{ label: 'Home', to: '/' }, { label: 'Shop', to: '/shop' }]
+  if (product.value?.categoryName) {
+    items.push({
+      label: product.value.categoryName,
+      to: `/shop?category=${product.value.categorySlug}`,
+    })
+  }
+  items.push({ label: product.value?.name || 'Card Details' })
+  return items
 })
 
 async function loadProduct() {
@@ -371,4 +386,3 @@ onMounted(() => {
   loadProduct()
 })
 </script>
-
