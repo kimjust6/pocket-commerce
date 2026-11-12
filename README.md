@@ -20,23 +20,25 @@
 
 ## Tech Stack
 
-This project is engineered on a lightweight, high-performance stack designed for simple deployments:
+This project is engineered on a modern, high-performance stack:
 
-- **Backend**: [PocketBase](https://pocketbase.io/) (Golang + SQLite embedded DB) - Powers Authentication, API endpoints, and data collections.
-- **Frontend**: [PocketPages](https://github.com/pocketpages/pocketpages) - Fast, lightweight server-side rendering using **EJS**.
-- **Interactivity**: [Alpine.js](https://alpinejs.dev/) - For micro-animations and reactive client-side bindings (Modals, Cart drawers, address select).
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/) with a curated "neobrutalism" theme.
+- **Backend & Database**: [PocketBase](https://pocketbase.io/) (Golang + embedded SQLite) - Powers real-time REST API, Authentication, and database collections.
+- **Frontend**: [Vue.js 3](https://vuejs.org/) (Composition API, `<script setup>`) with [Vite](https://vitejs.dev/) for sub-second HMR and optimized builds.
+- **State Management**: [Pinia](https://pinia.vuejs.org/) for reactive cart persistence, auth state, and theme management.
+- **Routing**: [Vue Router 4](https://router.vuejs.org/) with HTML5 History API.
+- **Styling**: [Tailwind CSS v3](https://tailwindcss.com/) + [DaisyUI v4](https://daisyui.com/) with squircle curves and Neo-Brutalist themes.
+- **Deployment**: [PocketHost](https://pockethost.io/) via `phio deploy`.
 
 ---
 
 ## Getting Started
 
-Follow these steps to get your own card commerce store running locally.
+Follow these steps to get your own card commerce store running locally:
 
 ### Prerequisites
 
-- **Node.js** (LTS version recommended)
-- **PocketBase**: The PocketBase binary is integrated, running directly on SQLite.
+- **Node.js** (v18+)
+- **PocketBase binary** (installed and in your PATH)
 
 ### Installation
 
@@ -51,25 +53,42 @@ Follow these steps to get your own card commerce store running locally.
    npm install
    ```
 
-3. **Run the Application**:
-   Starts the Tailwind CSS builder and the PocketBase server concurrently in development mode:
+3. **Run in Development**:
+   Starts Vite dev server with proxy to PocketBase:
    ```bash
    npm run dev
    ```
+   Or run the services individually:
+   - `npm run dev:ui`: Launches Vite development server on `http://localhost:5173`.
+   - `npm run dev:pb`: Launches PocketBase server on `http://127.0.0.1:8090`.
 
-4. **Visit the App**:
-   Open [http://localhost:8090](http://localhost:8090) in your browser.
+4. **Build for Production**:
+   Compiles the Vue 3 application into `pb_public/`:
+   ```bash
+   npm run build
+   ```
+
+5. **Deploy to PocketHost**:
+   Builds the latest assets and deploys your application to PocketHost:
+   ```bash
+   npm run push
+   ```
 
 ---
 
 ## Project Structure
 
-- `pb_hooks/` - Server-side hook handlers and templates.
-  - `pages/` - EJS views, static stylesheet bundles, and route loaders (PocketPages framework).
-  - `lib/` - Shared business logic and common wrappers.
-- `pb_public/` - Compiled static assets.
-- `pb_data/` - SQLite database files and store data (generated automatically).
-- `tests/` - Vitest unit tests verifying business loader rules.
+- `src/` - Vue 3 Single Page Application
+  - `components/` - Modular UI, layout, product card, and cart drawer components
+  - `views/` - Route views (Home, Shop, ProductDetail, Cart, Checkout, Account, Profile, Auth)
+  - `stores/` - Pinia state stores (cart, auth, theme, toast)
+  - `services/` - PocketBase JS SDK client and API wrappers
+  - `router/` - Vue Router configuration with auth route guards
+- `public/` - Static assets, images, and card illustrations served by Vite and copied to `pb_public/`
+- `pb_public/` - Compiled static frontend bundle directly served by PocketBase and deployed to PocketHost
+- `pb_hooks/` - PocketBase GoJA hooks (Banano crypto runner, etc.)
+- `pb_data/` - SQLite database files and store data
+- `tests/` - Vitest unit test suites
 
 ---
 

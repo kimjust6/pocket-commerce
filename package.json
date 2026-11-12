@@ -3,16 +3,17 @@
     "private": true,
     "version": "0.1.0",
     "scripts": {
-        "dev": "concurrently \"npx tailwindcss -i ./pb_hooks/pages/app.tailwind.css -o ./pb_hooks/pages/app.css --watch\" \"pocketbase serve --dir=pb_data --dev\"",
-        "wsl": "wsl.exe bash -c \"unset ComSpec; set -a && source <(tr -d '\\r' < .env) && set +a && node node_modules/concurrently/dist/bin/concurrently.js \\\"npx tailwindcss -i ./pb_hooks/pages/app.tailwind.css -o ./pb_hooks/pages/app.css --watch\\\" \\\"pocketbase serve --dir=pb_data --dev\\\"\"",
+        "dev": "concurrently \"vite\" \"pocketbase serve --dir=pb_data --dev\"",
+        "dev:ui": "vite",
+        "dev:pb": "pocketbase serve --dir=pb_data --dev",
+        "build": "vite build",
         "start": "pocketbase serve --dir=pb_data --dev",
-        "css": "tailwindcss -i ./pb_hooks/pages/app.tailwind.css -o ./pb_hooks/pages/app.css --watch",
-        "push": "npx phio deploy",
-        "login": "npx phio login",
+        "push": "npm run build && node ./node_modules/tsx/dist/cli.mjs ./node_modules/phio/src/cli.ts deploy",
+        "login": "node ./node_modules/tsx/dist/cli.mjs ./node_modules/phio/src/cli.ts login",
         "update": "pocketbase update",
         "test": "vitest run",
         "typegen": "node scripts/typegen.mjs",
-        "postinstall": "patch-package"
+        "postinstall": "node node_modules/patch-package/dist/index.js"
     },
     "pockethost": {
         "instanceName": "pocket-commerce"
@@ -37,6 +38,7 @@
     ],
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.16",
+        "autoprefixer": "^10.6.2",
         "concurrently": "^9.2.1",
         "daisyui": "^4.12.23",
         "dotenv": "^17.2.3",
@@ -49,13 +51,19 @@
     },
     "dependencies": {
         "@bananocoin/bananojs": "^2.10.10",
+        "@vitejs/plugin-vue": "^6.0.11",
         "baseline-browser-mapping": "^2.9.17",
         "caniuse-lite": "^1.0.30001765",
+        "lucide-vue-next": "^1.0.0",
+        "phio": "^0.3.5",
+        "pinia": "^4.1.0",
         "pocketbase": "^0.26.5",
         "pocketpages": "^0.22.3",
         "pocketpages-plugin-datastar": "^0.2.0",
         "pocketpages-plugin-js-sdk": "^0.2.0",
-        "phio": "^0.3.5"
+        "vite": "^8.3.8",
+        "vue": "^3.5.45",
+        "vue-router": "^5.5.0"
     },
     "overrides": {
         "minimatch": "^10.0.1",
