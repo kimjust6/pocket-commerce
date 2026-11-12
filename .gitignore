@@ -15,6 +15,7 @@ pb_data/
 dist/
 /pb_public/assets/
 /pb_public/index.html
+/pb_public/svg/
 .vite/
 
 # Deployment & FTP Sync State

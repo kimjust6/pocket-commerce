@@ -11,9 +11,7 @@
               aria-label="Toggle navigation menu"
               @click="isMobileMenuOpen = !isMobileMenuOpen"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-              </svg>
+              <Menu class="h-5 w-5" />
             </button>
             <ul
               v-if="isMobileMenuOpen"
@@ -48,9 +46,7 @@
           <div class="dropdown dropdown-hover">
             <div tabindex="0" role="button" class="text-sm font-bold text-base-content/80 hover:text-primary transition-colors flex items-center gap-1 cursor-pointer">
               Categories
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <ChevronDown class="h-4 w-4" />
             </div>
             <ul tabindex="0" class="dropdown-content z-50 menu p-2 shadow-xl bg-base-100 rounded-box w-52 border border-slate-200/80 dark:border-slate-800">
               <li><router-link to="/shop?category=birthday">Birthday Cards</router-link></li>
@@ -73,9 +69,7 @@
               class="input input-sm input-bordered w-full rounded-xl pr-8 bg-base-200/50 text-xs focus:bg-base-100"
             />
             <button type="submit" class="absolute right-2.5 top-2 text-base-content/50 hover:text-primary" aria-label="Search">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              <Search class="h-4 w-4" />
             </button>
           </form>
 
@@ -96,9 +90,7 @@
             class="btn btn-ghost btn-circle btn-sm relative"
             aria-label="Open shopping cart"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
+            <ShoppingCart class="h-5 w-5" />
             <span
               v-if="cartStore.totalItems > 0"
               class="badge badge-primary badge-xs absolute -top-0.5 -right-0.5 font-bold px-1.5 py-2 text-[10px]"
@@ -146,7 +138,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Mail, Sun, Moon } from 'lucide-vue-next'
+import { Mail, Sun, Moon, Menu, ChevronDown, Search, ShoppingCart } from 'lucide-vue-next'
 import { useAuthStore } from '../../stores/auth'
 import { useCartStore } from '../../stores/cart'
 import { useThemeStore } from '../../stores/theme'
