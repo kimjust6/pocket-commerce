@@ -14,13 +14,13 @@
             Handcrafted, thoughtful, and witty greeting cards printed locally on 100% recycled paper stock. Celebrating life's meaningful moments.
           </p>
           <div class="flex flex-wrap items-center gap-3 pt-2 text-base-content/70">
-            <span class="badge badge-outline text-xs font-semibold py-3 px-3 gap-1.5">
-              <Leaf class="w-3.5 h-3.5 text-emerald-500" />
-              100% Recycled Paper
-            </span>
-            <span class="badge badge-outline text-xs font-semibold py-3 px-3 gap-1.5">
-              <Truck class="w-3.5 h-3.5 text-primary" />
-              Fast Shipping
+            <span
+              v-for="badge in brandBadges"
+              :key="badge.label"
+              class="badge badge-outline text-xs font-semibold py-3 px-3 gap-1.5"
+            >
+              <component :is="badge.icon" :class="['w-3.5 h-3.5', badge.iconClass]" />
+              {{ badge.label }}
             </span>
           </div>
         </div>
@@ -29,11 +29,11 @@
         <div class="space-y-3">
           <h4 class="text-xs font-bold uppercase tracking-wider text-base-content">Shop Cards</h4>
           <ul class="space-y-2 text-sm text-base-content/70 font-medium">
-            <li><router-link to="/shop?category=birthday" class="hover:text-primary transition-colors">Birthday Cards</router-link></li>
-            <li><router-link to="/shop?category=animals" class="hover:text-primary transition-colors">Animals & Pets</router-link></li>
-            <li><router-link to="/shop?category=food" class="hover:text-primary transition-colors">Food & Drink Puns</router-link></li>
-            <li><router-link to="/shop?category=love" class="hover:text-primary transition-colors">Love & Romance</router-link></li>
-            <li><router-link to="/shop?category=thank-you" class="hover:text-primary transition-colors">Thank You Notes</router-link></li>
+            <li v-for="cat in CATEGORY_LINKS" :key="cat.slug">
+              <router-link :to="`/shop?category=${cat.slug}`" class="hover:text-primary transition-colors">
+                {{ cat.label }}
+              </router-link>
+            </li>
           </ul>
         </div>
 
@@ -41,10 +41,11 @@
         <div class="space-y-3">
           <h4 class="text-xs font-bold uppercase tracking-wider text-base-content">Account & Help</h4>
           <ul class="space-y-2 text-sm text-base-content/70 font-medium">
-            <li><router-link to="/cart" class="hover:text-primary transition-colors">Shopping Cart</router-link></li>
-            <li><router-link to="/account" class="hover:text-primary transition-colors">Order History</router-link></li>
-            <li><router-link to="/profile" class="hover:text-primary transition-colors">Account Settings</router-link></li>
-            <li><router-link to="/login" class="hover:text-primary transition-colors">Sign In</router-link></li>
+            <li v-for="link in accountLinks" :key="link.to">
+              <router-link :to="link.to" class="hover:text-primary transition-colors">
+                {{ link.label }}
+              </router-link>
+            </li>
           </ul>
         </div>
 
@@ -90,6 +91,19 @@
 <script setup>
 import { ref } from 'vue'
 import { Mail, Leaf, Truck } from 'lucide-vue-next'
+import { CATEGORY_LINKS } from '../../constants/navigation'
+
+const brandBadges = [
+  { label: '100% Recycled Paper', icon: Leaf, iconClass: 'text-emerald-500' },
+  { label: 'Fast Shipping', icon: Truck, iconClass: 'text-primary' },
+]
+
+const accountLinks = [
+  { to: '/cart', label: 'Shopping Cart' },
+  { to: '/account', label: 'Order History' },
+  { to: '/profile', label: 'Account Settings' },
+  { to: '/login', label: 'Sign In' },
+]
 
 const newsletterEmail = ref('')
 const subscribed = ref(false)

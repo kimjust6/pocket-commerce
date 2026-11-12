@@ -125,33 +125,17 @@
     <section class="py-16 bg-base-100 transition-colors">
       <div class="container mx-auto px-4 md:px-8 max-w-7xl">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-          <div class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3">
-            <div class="inline-flex p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <Leaf class="w-6 h-6" />
+          <div
+            v-for="feature in features"
+            :key="feature.title"
+            class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3"
+          >
+            <div :class="['inline-flex p-2.5 rounded-xl', feature.iconBgClass]">
+              <component :is="feature.icon" class="w-6 h-6" />
             </div>
-            <h3 class="font-extrabold text-base text-base-content">100% Recycled Paper</h3>
+            <h3 class="font-extrabold text-base text-base-content">{{ feature.title }}</h3>
             <p class="text-xs text-base-content/70 leading-relaxed">
-              Every card is printed with non-toxic soy ink on post-consumer recycled premium cardstock.
-            </p>
-          </div>
-
-          <div class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3">
-            <div class="inline-flex p-2.5 rounded-xl bg-primary/10 text-primary">
-              <Palette class="w-6 h-6" />
-            </div>
-            <h3 class="font-extrabold text-base text-base-content">Handcrafted Original Art</h3>
-            <p class="text-xs text-base-content/70 leading-relaxed">
-              Designed by independent illustrators, offering unique craftsmanship you will not find in mass-market stores.
-            </p>
-          </div>
-
-          <div class="p-6 rounded-2xl bg-base-200/50 border border-slate-200/80 dark:border-slate-800 space-y-3">
-            <div class="inline-flex p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-              <Truck class="w-6 h-6" />
-            </div>
-            <h3 class="font-extrabold text-base text-base-content">Fast Shipping</h3>
-            <p class="text-xs text-base-content/70 leading-relaxed">
-              Orders ship within 24 hours in rigid protective mailers to ensure every card arrives in pristine condition.
+              {{ feature.desc }}
             </p>
           </div>
         </div>
@@ -176,6 +160,27 @@ const featuredCategories = [
   { name: 'Animals & Pets', slug: 'animals', image: '/card-animals.webp', desc: 'Hilarious greetings featuring cute critters.' },
   { name: 'Food & Drink', slug: 'food', image: '/card-food.webp', desc: 'Deliciously funny cards for foodies.' },
   { name: 'Love & Romance', slug: 'love', image: '/card-love.webp', desc: 'Romantic puns to make your partner smile.' },
+]
+
+const features = [
+  {
+    title: '100% Recycled Paper',
+    desc: 'Every card is printed with non-toxic soy ink on post-consumer recycled premium cardstock.',
+    icon: Leaf,
+    iconBgClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    title: 'Handcrafted Original Art',
+    desc: 'Designed by independent illustrators, offering unique craftsmanship you will not find in mass-market stores.',
+    icon: Palette,
+    iconBgClass: 'bg-primary/10 text-primary',
+  },
+  {
+    title: 'Fast Shipping',
+    desc: 'Orders ship within 24 hours in rigid protective mailers to ensure every card arrives in pristine condition.',
+    icon: Truck,
+    iconBgClass: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  },
 ]
 
 onMounted(async () => {

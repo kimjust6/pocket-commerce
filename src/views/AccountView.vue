@@ -39,24 +39,16 @@
       <!-- Navigation Tabs -->
       <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 mb-8">
         <button
+          v-for="tab in tabs"
+          :key="tab.id"
           type="button"
-          @click="activeTab = 'orders'"
+          @click="activeTab = tab.id"
           :class="[
             'pb-3 px-4 font-bold text-sm border-b-2 transition-all',
-            activeTab === 'orders' ? 'border-primary text-primary' : 'border-transparent text-base-content/60 hover:text-base-content'
+            activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-base-content/60 hover:text-base-content'
           ]"
         >
-          Order History ({{ orders.length }})
-        </button>
-        <button
-          type="button"
-          @click="activeTab = 'addresses'"
-          :class="[
-            'pb-3 px-4 font-bold text-sm border-b-2 transition-all',
-            activeTab === 'addresses' ? 'border-primary text-primary' : 'border-transparent text-base-content/60 hover:text-base-content'
-          ]"
-        >
-          Saved Addresses ({{ addresses.length }})
+          {{ tab.label }} ({{ tab.count }})
         </button>
       </div>
 
@@ -238,7 +230,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Package, MapPin } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
@@ -257,6 +249,11 @@ const loadingOrders = ref(true)
 const loadingAddresses = ref(true)
 const orders = ref([])
 const addresses = ref([])
+
+const tabs = computed(() => [
+  { id: 'orders', label: 'Order History', count: orders.value.length },
+  { id: 'addresses', label: 'Saved Addresses', count: addresses.value.length },
+])
 
 const showAddressModal = ref(false)
 const savingAddress = ref(false)

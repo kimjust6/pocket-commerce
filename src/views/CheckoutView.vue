@@ -149,25 +149,16 @@
 
             <div class="grid grid-cols-2 gap-3">
               <label
+                v-for="option in paymentOptions"
+                :key="option.value"
                 :class="[
                   'cursor-pointer border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all',
-                  paymentMethod === 'stripe' ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-slate-200 dark:border-slate-800'
+                  paymentMethod === option.value ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-slate-200 dark:border-slate-800'
                 ]"
               >
-                <input type="radio" value="stripe" v-model="paymentMethod" class="hidden" />
-                <CreditCard class="w-6 h-6 text-primary" />
-                <span class="text-xs font-bold text-base-content">Stripe Checkout</span>
-              </label>
-
-              <label
-                :class="[
-                  'cursor-pointer border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all',
-                  paymentMethod === 'banano' ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-slate-200 dark:border-slate-800'
-                ]"
-              >
-                <input type="radio" value="banano" v-model="paymentMethod" class="hidden" />
-                <Coins class="w-6 h-6 text-amber-500" />
-                <span class="text-xs font-bold text-base-content">Banano Crypto</span>
+                <input type="radio" :value="option.value" v-model="paymentMethod" class="hidden" />
+                <component :is="option.icon" :class="['w-6 h-6', option.iconClass]" />
+                <span class="text-xs font-bold text-base-content">{{ option.label }}</span>
               </label>
             </div>
 
@@ -253,6 +244,11 @@ const toastStore = useToastStore()
 
 const savedAddresses = ref([])
 const paymentMethod = ref('stripe')
+
+const paymentOptions = [
+  { value: 'stripe', label: 'Stripe Checkout', icon: CreditCard, iconClass: 'text-primary' },
+  { value: 'banano', label: 'Banano Crypto', icon: Coins, iconClass: 'text-amber-500' },
+]
 const processingOrder = ref(false)
 const errorMessage = ref('')
 

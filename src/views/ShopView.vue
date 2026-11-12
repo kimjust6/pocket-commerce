@@ -22,9 +22,9 @@
               @change="fetchData"
               class="select select-bordered select-sm rounded-xl text-xs bg-base-100"
             >
-              <option value="-created">Newest</option>
-              <option value="name">Name: A to Z</option>
-              <option value="-name">Name: Z to A</option>
+              <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
+                {{ opt.label }}
+              </option>
             </select>
           </div>
         </div>
@@ -165,6 +165,12 @@ const searchQuery = ref(route.query.search || '')
 const minPrice = ref(route.query.minPrice || null)
 const maxPrice = ref(route.query.maxPrice || null)
 const selectedSort = ref('-created')
+
+const sortOptions = [
+  { value: '-created', label: 'Newest' },
+  { value: 'name', label: 'Name: A to Z' },
+  { value: '-name', label: 'Name: Z to A' },
+]
 
 async function fetchData() {
   loading.value = true

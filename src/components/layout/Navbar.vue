@@ -20,11 +20,11 @@
               <li><router-link to="/" @click="isMobileMenuOpen = false">Home</router-link></li>
               <li><router-link to="/shop" @click="isMobileMenuOpen = false">All Cards</router-link></li>
               <li class="menu-title text-xs">Categories</li>
-              <li><router-link to="/shop?category=birthday" @click="isMobileMenuOpen = false">Birthday</router-link></li>
-              <li><router-link to="/shop?category=animals" @click="isMobileMenuOpen = false">Animals</router-link></li>
-              <li><router-link to="/shop?category=food" @click="isMobileMenuOpen = false">Food & Drink</router-link></li>
-              <li><router-link to="/shop?category=love" @click="isMobileMenuOpen = false">Love & Romance</router-link></li>
-              <li><router-link to="/shop?category=thank-you" @click="isMobileMenuOpen = false">Thank You</router-link></li>
+              <li v-for="cat in CATEGORY_LINKS" :key="cat.slug">
+                <router-link :to="`/shop?category=${cat.slug}`" @click="isMobileMenuOpen = false">
+                  {{ cat.shortLabel }}
+                </router-link>
+              </li>
             </ul>
           </div>
 
@@ -49,11 +49,9 @@
               <ChevronDown class="h-4 w-4" />
             </div>
             <ul tabindex="0" class="dropdown-content z-50 menu p-2 shadow-xl bg-base-100 rounded-box w-52 border border-slate-200/80 dark:border-slate-800">
-              <li><router-link to="/shop?category=birthday">Birthday Cards</router-link></li>
-              <li><router-link to="/shop?category=animals">Animals & Pets</router-link></li>
-              <li><router-link to="/shop?category=food">Food & Drink Puns</router-link></li>
-              <li><router-link to="/shop?category=love">Love & Romance</router-link></li>
-              <li><router-link to="/shop?category=thank-you">Thank You Notes</router-link></li>
+              <li v-for="cat in CATEGORY_LINKS" :key="cat.slug">
+                <router-link :to="`/shop?category=${cat.slug}`">{{ cat.label }}</router-link>
+              </li>
             </ul>
           </div>
         </div>
@@ -139,6 +137,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Mail, Sun, Moon, Menu, ChevronDown, Search, ShoppingCart } from 'lucide-vue-next'
+import { CATEGORY_LINKS } from '../../constants/navigation'
 import { useAuthStore } from '../../stores/auth'
 import { useCartStore } from '../../stores/cart'
 import { useThemeStore } from '../../stores/theme'
