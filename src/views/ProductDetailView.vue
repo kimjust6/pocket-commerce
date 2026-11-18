@@ -273,6 +273,7 @@ import { getProduct, createReview } from '../services/pocketbase'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'
 import { formatPrice } from '../utils/formatters'
+import { updateSeoMeta, buildProductJsonLd } from '../utils/seo'
 import ReviewCard from '../components/products/ReviewCard.vue'
 import RatingStars from '../components/ui/RatingStars.vue'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
@@ -325,6 +326,14 @@ async function loadProduct() {
       if (res.variants?.length > 0) {
         selectedVariant.value = res.variants[0]
       }
+      updateSeoMeta({
+        title: res.name,
+        description: res.description || `${res.name} — handcrafted greeting card printed on 100% recycled paper.`,
+        image: res.primaryImage,
+        type: 'product',
+        canonicalPath: `/shop/card/${res.slug}`,
+        jsonLd: buildProductJsonLd(res, typeof window !== 'undefined' ? window.location.origin : ''),
+      })
     }
   } catch (err) {
     console.error('Error fetching product:', err)
