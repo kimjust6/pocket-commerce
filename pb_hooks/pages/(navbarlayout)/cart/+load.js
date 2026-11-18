@@ -166,17 +166,55 @@ module.exports = function (context) {
         return cart;
     }
 
+    // Check if JSON / AJAX response is requested
+    function isJsonRequest(formData) {
+        if (formData && (formData.json === '1' || formData.json === 'true' || formData.ajax === '1' || formData.ajax === 'true')) {
+            return true;
+        }
+        if (getRequestFormValue('json') === '1' || getRequestFormValue('ajax') === '1') {
+            return true;
+        }
+        if (context.request) {
+            if (context.request.url && typeof context.request.url.searchParams !== 'undefined') {
+                try {
+                    const qj = context.request.url.searchParams.get('json');
+                    if (qj === '1' || qj === 'true') return true;
+                } catch (_) {}
+            }
+            if (typeof context.request.header === 'function') {
+                const accept = (context.request.header('Accept') || context.request.header('accept') || '');
+                if (accept.includes('application/json')) return true;
+                const xrw = (context.request.header('X-Requested-With') || context.request.header('x-requested-with') || '');
+                if (xrw === 'XMLHttpRequest') return true;
+            }
+            if (context.request.headers) {
+                const accept = context.request.headers['accept'] || context.request.headers['Accept'] || '';
+                if (typeof accept === 'string' && accept.includes('application/json')) return true;
+            }
+        }
+        return false;
+    }
+
     // 1. Process Form Submissions / Actions (POST)
     if (context.request.method === 'POST') {
+        let formData = {};
         try {
-            let formData = common.parseFormData(context);
+            formData = common.parseFormData(context) || {};
+        } catch (_) {}
+
+        const asJson = isJsonRequest(formData);
+
+        try {
             if (!hasFormValue(formData, 'action') && context.request && typeof context.request.formData === 'function') {
-                formData = context.request.formData();
+                try {
+                    formData = context.request.formData() || formData;
+                } catch (_) {}
             }
             if (!hasFormValue(formData, 'action')) {
                 formData = {
                     action: getRequestFormValue('action'),
                     variant_id: getRequestFormValue('variant_id'),
+                    product_id: getRequestFormValue('product_id'),
                     quantity: getRequestFormValue('quantity'),
                     item_id: getRequestFormValue('item_id')
                 };
@@ -184,15 +222,38 @@ module.exports = function (context) {
             const action = getFormValue(formData, 'action');
 
             if (action === 'add') {
-                const variantId = getFormValue(formData, 'variant_id');
+                let variantId = getFormValue(formData, 'variant_id');
+                const productId = getFormValue(formData, 'product_id');
                 const quantity = parseInt(getFormValue(formData, 'quantity', '1'), 10);
+
+                if (!variantId && productId) {
+                    try {
+                        const inStockVariants = $app.findRecordsByFilter("product_variants", `product = '${productId}' && stock > 0`, "price", 1, 0);
+                        if (inStockVariants.length > 0) {
+                            variantId = inStockVariants[0].id;
+                        } else {
+                            const allVariants = $app.findRecordsByFilter("product_variants", `product = '${productId}'`, "price", 1, 0);
+                            if (allVariants.length > 0) {
+                                variantId = allVariants[0].id;
+                            }
+                        }
+                    } catch (_) {}
+                }
+
                 if (variantId && quantity > 0) {
-                    const variant = $app.findRecordById("product_variants", variantId);
+                    let variant = null;
+                    try {
+                        variant = $app.findRecordById("product_variants", variantId);
+                    } catch (_) {}
                     const stock = variant ? variant.getInt("stock") : 0;
                     if (stock > 0) {
                         const cart = findOrCreateCart();
                         if (!cart) {
-                            context.response.redirect('/cart');
+                            if (asJson) {
+                                context.response.json(500, { success: false, message: "Could not initialize cart" });
+                                return;
+                            }
+                            context.response.redirect(303, '/cart');
                             return;
                         }
 
@@ -220,7 +281,10 @@ module.exports = function (context) {
                 const itemId = getFormValue(formData, 'item_id');
                 const quantity = parseInt(getFormValue(formData, 'quantity', '0'), 10);
                 if (itemId) {
-                    const item = $app.findRecordById("cart_items", itemId);
+                    let item = null;
+                    try {
+                        item = $app.findRecordById("cart_items", itemId);
+                    } catch (_) {}
                     if (item) {
                         const cart = item.getString("cart");
                         const activeCart = findOrCreateCart();
@@ -238,7 +302,10 @@ module.exports = function (context) {
             } else if (action === 'delete') {
                 const itemId = getFormValue(formData, 'item_id');
                 if (itemId) {
-                    const item = $app.findRecordById("cart_items", itemId);
+                    let item = null;
+                    try {
+                        item = $app.findRecordById("cart_items", itemId);
+                    } catch (_) {}
                     if (item) {
                         const cart = item.getString("cart");
                         const activeCart = findOrCreateCart();
@@ -253,16 +320,87 @@ module.exports = function (context) {
                 if (activeCart) {
                     const items = $app.findRecordsByFilter("cart_items", `cart = '${activeCart.id}'`, "", 500, 0);
                     items.forEach(item => {
-                        $app.delete(item);
+                        try {
+                            $app.delete(item);
+                        } catch (_) {}
                     });
                 }
             }
 
+            if (asJson) {
+                let updatedTotalItems = 0;
+                let updatedTotalPrice = 0.0;
+                let updatedCartItems = [];
+                const activeCart = findOrCreateCart();
+                if (activeCart) {
+                    const items = $app.findRecordsByFilter("cart_items", `cart = '${activeCart.id}'`, "", 500, 0);
+                    if (items.length > 0) {
+                        $app.expandRecords(items, ["variant"]);
+                        const variantRecords = items.map(item => item.expandedOne("variant")).filter(Boolean);
+                        if (variantRecords.length > 0) {
+                            $app.expandRecords(variantRecords, ["product"]);
+                        }
+                        updatedCartItems = items.map(item => {
+                            const q = item.getInt("quantity");
+                            const v = item.expandedOne("variant");
+                            if (!v) return null;
+                            const p = v.expandedOne("product");
+                            if (!p) return null;
+                            const price = v.getFloat("price");
+                            const itemTotal = price * q;
+                            updatedTotalItems += q;
+                            updatedTotalPrice += itemTotal;
+
+                            const imagesArray = p.getStringSlice("images");
+                            let imageUrl = "/card-birthday.webp";
+                            if (imagesArray && imagesArray.length > 0) {
+                                const img = imagesArray[0];
+                                const cleanImg = (img || '').split('"').join('').trim();
+                                if (cleanImg.startsWith('http://') || cleanImg.startsWith('https://') || cleanImg.startsWith('/')) {
+                                    imageUrl = cleanImg;
+                                } else {
+                                    imageUrl = `/api/files/products/${p.id}/${cleanImg}`;
+                                }
+                            }
+
+                            return {
+                                id: item.id,
+                                quantity: q,
+                                price: price,
+                                total: itemTotal,
+                                variantId: v.id,
+                                sku: v.getString("sku"),
+                                attributes: common.normalizeJsonField(v.get("attributes")),
+                                productId: p.id,
+                                productName: p.getString("name"),
+                                productSlug: p.getString("slug") || p.getString("name").toLowerCase().replace(/\s+/g, '-'),
+                                image: imageUrl,
+                                stock: v.getInt("stock")
+                            };
+                        }).filter(Boolean);
+                    }
+                }
+                context.response.json(200, {
+                    success: true,
+                    totalItems: updatedTotalItems,
+                    totalPrice: updatedTotalPrice,
+                    items: updatedCartItems,
+                    message: "Cart updated successfully"
+                });
+                return;
+            }
+
             // Redirect back to page to avoid form double submission and refresh state
-            context.response.redirect('/cart');
+            context.response.redirect(303, '/cart');
             return;
         } catch (e) {
             console.error("[cart/+load.js] Action execution error:", e);
+            if (asJson) {
+                context.response.json(500, { success: false, message: e.message || "Failed to process cart action" });
+                return;
+            }
+            context.response.redirect(303, '/cart');
+            return;
         }
     }
 
@@ -341,7 +479,19 @@ module.exports = function (context) {
         console.error("[cart/+load.js] GET fetch error:", e);
     }
 
+    if (isJsonRequest()) {
+        context.response.json(200, {
+            success: true,
+            totalItems,
+            totalPrice,
+            items: cartItems,
+            cartItems
+        });
+        return;
+    }
+
     return {
+        isCartPage: true,
         cartItems,
         totalItems,
         totalPrice,

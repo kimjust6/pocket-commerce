@@ -16,6 +16,9 @@
 
 # production
 /build
+/pb_public/assets/
+/pb_public/index.html
+/pb_public/svg/
 
 # misc
 .DS_Store

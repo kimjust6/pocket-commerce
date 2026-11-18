@@ -1,24 +1,39 @@
 <!doctype html>
-<html lang="en" data-theme="light" x-data="shell()">
+<%
+    const initialCartItemsList = (locals.data && Array.isArray(locals.data.cartItems)) ? locals.data.cartItems : [];
+    const initialCartCount = (locals.data && typeof locals.data.totalItems === 'number') ? locals.data.totalItems : 0;
+    const initialCartTotal = (locals.data && typeof locals.data.totalPrice === 'number') ? locals.data.totalPrice : 0;
+    const isCartPage = Boolean(locals.data && locals.data.isCartPage);
+    let initialCartBase64 = '';
+    try {
+        initialCartBase64 = Buffer.from(JSON.stringify(initialCartItemsList)).toString('base64');
+    } catch (_) {
+        initialCartBase64 = '';
+    }
+%>
+<html lang="en" data-theme="light" x-data="shell(<%= initialCartCount %>, <%= initialCartTotal %>, '<%= initialCartBase64 %>', <%= isCartPage %>)">
 
 <head>
     <%- include('head') %> <%- include('theme-init') %> <%- include('alpine-setup') %> <%- include('shell-init') %> <%-
                         include('custom-styles') %>
 </head>
 
-<body class="bg-transparent text-zinc-900 dark:text-zinc-100">
-    <div class="relative min-h-screen flex flex-col">
+<body class="bg-transparent text-zinc-900 dark:text-zinc-100 min-h-screen overflow-x-hidden">
+    <div class="relative min-h-screen flex flex-col transition-[margin] duration-300 ease-out"
+         :class="{ 'lg:mr-64 xl:mr-72': !isCartPage && (cartCount > 0 || cartItems.length > 0) && sideCartOpen }">
         <div x-on:click.outside="navOpen = false">
             <%- include('header') %> <%- include('mobile-menu') %>
         </div>
 
-        <main class="relative flex-grow transition-all duration-200"
-            :style="{ 'padding-top': headerVisible ? '3.3rem' : '0' }"><%- slot %></main>
+        <main class="relative flex-grow"><%- slot %></main>
 
         <% if (!locals.data.list) { %>
             <%- include('footer') %>
-                <% } %>
+        <% } %>
     </div>
+    <% if (!isCartPage) { %>
+        <%- include('side-cart') %>
+    <% } %>
     <%- include('../_private/link-fixer') %>
 </body>
 
