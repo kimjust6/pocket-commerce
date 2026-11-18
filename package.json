@@ -38,10 +38,12 @@
     ],
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.16",
+        "@vue/test-utils": "^2.6.0",
         "autoprefixer": "^10.6.2",
         "concurrently": "^9.2.1",
         "daisyui": "^4.12.23",
         "dotenv": "^17.2.3",
+        "jsdom": "^31.0.1",
         "patch-package": "^8.0.1",
         "prettier": "^3.6.2",
         "prettier-plugin-ejs": "^1.0.3",

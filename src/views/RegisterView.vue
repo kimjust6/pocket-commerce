@@ -1,103 +1,43 @@
 <template>
-  <div class="py-16 bg-base-100 min-h-screen flex items-center justify-center">
-    <div class="container mx-auto px-4 max-w-md">
-      <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-md space-y-6">
-        <div class="text-center space-y-2">
-          <div class="inline-flex p-3 rounded-2xl bg-primary/10 text-primary">
-            <UserPlus class="w-7 h-7" />
-          </div>
-          <h1 class="text-2xl font-black text-base-content tracking-tight">Create Account</h1>
-          <p class="text-xs text-base-content/60">Create an account to manage your orders and saved addresses</p>
-        </div>
-
-        <div v-if="errorMessage" class="alert alert-error text-xs rounded-xl font-bold">
-          {{ errorMessage }}
-        </div>
-
-        <GoogleAuthButton
-          label="Sign up with Google"
-          @success="onGoogleSuccess"
-          @error="onGoogleError"
+  <AuthCardLayout
+    title="Create Account"
+    subtitle="Create an account to manage your orders and saved addresses"
+    :icon="UserPlus"
+    :error-message="errorMessage"
+    google-label="Sign up with Google"
+    @google-success="onGoogleSuccess"
+    @google-error="onGoogleError"
+  >
+    <form @submit.prevent="handleRegister" class="space-y-4">
+      <div v-for="field in registerFields" :key="field.key">
+        <label class="text-xs font-bold text-base-content block mb-1">{{ field.label }}</label>
+        <input
+          v-model="form[field.key]"
+          :type="field.type"
+          :required="field.required"
+          :minlength="field.minlength"
+          :placeholder="field.placeholder"
+          class="input input-sm input-bordered w-full rounded-xl text-xs"
         />
-
-        <div class="divider text-xs font-medium text-base-content/40 my-1">OR</div>
-
-        <form @submit.prevent="handleRegister" class="space-y-4">
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Full Name</label>
-            <input
-              v-model="name"
-              type="text"
-              required
-              placeholder="Your Name"
-              class="input input-sm input-bordered w-full rounded-xl text-xs"
-            />
-          </div>
-
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Email Address</label>
-            <input
-              v-model="email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              class="input input-sm input-bordered w-full rounded-xl text-xs"
-            />
-          </div>
-
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Username (optional)</label>
-            <input
-              v-model="username"
-              type="text"
-              placeholder="johndoe"
-              class="input input-sm input-bordered w-full rounded-xl text-xs"
-            />
-          </div>
-
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Password</label>
-            <input
-              v-model="password"
-              type="password"
-              required
-              minlength="8"
-              placeholder="At least 8 characters"
-              class="input input-sm input-bordered w-full rounded-xl text-xs"
-            />
-          </div>
-
-          <div>
-            <label class="text-xs font-bold text-base-content block mb-1">Confirm Password</label>
-            <input
-              v-model="passwordConfirm"
-              type="password"
-              required
-              minlength="8"
-              placeholder="Repeat password"
-              class="input input-sm input-bordered w-full rounded-xl text-xs"
-            />
-          </div>
-
-          <button
-            type="submit"
-            :disabled="loading"
-            class="btn btn-primary btn-sm w-full rounded-xl font-bold text-xs shadow-xs"
-          >
-            <span v-if="loading" class="loading loading-spinner"></span>
-            <span v-else>Create Account</span>
-          </button>
-        </form>
-
-        <div class="border-t border-slate-200 dark:border-slate-800 pt-4 text-center text-xs text-base-content/60">
-          Already have an account?
-          <router-link to="/login" class="text-primary font-bold hover:underline ml-1">
-            Sign in
-          </router-link>
-        </div>
       </div>
-    </div>
-  </div>
+
+      <button
+        type="submit"
+        :disabled="loading"
+        class="btn btn-primary btn-sm w-full rounded-xl font-bold text-xs shadow-xs"
+      >
+        <span v-if="loading" class="loading loading-spinner"></span>
+        <span v-else>Create Account</span>
+      </button>
+    </form>
+
+    <template #footer>
+      Already have an account?
+      <router-link to="/login" class="text-primary font-bold hover:underline ml-1">
+        Sign in
+      </router-link>
+    </template>
+  </AuthCardLayout>
 </template>
 
 <script setup>
@@ -106,36 +46,40 @@ import { useRouter } from 'vue-router'
 import { UserPlus } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
-import GoogleAuthButton from '../components/auth/GoogleAuthButton.vue'
+import AuthCardLayout from '../components/auth/AuthCardLayout.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 
-const name = ref('')
-const email = ref('')
-const username = ref('')
-const password = ref('')
-const passwordConfirm = ref('')
+const form = ref({
+  name: '',
+  email: '',
+  username: '',
+  password: '',
+  passwordConfirm: '',
+})
 const loading = ref(false)
 const errorMessage = ref('')
 
+const registerFields = [
+  { key: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your Name' },
+  { key: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'you@example.com' },
+  { key: 'username', label: 'Username (optional)', type: 'text', required: false, placeholder: 'johndoe' },
+  { key: 'password', label: 'Password', type: 'password', required: true, minlength: 8, placeholder: 'At least 8 characters' },
+  { key: 'passwordConfirm', label: 'Confirm Password', type: 'password', required: true, minlength: 8, placeholder: 'Repeat password' },
+]
+
 async function handleRegister() {
   errorMessage.value = ''
-  if (password.value !== passwordConfirm.value) {
+  if (form.value.password !== form.value.passwordConfirm) {
     errorMessage.value = 'Passwords do not match.'
     return
   }
 
   loading.value = true
   try {
-    await authStore.register({
-      email: email.value,
-      name: name.value,
-      username: username.value,
-      password: password.value,
-      passwordConfirm: passwordConfirm.value,
-    })
+    await authStore.register(form.value)
     toastStore.success('Welcome to Pocket Commerce!')
     router.push('/account')
   } catch (err) {

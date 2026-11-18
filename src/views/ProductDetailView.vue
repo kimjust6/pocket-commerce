@@ -122,27 +122,12 @@
             <div class="space-y-4 pt-2">
               <div class="flex items-center gap-4">
                 <label class="text-xs font-bold text-base-content">Quantity:</label>
-                <div class="join border border-slate-200 dark:border-slate-700 rounded-xl bg-base-100">
-                  <button
-                    type="button"
-                    @click="quantity = Math.max(1, quantity - 1)"
-                    class="join-item btn btn-ghost btn-sm px-3"
-                    aria-label="Decrease quantity"
-                  >
-                    -
-                  </button>
-                  <span class="join-item px-4 py-1 text-sm font-bold flex items-center">
-                    {{ quantity }}
-                  </span>
-                  <button
-                    type="button"
-                    @click="quantity++"
-                    class="join-item btn btn-ghost btn-sm px-3"
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
-                </div>
+                <QuantitySelector
+                  :quantity="quantity"
+                  :min="1"
+                  size="sm"
+                  @update="(qty) => (quantity = qty)"
+                />
               </div>
 
               <div class="flex flex-col sm:flex-row gap-3 pt-2">
@@ -292,6 +277,7 @@ import ReviewCard from '../components/products/ReviewCard.vue'
 import RatingStars from '../components/ui/RatingStars.vue'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 import Modal from '../components/ui/Modal.vue'
+import QuantitySelector from '../components/ui/QuantitySelector.vue'
 
 const route = useRoute()
 const router = useRouter()

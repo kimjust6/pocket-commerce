@@ -22,27 +22,11 @@
     </div>
 
     <div class="flex flex-col items-end gap-2">
-      <div class="join border border-slate-200 dark:border-slate-700 rounded-lg bg-base-100">
-        <button
-          type="button"
-          @click="$emit('updateQuantity', item.id, item.quantity - 1)"
-          class="join-item btn btn-ghost btn-xs px-2"
-          aria-label="Decrease quantity"
-        >
-          -
-        </button>
-        <span class="join-item px-2 py-0.5 text-xs font-bold flex items-center">
-          {{ item.quantity }}
-        </span>
-        <button
-          type="button"
-          @click="$emit('updateQuantity', item.id, item.quantity + 1)"
-          class="join-item btn btn-ghost btn-xs px-2"
-          aria-label="Increase quantity"
-        >
-          +
-        </button>
-      </div>
+      <QuantitySelector
+        :quantity="item.quantity"
+        size="xs"
+        @update="(qty) => $emit('updateQuantity', item.id, qty)"
+      />
       <button
         type="button"
         @click="$emit('remove', item.id)"
@@ -101,27 +85,11 @@
 
     <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
       <!-- Quantity Modifier -->
-      <div class="join border border-slate-200 dark:border-slate-700 rounded-xl bg-base-100">
-        <button
-          type="button"
-          @click="$emit('updateQuantity', item.id, item.quantity - 1)"
-          class="join-item btn btn-ghost btn-sm px-3"
-          aria-label="Decrease quantity"
-        >
-          -
-        </button>
-        <span class="join-item px-3 py-1 text-xs font-bold flex items-center">
-          {{ item.quantity }}
-        </span>
-        <button
-          type="button"
-          @click="$emit('updateQuantity', item.id, item.quantity + 1)"
-          class="join-item btn btn-ghost btn-sm px-3"
-          aria-label="Increase quantity"
-        >
-          +
-        </button>
-      </div>
+      <QuantitySelector
+        :quantity="item.quantity"
+        size="sm"
+        @update="(qty) => $emit('updateQuantity', item.id, qty)"
+      />
 
       <!-- Line Total -->
       <span class="text-base font-extrabold text-base-content min-w-[4.5rem] text-right">
@@ -143,6 +111,7 @@
 
 <script setup>
 import { formatPrice } from '../../utils/formatters'
+import QuantitySelector from '../ui/QuantitySelector.vue'
 
 defineProps({
   item: {

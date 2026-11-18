@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { pb, getFileUrl } from '../services/pocketbase'
+import {
+  pb,
+  getFileUrl,
+  loginWithPassword,
+  loginWithOAuth2,
+  registerUser,
+  updateUserRecord,
+} from '../services/pocketbase'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(pb.authStore.model)
@@ -23,32 +30,22 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   async function login(emailOrUsername, password) {
-    const authData = await pb.collection('users').authWithPassword(emailOrUsername, password)
+    const authData = await loginWithPassword(emailOrUsername, password)
     user.value = authData.record
     token.value = authData.token
     return authData
   }
 
   async function loginWithGoogle() {
-    const authData = await pb.collection('users').authWithOAuth2({ provider: 'google' })
+    const authData = await loginWithOAuth2('google')
     user.value = authData.record
     token.value = authData.token
     return authData
   }
 
-  async function register({ email, password, passwordConfirm, name, username }) {
-    // 1. Create account
-    const cleanUsername = username || email.split('@')[0] + Math.floor(Math.random() * 1000)
-    await pb.collection('users').create({
-      email,
-      password,
-      passwordConfirm,
-      name: name || cleanUsername,
-      username: cleanUsername,
-    })
-
-    // 2. Auto sign in
-    return await login(email, password)
+  async function register(payload) {
+    await registerUser(payload)
+    return await login(payload.email, payload.password)
   }
 
   function logout() {
@@ -59,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function updateProfile(formData) {
     if (!user.value) throw new Error('Not authenticated')
-    const updated = await pb.collection('users').update(user.value.id, formData)
+    const updated = await updateUserRecord(user.value.id, formData)
     user.value = updated
     return updated
   }
