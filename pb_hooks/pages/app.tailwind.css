@@ -68,40 +68,30 @@
     }
 
     .store-card {
-        @apply bg-base-100 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col;
+        @apply bg-base-100 border border-base-200/80 dark:border-slate-800/80 rounded-3xl shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col;
         corner-shape: squircle;
     }
 
     .store-badge {
-        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase;
+        @apply inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase;
         corner-shape: squircle;
     }
 
     .gradient-heading {
-        @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent;
+        @apply text-primary font-bold;
     }
 
     .mesh-gradient-bg {
-        background-color: hsla(240, 100%, 99%, 1);
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(243, 75%, 59%, 0.12) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, hsla(263, 70%, 50%, 0.1) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, hsla(339, 80%, 55%, 0.08) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, hsla(187, 85%, 53%, 0.1) 0px, transparent 50%);
-    }
-
-    .dark .mesh-gradient-bg {
-        background-color: hsla(222, 47%, 6%, 1);
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(243, 75%, 59%, 0.2) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, hsla(263, 70%, 50%, 0.15) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, hsla(339, 80%, 55%, 0.12) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, hsla(187, 85%, 53%, 0.15) 0px, transparent 50%);
+        @apply bg-base-200/50 dark:bg-base-200/40;
     }
 
     .glow-card {
-        @apply border border-indigo-500/20 shadow-[0_10px_35px_-15px_rgba(99,102,241,0.2)] dark:shadow-[0_10px_35px_-15px_rgba(99,102,241,0.3)];
+        @apply border border-primary/20 shadow-lg dark:border-primary/30;
         corner-shape: squircle;
+    }
+
+    .cute-pill {
+        @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-all;
     }
 
 }
@@ -138,6 +128,26 @@
 
     [x-cloak] {
         display: none !important;
+    }
+
+    /* Smooth Slide-in for New Cart Items */
+    @keyframes cartItemSlideIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.96);
+        }
+        60% {
+            opacity: 0.95;
+            transform: translateY(2px) scale(1.01);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .animate-cart-item-slide {
+        animation: cartItemSlideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 }
 

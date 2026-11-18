@@ -18,6 +18,8 @@ dist/
 /pb_public/svg/
 .vite/
 
+/build
+
 # Deployment & FTP Sync State
 .ftp-deploy-sync-state.json
 

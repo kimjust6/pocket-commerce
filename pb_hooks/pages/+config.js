@@ -72,9 +72,9 @@ const getCookie = (request, name) => {
  * @returns {import('pocketpages').Plugin} The auth plugin instance.
  */
 const authPlugin = (config) => {
-    const globalApi = config?.globalApi || config || {};
-    const _dbg = globalApi.dbg || (typeof console !== 'undefined' && console.log ? console.log : (typeof print === 'function' ? print : () => {}));
-    const info = globalApi.info || (typeof console !== 'undefined' && console.log ? console.log : (typeof print === 'function' ? print : () => {}));
+    const globalApi = (config && typeof config.globalApi === 'object' && config.globalApi !== null) ? config.globalApi : (typeof config === 'object' && config !== null ? config : {});
+    const _dbg = (globalApi && globalApi.dbg) || (typeof console !== 'undefined' && console.log ? console.log : () => {});
+    const info = (globalApi && globalApi.info) || (typeof console !== 'undefined' && console.log ? console.log : () => {});
 
     // Global API methods for user management
     globalApi.createUser = (email, password, options) => {
@@ -276,6 +276,6 @@ module.exports = function (api) {
             'pocketpages-plugin-ejs',
             authPlugin,
         ],
-        debug: false,
+        debug: true,
     }
 }
