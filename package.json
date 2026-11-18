@@ -6,7 +6,7 @@
         "dev": "concurrently \"vite\" \"pocketbase serve --dir=pb_data --dev\"",
         "dev:ui": "vite",
         "dev:pb": "pocketbase serve --dir=pb_data --dev",
-        "build": "vite build",
+        "build": "node -e \"require('fs').rmSync('pb_public/assets', { recursive: true, force: true })\" && vite build",
         "start": "pocketbase serve --dir=pb_data --dev",
         "push": "node scripts/patch-phio.mjs && npm run build && node ./node_modules/tsx/dist/cli.mjs ./node_modules/phio/src/cli.ts deploy",
         "postinstall": "node scripts/patch-phio.mjs",
