@@ -10,6 +10,10 @@
  */
 
 routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
+    if (!e.auth) {
+        return e.json(401, { error: "Authentication required." });
+    }
+
     const stripeKey = $os.getenv("STRIPE_SECRET_KEY");
     if (!stripeKey) {
         return e.json(500, {
@@ -32,6 +36,11 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
         order = $app.findRecordById("orders", orderId);
     } catch (_) {
         return e.json(404, { error: "Order not found." });
+    }
+
+    const isAdmin = e.auth.getString("role") === "admin";
+    if (!isAdmin && order.getString("user") !== e.auth.id) {
+        return e.json(403, { error: "Forbidden." });
     }
 
     if (order.getString("status") === "paid") {
@@ -183,6 +192,10 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
  * Verify a Stripe Checkout Session on the success page and update order status.
  */
 routerAdd("GET", "/api/stripe/verify-session", (e) => {
+    if (!e.auth) {
+        return e.json(401, { error: "Authentication required." });
+    }
+
     const stripeKey = $os.getenv("STRIPE_SECRET_KEY");
     if (!stripeKey) {
         return e.json(500, { error: "Stripe is not configured." });
@@ -210,17 +223,32 @@ routerAdd("GET", "/api/stripe/verify-session", (e) => {
         const orderId = session.client_reference_id || (session.metadata && session.metadata.order_id);
         const isPaid = session.payment_status === "paid";
 
-        if (isPaid && orderId) {
+        if (orderId) {
+            let order = null;
             try {
-                const order = $app.findRecordById("orders", orderId);
-                const expectedCents = Math.round(Number(order.get("total_amount") || 0) * 100);
-                const paidCents = Number(session.amount_total || 0);
-                if (order && paidCents >= expectedCents - 5 && order.getString("status") !== "paid") {
-                    order.set("status", "paid");
-                    $app.save(order);
+                order = $app.findRecordById("orders", orderId);
+            } catch (_) {}
+
+            if (!order) {
+                return e.json(404, { error: "Order not found." });
+            }
+
+            const isAdmin = e.auth.getString("role") === "admin";
+            if (!isAdmin && order.getString("user") !== e.auth.id) {
+                return e.json(403, { error: "Forbidden." });
+            }
+
+            if (isPaid) {
+                try {
+                    const expectedCents = Math.round(Number(order.get("total_amount") || 0) * 100);
+                    const paidCents = Number(session.amount_total || 0);
+                    if (paidCents >= expectedCents - 5 && order.getString("status") !== "paid") {
+                        order.set("status", "paid");
+                        $app.save(order);
+                    }
+                } catch (dbErr) {
+                    console.error("Failed to update order status:", dbErr);
                 }
-            } catch (dbErr) {
-                console.error("Failed to update order status:", dbErr);
             }
         }
 
