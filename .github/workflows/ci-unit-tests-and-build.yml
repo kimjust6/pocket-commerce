@@ -1,0 +1,31 @@
+name: CI — Unit Tests & Build
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test-and-build:
+    name: Unit Tests & Vite Build (Node 24.x)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js 24.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24.x'
+        cache: 'npm'
+
+    - name: Install npm dependencies
+      run: npm ci
+
+    - name: Run Vitest unit test suite
+      run: npm test -- --reporter=verbose
+
+    - name: Build Vue SPA production bundle
+      run: npm run build
