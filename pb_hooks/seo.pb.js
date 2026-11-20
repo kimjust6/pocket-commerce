@@ -113,7 +113,7 @@ routerAdd("GET", "/{$}", (e) => {
             url: `${origin}/`,
             potentialAction: {
                 "@type": "SearchAction",
-                target: `${origin}/shop?q={search_term_string}`,
+                target: `${origin}/shop?search={search_term_string}`,
                 "query-input": "required name=search_term_string",
             },
         },
@@ -188,16 +188,7 @@ routerAdd("GET", "/shop/card/{slug}", (e) => {
             const images = seo.parseProductImages(product.get("images"));
             const primaryImage = images[0] || seo.DEFAULT_IMAGE;
 
-            let minPrice = null;
-            try {
-                const variants = $app.findRecordsByFilter("product_variants", `product = '${product.id}'`, "", 50, 0);
-                for (let i = 0; i < variants.length; i++) {
-                    const p = Number(variants[i].get("price"));
-                    if (!isNaN(p) && (minPrice === null || p < minPrice)) {
-                        minPrice = p;
-                    }
-                }
-            } catch (_) {}
+            const minPrice = seo.getMinVariantPrice(product.id);
 
             let reviews = [];
             try {
@@ -260,11 +251,12 @@ routerAdd("GET", "/shop/card/{slug}", (e) => {
     } catch (_) {}
 
     const fallbackHtml = seo.renderSeoHtml(e, __hooks, {
-        title: "Card Details",
+        title: "Card Not Found",
         description: seo.DEFAULT_DESCRIPTION,
+        robots: "noindex, nofollow",
         canonicalPath: `/shop/card/${encodeURIComponent(slug)}`,
     });
-    return e.html(200, fallbackHtml);
+    return e.html(404, fallbackHtml);
 });
 
 const NO_INDEX_PATHS = ["/cart", "/checkout", "/checkout/success", "/account", "/profile", "/login", "/register"];

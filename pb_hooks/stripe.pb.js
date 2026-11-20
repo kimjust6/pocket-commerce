@@ -21,14 +21,83 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
     const body = info.body || {};
     const orderId = body.orderId;
     const email = body.email || "";
-    const items = Array.isArray(body.items) ? body.items : [];
-    const shippingAmount = Number(body.shippingAmount || 0);
-    const taxAmount = Number(body.taxAmount || 0);
-    const discountAmount = Number(body.discountAmount || 0);
+    const couponCode = String(body.couponCode || "").trim().toUpperCase();
 
-    if (!orderId || items.length === 0) {
-        return e.json(400, { error: "Missing orderId or cart items." });
+    if (!orderId) {
+        return e.json(400, { error: "Missing orderId." });
     }
+
+    let order;
+    try {
+        order = $app.findRecordById("orders", orderId);
+    } catch (_) {
+        return e.json(404, { error: "Order not found." });
+    }
+
+    if (order.getString("status") === "paid") {
+        return e.json(400, { error: "Order is already paid." });
+    }
+
+    // Load authoritative order items and variant prices from PocketBase
+    let orderItems = [];
+    try {
+        orderItems = $app.findRecordsByFilter("order_items", "order = {:orderId}", "", 100, 0, { orderId });
+    } catch (_) {}
+
+    if (!orderItems || orderItems.length === 0) {
+        return e.json(400, { error: "Order has no items." });
+    }
+
+    const items = [];
+    for (let i = 0; i < orderItems.length; i++) {
+        const oi = orderItems[i];
+        const qty = Math.max(1, parseInt(oi.get("quantity") || 1, 10));
+        let unitPrice = Number(oi.get("price") || 0);
+        let name = "Greeting Card";
+        let format = "";
+
+        const productId = oi.getString("product");
+        if (productId) {
+            try {
+                const prod = $app.findRecordById("products", productId);
+                if (prod) name = prod.getString("name") || name;
+            } catch (_) {}
+        }
+
+        const variantId = oi.getString("variant");
+        if (variantId) {
+            try {
+                const variant = $app.findRecordById("product_variants", variantId);
+                if (variant) {
+                    unitPrice = Number(variant.get("price") ?? unitPrice);
+                    const attrs = variant.get("attributes");
+                    if (attrs && typeof attrs === "object" && attrs.Format) {
+                        format = attrs.Format;
+                    }
+                }
+            } catch (_) {}
+        }
+
+        items.push({ name, format, price: unitPrice, quantity: qty });
+    }
+
+    // Server-side coupon, shipping, and tax calculation
+    const rawSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    let discountPercent = 0;
+    let freeShipping = false;
+    if (couponCode === "POCKET10") discountPercent = 10;
+    else if (couponCode === "WELCOME20") discountPercent = 20;
+    else if (couponCode === "FREESHIP") freeShipping = true;
+
+    const discountAmount = (rawSubtotal * discountPercent) / 100;
+    const shippingAmount = rawSubtotal === 0 || rawSubtotal >= 35 || freeShipping ? 0 : 4.99;
+    const taxableAmount = Math.max(0, rawSubtotal - discountAmount);
+    const taxAmount = taxableAmount * 0.08;
+    const computedTotal = Math.max(0, taxableAmount + shippingAmount + taxAmount);
+
+    // Sync authoritative total to the order record
+    order.set("total_amount", Number(computedTotal.toFixed(2)));
+    $app.save(order);
 
     // Determine origin for success/cancel redirects
     const originHeader = info.headers["origin"] || info.headers["Origin"];
@@ -54,7 +123,6 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
     }
 
     // Calculate discount ratio if promo code was applied
-    const rawSubtotal = items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 1), 0);
     const discountRatio = rawSubtotal > 0 && discountAmount > 0 ? Math.max(0, (rawSubtotal - discountAmount) / rawSubtotal) : 1;
 
     let lineIdx = 0;
@@ -145,7 +213,9 @@ routerAdd("GET", "/api/stripe/verify-session", (e) => {
         if (isPaid && orderId) {
             try {
                 const order = $app.findRecordById("orders", orderId);
-                if (order && order.getString("status") !== "paid") {
+                const expectedCents = Math.round(Number(order.get("total_amount") || 0) * 100);
+                const paidCents = Number(session.amount_total || 0);
+                if (order && paidCents >= expectedCents - 5 && order.getString("status") !== "paid") {
                     order.set("status", "paid");
                     $app.save(order);
                 }
@@ -170,26 +240,40 @@ routerAdd("GET", "/api/stripe/verify-session", (e) => {
  */
 routerAdd("POST", "/api/stripe/webhook", (e) => {
     const webhookSecret = $os.getenv("STRIPE_WEBHOOK_SECRET");
+    if (!webhookSecret) {
+        return e.json(500, { error: "Stripe webhook secret is not configured." });
+    }
+
     const rawBody = toString(e.request.body);
     const sigHeader = e.request.header.get("Stripe-Signature");
+    if (!sigHeader) {
+        return e.json(400, { error: "Missing Stripe-Signature header." });
+    }
 
-    if (webhookSecret && sigHeader) {
-        // Parse t=... and v1=... from Stripe-Signature header
-        let timestamp = "";
-        const signatures = [];
-        sigHeader.split(",").forEach((part) => {
-            const [k, v] = part.trim().split("=");
-            if (k === "t") timestamp = v;
-            if (k === "v1") signatures.push(v);
-        });
+    // Parse t=... and v1=... from Stripe-Signature header
+    let timestamp = "";
+    const signatures = [];
+    sigHeader.split(",").forEach((part) => {
+        const idx = part.indexOf("=");
+        if (idx === -1) return;
+        const k = part.slice(0, idx).trim();
+        const v = part.slice(idx + 1).trim();
+        if (k === "t") timestamp = v;
+        if (k === "v1") signatures.push(v);
+    });
 
-        const signedPayload = `${timestamp}.${rawBody}`;
-        const expectedSig = $security.hs256(signedPayload, webhookSecret);
+    const tsNum = parseInt(timestamp, 10);
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (!tsNum || Math.abs(nowSec - tsNum) > 300 || signatures.length === 0) {
+        return e.json(400, { error: "Invalid or expired Stripe-Signature header." });
+    }
 
-        const isValid = signatures.some((sig) => $security.equal(sig, expectedSig));
-        if (!isValid) {
-            return e.json(400, { error: "Invalid Stripe webhook signature." });
-        }
+    const signedPayload = `${timestamp}.${rawBody}`;
+    const expectedSig = $security.hs256(signedPayload, webhookSecret);
+
+    const isValid = signatures.some((sig) => $security.equal(sig, expectedSig));
+    if (!isValid) {
+        return e.json(400, { error: "Invalid Stripe webhook signature." });
     }
 
     let event;
@@ -206,7 +290,9 @@ routerAdd("POST", "/api/stripe/webhook", (e) => {
         if (orderId && session.payment_status === "paid") {
             try {
                 const order = $app.findRecordById("orders", orderId);
-                if (order) {
+                const expectedCents = Math.round(Number(order.get("total_amount") || 0) * 100);
+                const paidCents = Number(session.amount_total || 0);
+                if (order && paidCents >= expectedCents - 5 && order.getString("status") !== "paid") {
                     order.set("status", "paid");
                     $app.save(order);
                 }

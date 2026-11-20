@@ -178,20 +178,13 @@ async function fetchData() {
     const res = await getProducts({
       categorySlug: selectedCategory.value,
       search: searchQuery.value,
+      minPrice: minPrice.value,
+      maxPrice: maxPrice.value,
       sort: selectedSort.value,
       perPage: 50,
     })
 
-    // Filter by min/max in memory if specified
-    let items = res.items
-    if (minPrice.value) {
-      items = items.filter((p) => p.price >= Number(minPrice.value))
-    }
-    if (maxPrice.value) {
-      items = items.filter((p) => p.price <= Number(maxPrice.value))
-    }
-
-    products.value = items
+    products.value = res.items
   } catch (err) {
     console.error('Error loading shop products:', err)
   } finally {
@@ -208,7 +201,6 @@ function setCategory(catSlug) {
       category: catSlug || undefined,
     },
   })
-  fetchData()
 }
 
 function clearAllFilters() {
@@ -217,7 +209,6 @@ function clearAllFilters() {
   minPrice.value = null
   maxPrice.value = null
   router.push({ path: '/shop' })
-  fetchData()
 }
 
 watch(

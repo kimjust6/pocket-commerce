@@ -311,10 +311,7 @@ async function handlePlaceOrder() {
       const session = await createStripeCheckoutSession({
         orderId: orderRecord.id,
         email: form.value.email,
-        items: cartStore.items,
-        shippingAmount: cartStore.shippingAmount,
-        taxAmount: cartStore.taxAmount,
-        discountAmount: cartStore.discountAmount,
+        couponCode: cartStore.coupon?.code || null,
       })
 
       if (session?.url) {

@@ -96,12 +96,11 @@ export const router = createRouter({
 })
 
 // Route navigation guard for authenticated routes
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   if (to.meta.requiresAuth && !pb.authStore.isValid) {
-    next({ name: 'login', query: { redirect: to.fullPath } })
-  } else {
-    next()
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
+  return true
 })
 
 // Dynamically update document title and SEO metadata

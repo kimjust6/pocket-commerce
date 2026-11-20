@@ -124,6 +124,7 @@ describe('Cart Store', () => {
     })
     expect(cart.coupon.freeShipping).toBe(true)
     expect(cart.discountAmount).toBe(0)
+    expect(cart.shippingAmount).toBe(0)
 
     expect(cart.applyCoupon('NOPE')).toEqual({
       success: false,
@@ -142,5 +143,11 @@ describe('Cart Store', () => {
     expect(cart.shippingAmount).toBe(4.99)
     expect(cart.taxAmount).toBeCloseTo(1.44, 5)
     expect(cart.total).toBeCloseTo(24.43, 5)
+  })
+
+  it('recovers gracefully from malformed localStorage cart data', () => {
+    global.localStorage.setItem('pocket_commerce_cart', '{invalid-json')
+    const cart = useCartStore()
+    expect(cart.items).toEqual([])
   })
 })

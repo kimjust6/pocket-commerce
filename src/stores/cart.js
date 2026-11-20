@@ -5,8 +5,21 @@ const CART_STORAGE_KEY = 'pocket_commerce_cart'
 
 export const useCartStore = defineStore('cart', () => {
   // Load initial items from localStorage
-  const savedCart = typeof localStorage !== 'undefined' ? localStorage.getItem(CART_STORAGE_KEY) : null
-  const items = ref(savedCart ? JSON.parse(savedCart) : [])
+  let initialItems = []
+  if (typeof localStorage !== 'undefined') {
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY)
+    if (savedCart) {
+      try {
+        const parsed = JSON.parse(savedCart)
+        if (Array.isArray(parsed)) {
+          initialItems = parsed
+        }
+      } catch {
+        localStorage.removeItem(CART_STORAGE_KEY)
+      }
+    }
+  }
+  const items = ref(initialItems)
   const isDrawerOpen = ref(false)
   const coupon = ref(null)
 
@@ -31,6 +44,7 @@ export const useCartStore = defineStore('cart', () => {
 
   const shippingAmount = computed(() => {
     if (subtotal.value === 0) return 0
+    if (coupon.value?.freeShipping) return 0
     // Free shipping on orders over $35
     return subtotal.value >= 35 ? 0 : 4.99
   })
@@ -47,7 +61,7 @@ export const useCartStore = defineStore('cart', () => {
 
   function addToCart(product, variant = null, quantity = 1) {
     const variantId = variant?.id || 'default'
-    const price = variant?.price || product.price || 4.99
+    const price = variant?.price ?? product.price ?? 4.99
     const format = variant?.attributes?.Format || 'Single Card'
 
     // Look for existing item

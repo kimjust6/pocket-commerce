@@ -97,7 +97,7 @@ export function buildWebsiteJsonLd(origin) {
     url,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${url}shop?q={search_term_string}`,
+      target: `${url}shop?search={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
   }

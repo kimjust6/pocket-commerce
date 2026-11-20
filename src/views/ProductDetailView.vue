@@ -68,9 +68,9 @@
 
               <!-- Star Rating -->
               <div class="flex items-center gap-3 pt-1">
-                <RatingStars :value="5" size="sm" />
+                <RatingStars :value="averageRating" size="sm" />
                 <span class="text-xs text-base-content/70 font-semibold">
-                  5.0 ({{ product.reviews?.length || 4 }} customer reviews)
+                  {{ reviewCount > 0 ? `${averageRating.toFixed(1)} (${reviewCount} customer ${reviewCount === 1 ? 'review' : 'reviews'})` : 'No reviews yet' }}
                 </span>
               </div>
             </div>
@@ -266,7 +266,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Mail, Leaf, Ruler } from 'lucide-vue-next'
 import { getProduct, createReview } from '../services/pocketbase'
@@ -300,7 +300,15 @@ const newReview = ref({
 })
 
 const currentPrice = computed(() => {
-  return selectedVariant.value?.price || product.value?.price || 4.99
+  return selectedVariant.value?.price ?? product.value?.price ?? 4.99
+})
+
+const reviewCount = computed(() => product.value?.reviews?.length || 0)
+
+const averageRating = computed(() => {
+  if (!reviewCount.value) return 0
+  const total = product.value.reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0)
+  return total / reviewCount.value
 })
 
 const breadcrumbItems = computed(() => {
@@ -364,7 +372,7 @@ async function submitReview() {
       rating: newReview.value.rating,
       title: newReview.value.title,
       body: newReview.value.body,
-      is_verified_purchase: true,
+      is_verified_purchase: false,
     })
     toastStore.success('Thank you! Your review was submitted.')
     showReviewModal.value = false
@@ -381,4 +389,13 @@ async function submitReview() {
 onMounted(() => {
   loadProduct()
 })
+
+watch(
+  () => route.params.slug,
+  (newSlug, oldSlug) => {
+    if (newSlug && newSlug !== oldSlug) {
+      loadProduct()
+    }
+  }
+)
 </script>

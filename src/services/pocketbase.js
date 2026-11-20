@@ -49,9 +49,9 @@ export async function getProducts(options = {}) {
   if (categorySlug) {
     // Look up category ID by slug first
     try {
-      const cat = await pb.collection('categories').getFirstListItem(`slug = '${categorySlug}'`)
+      const cat = await pb.collection('categories').getFirstListItem(pb.filter('slug = {:slug}', { slug: categorySlug }))
       if (cat) {
-        filterParts.push(`category = '${cat.id}'`)
+        filterParts.push(pb.filter('category = {:catId}', { catId: cat.id }))
       }
     } catch {
       // ignore if category not found
@@ -59,7 +59,7 @@ export async function getProducts(options = {}) {
   }
 
   if (search) {
-    filterParts.push(`(name ~ '${search}' || description ~ '${search}')`)
+    filterParts.push(pb.filter('(name ~ {:q} || description ~ {:q})', { q: search }))
   }
 
   const filter = filterParts.join(' && ')
@@ -130,9 +130,15 @@ export async function getProducts(options = {}) {
       }
     })
 
+    const filteredItems = processedItems.filter((p) => {
+      if (minPrice !== null && minPrice !== '' && p.price < Number(minPrice)) return false
+      if (maxPrice !== null && maxPrice !== '' && p.price > Number(maxPrice)) return false
+      return true
+    })
+
     return {
       ...result,
-      items: processedItems,
+      items: filteredItems,
     }
   } catch (err) {
     console.error('Error fetching products:', err)
@@ -147,7 +153,7 @@ export async function getProduct(slugOrId) {
   try {
     let product
     try {
-      product = await pb.collection('products').getFirstListItem(`slug = '${slugOrId}'`, {
+      product = await pb.collection('products').getFirstListItem(pb.filter('slug = {:slug}', { slug: slugOrId }), {
         expand: 'category',
       })
     } catch {
@@ -241,13 +247,16 @@ export async function createOrder(orderPayload, items) {
     try {
       await pb.collection('order_items').create({
         order: orderRecord.id,
-        variant: item.variantId || null,
+        variant: item.variantId && item.variantId !== 'default' ? item.variantId : null,
         product: item.productId || null,
         quantity: item.quantity,
         price: item.price,
       })
     } catch (e) {
-      console.warn('Could not record order item:', e)
+      try {
+        await pb.collection('orders').delete(orderRecord.id)
+      } catch {}
+      throw e
     }
   }
 
