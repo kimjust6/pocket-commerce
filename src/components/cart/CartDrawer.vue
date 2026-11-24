@@ -11,9 +11,9 @@
         class="w-screen max-w-md bg-base-100 border-l border-slate-200/80 dark:border-slate-800 shadow-2xl flex flex-col"
       >
         <!-- Drawer Header -->
-        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="p-6 border-b border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <h2 class="text-xl font-extrabold text-base-content tracking-tight">Your Cart</h2>
+            <h2 class="font-serif text-xl font-bold text-base-content tracking-tight">Your Cart</h2>
             <span class="badge badge-primary font-bold text-xs">{{ cartStore.totalItems }}</span>
           </div>
           <button

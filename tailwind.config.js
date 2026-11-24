@@ -17,22 +17,22 @@ export default {
         themes: [
             {
                 light: {
-                    "primary": "#4f46e5",           // Indigo 600
+                    "primary": "#c84b31",           // Terracotta Vermilion
                     "primary-content": "#ffffff",
-                    "secondary": "#7c3aed",         // Violet 600
+                    "secondary": "#2d6a4f",         // Studio Sage
                     "secondary-content": "#ffffff",
-                    "accent": "#06b6d4",            // Cyan / Emerald
+                    "accent": "#c58940",            // Warm Kraft Gold
                     "accent-content": "#ffffff",
-                    "neutral": "#0f172a",           // Slate 900
-                    "neutral-content": "#f8fafc",
-                    "base-100": "#ffffff",          // Clean Surface
-                    "base-200": "#f8fafc",          // Soft Tint
-                    "base-300": "#f1f5f9",          // Border Tint
-                    "base-content": "#0f172a",      // Text
+                    "neutral": "#1c1917",           // Charcoal Ink
+                    "neutral-content": "#faf7f2",
+                    "base-100": "#faf7f2",          // Warm Cotton Paper
+                    "base-200": "#f2ece1",          // Soft Cream Stock
+                    "base-300": "#e6dfd3",          // Paper Border Tint
+                    "base-content": "#1c1917",      // Espresso Ink
                     "info": "#3b82f6",
-                    "success": "#10b981",
-                    "warning": "#f59e0b",
-                    "error": "#f43f5e",
+                    "success": "#2d6a4f",
+                    "warning": "#d97706",
+                    "error": "#be123c",
                     "--rounded-box": "1.25rem",
                     "--rounded-btn": "0.75rem",
                     "--rounded-badge": "9999px",
@@ -42,20 +42,20 @@ export default {
                     "--tab-radius": "0.75rem",
                 },
                 dark: {
-                    "primary": "#6366f1",           // Vibrant Indigo 500
-                    "primary-content": "#ffffff",
-                    "secondary": "#8b5cf6",         // Vivid Violet 500
-                    "secondary-content": "#ffffff",
-                    "accent": "#22d3ee",            // Bright Cyan 400
-                    "accent-content": "#0f172a",
-                    "neutral": "#030712",           // Darkest Slate
-                    "neutral-content": "#f9fafb",
-                    "base-100": "#0b0f19",          // Deep Slate Dark Base
-                    "base-200": "#111827",          // Dark Surface Card
-                    "base-300": "#1f2937",          // Dark Surface Elevated
-                    "base-content": "#f9fafb",      // Bright Text
+                    "primary": "#e06d53",           // Warm Coral Terracotta
+                    "primary-content": "#141210",
+                    "secondary": "#52b788",         // Soft Sage
+                    "secondary-content": "#0b1912",
+                    "accent": "#e0a96d",            // Kraft Gold
+                    "accent-content": "#141210",
+                    "neutral": "#0c0a09",           // Deep Ink
+                    "neutral-content": "#f5f0e6",
+                    "base-100": "#141210",          // Espresso Paper
+                    "base-200": "#1c1917",          // Charcoal Surface
+                    "base-300": "#292524",          // Elevated Stone
+                    "base-content": "#f5f0e6",      // Warm Bone Text
                     "info": "#38bdf8",
-                    "success": "#34d399",
+                    "success": "#52b788",
                     "warning": "#fbbf24",
                     "error": "#fb7185",
                     "--rounded-box": "1.25rem",

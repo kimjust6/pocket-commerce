@@ -1,12 +1,12 @@
 <template>
-  <div class="store-card group bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xs hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden">
-    <!-- Card Thumbnail -->
-    <div class="relative overflow-hidden aspect-4/3 bg-base-200">
-      <router-link :to="`/shop/card/${product.slug}`" class="block w-full h-full">
+  <div class="store-card group bg-base-100 border border-stone-200/80 dark:border-stone-800 rounded-2xl shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
+    <!-- Card Thumbnail (A2 Portrait Ratio) -->
+    <div class="relative overflow-hidden aspect-[4/5] bg-base-200 p-3">
+      <router-link :to="`/shop/card/${product.slug}`" class="block w-full h-full overflow-hidden rounded-xl shadow-xs">
         <img
           :src="product.primaryImage || '/card-birthday.webp'"
           :alt="product.name"
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          class="w-full h-full object-cover group-hover:scale-[1.04] group-hover:-rotate-1 transition-transform duration-500"
           loading="lazy"
         />
       </router-link>
@@ -14,7 +14,7 @@
       <!-- Category Pill -->
       <span
         v-if="product.categoryName"
-        class="store-badge absolute top-3 left-3 bg-base-100/90 dark:bg-base-900/90 backdrop-blur-xs text-primary font-bold shadow-xs text-[10px]"
+        class="store-badge absolute top-5 left-5 bg-base-100/95 backdrop-blur-xs text-primary font-bold shadow-xs text-[10px] border border-stone-200/70 dark:border-stone-700"
       >
         {{ product.categoryName }}
       </span>
@@ -22,23 +22,23 @@
       <!-- Discount Badge -->
       <span
         v-if="product.compareAtPrice && product.compareAtPrice > product.price"
-        class="store-badge absolute top-3 right-3 bg-rose-500 text-white font-bold text-[10px]"
+        class="store-badge absolute top-5 right-5 bg-primary text-primary-content font-bold text-[10px] shadow-xs"
       >
         SALE
       </span>
     </div>
 
     <!-- Card Content -->
-    <div class="p-4 flex flex-col flex-1 justify-between gap-3">
-      <div class="space-y-1">
-        <div class="flex items-center justify-between text-xs text-base-content/60 font-semibold">
-          <RatingStars :value="5" size="xs" :show-score="true" />
-          <span>100% Recycled</span>
+    <div class="p-4 pt-2 flex flex-col flex-1 justify-between gap-3">
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] text-base-content/60 font-medium">
+          <span>{{ variantLabel }}</span>
+          <span class="text-secondary font-semibold">300gsm Recycled</span>
         </div>
 
         <router-link
           :to="`/shop/card/${product.slug}`"
-          class="font-bold text-sm text-base-content hover:text-primary transition-colors line-clamp-1 leading-snug block"
+          class="font-serif font-bold text-base text-base-content hover:text-primary transition-colors line-clamp-1 leading-snug block"
         >
           {{ product.name }}
         </router-link>
@@ -49,7 +49,7 @@
       </div>
 
       <!-- Price & Action -->
-      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+      <div class="pt-2.5 border-t border-stone-200/70 dark:border-stone-800 flex items-center justify-between gap-2">
         <div class="flex items-baseline gap-1.5">
           <span class="text-base font-extrabold text-base-content">
             {{ formatPrice(product.price) }}
@@ -65,7 +65,7 @@
         <button
           type="button"
           @click="handleAddToCart"
-          class="btn btn-primary btn-sm rounded-xl font-bold px-3 text-xs shadow-xs"
+          class="btn btn-primary btn-sm rounded-xl font-bold px-3.5 text-xs shadow-xs"
         >
           + Add
         </button>
@@ -75,10 +75,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useCartStore } from '../../stores/cart'
 import { useToastStore } from '../../stores/toast'
 import { formatPrice } from '../../utils/formatters'
-import RatingStars from '../ui/RatingStars.vue'
 
 const props = defineProps({
   product: {
@@ -89,6 +89,12 @@ const props = defineProps({
 
 const cartStore = useCartStore()
 const toastStore = useToastStore()
+
+const variantLabel = computed(() => {
+  const count = props.product.variants?.length || 0
+  if (count > 1) return `${count} Formats`
+  return props.product.variants?.[0]?.attributes?.Format || 'Single Card'
+})
 
 function handleAddToCart() {
   const defaultVariant = props.product.variants?.[0] || null

@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-40 bg-base-100/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
+  <header class="sticky top-0 z-40 bg-base-100/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800 transition-colors">
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
       <div class="navbar min-h-[4rem] px-0 gap-2">
         <!-- Mobile hamburger -->
@@ -29,11 +29,11 @@
           </div>
 
           <!-- Brand Logo -->
-          <router-link to="/" class="flex items-center gap-2 text-xl sm:text-2xl font-black text-base-content tracking-tight">
+          <router-link to="/" class="flex items-center gap-2.5 text-xl sm:text-2xl font-serif font-bold text-base-content tracking-tight">
             <span class="p-2 bg-primary text-primary-content rounded-xl shadow-xs flex items-center justify-center">
               <Mail class="w-5 h-5" />
             </span>
-            <span>Pocket<span class="text-primary">Commerce</span></span>
+            <span>Pocket<span class="italic text-primary">Commerce</span></span>
           </router-link>
         </div>
 
@@ -58,18 +58,17 @@
 
         <!-- Navbar End Actions -->
         <div class="navbar-end flex items-center gap-2 sm:gap-3 flex-1 justify-end">
-          <!-- Search input -->
-          <form @submit.prevent="handleSearch" class="relative hidden sm:block w-40 md:w-56">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search cards..."
-              class="input input-sm input-bordered w-full rounded-xl pr-8 bg-base-200/50 text-xs focus:bg-base-100"
-            />
-            <button type="submit" class="absolute right-2.5 top-2 text-base-content/50 hover:text-primary" aria-label="Search">
-              <Search class="h-4 w-4" />
-            </button>
-          </form>
+          <!-- Quick Search Trigger -->
+          <button
+            type="button"
+            @click="isSearchOpen = true"
+            class="btn btn-ghost btn-sm rounded-xl border border-stone-200/80 dark:border-stone-700 bg-base-200/60 hover:bg-base-200 gap-2 px-3 text-xs font-medium text-base-content/70"
+            aria-label="Search cards"
+          >
+            <Search class="h-3.5 w-3.5" />
+            <span class="hidden sm:inline">Search cards...</span>
+            <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-base-100 rounded border border-stone-200/80 dark:border-stone-700">⌘K</kbd>
+          </button>
 
           <!-- Theme toggle -->
           <button
@@ -131,10 +130,12 @@
       </div>
     </div>
   </header>
+
+  <QuickSearchModal :is-open="isSearchOpen" @close="isSearchOpen = false" />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Mail, Sun, Moon, Menu, ChevronDown, Search, ShoppingCart } from 'lucide-vue-next'
 import { CATEGORY_LINKS } from '../../constants/navigation'
@@ -142,6 +143,7 @@ import { useAuthStore } from '../../stores/auth'
 import { useCartStore } from '../../stores/cart'
 import { useThemeStore } from '../../stores/theme'
 import { useToastStore } from '../../stores/toast'
+import QuickSearchModal from './QuickSearchModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -149,14 +151,20 @@ const cartStore = useCartStore()
 const themeStore = useThemeStore()
 const toastStore = useToastStore()
 
-const searchQuery = ref('')
+const isSearchOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 
-function handleSearch() {
-  if (searchQuery.value.trim()) {
-    router.push({ path: '/shop', query: { search: searchQuery.value.trim() } })
+function onKeyDown(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault()
+    isSearchOpen.value = !isSearchOpen.value
+  } else if (e.key === 'Escape' && isSearchOpen.value) {
+    isSearchOpen.value = false
   }
 }
+
+onMounted(() => window.addEventListener('keydown', onKeyDown))
+onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 
 function handleLogout() {
   authStore.logout()
