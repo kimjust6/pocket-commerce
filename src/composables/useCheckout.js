@@ -4,8 +4,8 @@ import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'
 import { createOrder } from '../services/orderService'
-import { getUserAddresses, createAddress } from '../services/addressService'
 import { PAYMENT_PROVIDERS } from '../services/paymentProviders'
+import { useAddresses } from './useAddresses'
 
 export function useCheckout({ redirect = (url) => { window.location.href = url } } = {}) {
   const router = useRouter()
@@ -13,7 +13,7 @@ export function useCheckout({ redirect = (url) => { window.location.href = url }
   const cartStore = useCartStore()
   const toastStore = useToastStore()
 
-  const savedAddresses = ref([])
+  const { addresses: savedAddresses, loadAddresses, addAddress } = useAddresses()
   const paymentMethod = ref('stripe')
   const processingOrder = ref(false)
   const errorMessage = ref('')
@@ -46,7 +46,7 @@ export function useCheckout({ redirect = (url) => { window.location.href = url }
   async function loadSavedAddresses() {
     if (!authStore.isAuthenticated) return
     try {
-      savedAddresses.value = await getUserAddresses()
+      await loadAddresses()
       if (savedAddresses.value.length > 0) {
         selectSavedAddress(savedAddresses.value[0].id)
       }
@@ -68,7 +68,7 @@ export function useCheckout({ redirect = (url) => { window.location.href = url }
 
       if (form.value.saveAddress && authStore.isAuthenticated) {
         try {
-          await createAddress({
+          await addAddress({
             name: form.value.fullName,
             street: form.value.street,
             city: form.value.city,

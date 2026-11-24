@@ -1,19 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { createStorageAdapter } from '../utils/storage'
+import { applyThemeToDocument } from '../utils/themeDom'
+
+const THEME_STORAGE_KEY = 'pocket_theme'
 
 export const useThemeStore = defineStore('theme', () => {
-  const storedTheme = localStorage.getItem('pocket_theme') || 'light'
+  const storage = createStorageAdapter()
+  const storedTheme = (typeof localStorage !== 'undefined' ? localStorage.getItem(THEME_STORAGE_KEY) : null) || 'light'
   const currentTheme = ref(storedTheme)
 
   function applyTheme(theme) {
     currentTheme.value = theme
-    localStorage.setItem('pocket_theme', theme)
-    document.documentElement.setAttribute('data-theme', theme)
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(THEME_STORAGE_KEY, theme)
     } else {
-      document.documentElement.classList.remove('dark')
+      storage.setJson(THEME_STORAGE_KEY, theme)
     }
+    applyThemeToDocument(theme)
   }
 
   function toggleTheme() {
@@ -21,7 +25,6 @@ export const useThemeStore = defineStore('theme', () => {
     applyTheme(nextTheme)
   }
 
-  // Initial apply
   applyTheme(currentTheme.value)
 
   return {
@@ -30,4 +33,3 @@ export const useThemeStore = defineStore('theme', () => {
     applyTheme,
   }
 })
-

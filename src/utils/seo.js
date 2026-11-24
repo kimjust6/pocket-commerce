@@ -1,45 +1,9 @@
+import { setMetaTag, setCanonicalLink, setJsonLd } from './seoDom'
+
 const SITE_NAME = 'Pocket Commerce'
 const DEFAULT_DESCRIPTION =
   'Explore our collection of funny, thoughtful, and custom-illustrated cards printed locally on 100% recycled paper stock.'
 const DEFAULT_IMAGE = '/og-image.webp'
-
-function setMetaTag(attrName, attrValue, content) {
-  if (typeof document === 'undefined') return
-  let el = document.head.querySelector(`meta[${attrName}="${attrValue}"]`)
-  if (!el) {
-    el = document.createElement('meta')
-    el.setAttribute(attrName, attrValue)
-    document.head.appendChild(el)
-  }
-  el.setAttribute('content', content)
-}
-
-function setCanonicalLink(url) {
-  if (typeof document === 'undefined') return
-  let link = document.head.querySelector('link[rel="canonical"]')
-  if (!link) {
-    link = document.createElement('link')
-    link.setAttribute('rel', 'canonical')
-    document.head.appendChild(link)
-  }
-  link.setAttribute('href', url)
-}
-
-function setJsonLd(data) {
-  if (typeof document === 'undefined') return
-  const existing = document.head.querySelector('script#seo-json-ld')
-  if (!data) {
-    if (existing) existing.remove()
-    return
-  }
-  const script = existing || document.createElement('script')
-  script.id = 'seo-json-ld'
-  script.type = 'application/ld+json'
-  script.textContent = JSON.stringify(data)
-  if (!existing) {
-    document.head.appendChild(script)
-  }
-}
 
 export function resolveAbsoluteUrl(pathOrUrl, origin) {
   if (!pathOrUrl) return origin || ''
@@ -139,4 +103,3 @@ export function updateSeoMeta({
 
   setJsonLd(jsonLd)
 }
-

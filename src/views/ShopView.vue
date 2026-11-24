@@ -147,24 +147,31 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { Search } from 'lucide-vue-next'
 import { getProducts, getCategories } from '../services/catalogService'
+import { useProductFilters } from '../composables/useProductFilters'
 import ProductCard from '../components/products/ProductCard.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 
 const route = useRoute()
-const router = useRouter()
 
 const loading = ref(true)
 const products = ref([])
 const categories = ref([])
-const selectedCategory = ref(route.query.category || null)
-const searchQuery = ref(route.query.search || '')
-const minPrice = ref(route.query.minPrice || null)
-const maxPrice = ref(route.query.maxPrice || null)
-const selectedSort = ref('-created')
+
+const {
+  selectedCategory,
+  searchQuery,
+  minPrice,
+  maxPrice,
+  selectedSort,
+  syncFromQuery,
+  setCategory,
+  clearAllFilters,
+  toQueryOptions,
+} = useProductFilters()
 
 const sortOptions = [
   { value: '-created', label: 'Newest' },
@@ -175,15 +182,7 @@ const sortOptions = [
 async function fetchData() {
   loading.value = true
   try {
-    const res = await getProducts({
-      categorySlug: selectedCategory.value,
-      search: searchQuery.value,
-      minPrice: minPrice.value,
-      maxPrice: maxPrice.value,
-      sort: selectedSort.value,
-      perPage: 50,
-    })
-
+    const res = await getProducts(toQueryOptions())
     products.value = res.items
   } catch (err) {
     console.error('Error loading shop products:', err)
@@ -192,30 +191,10 @@ async function fetchData() {
   }
 }
 
-function setCategory(catSlug) {
-  selectedCategory.value = catSlug
-  router.push({
-    path: '/shop',
-    query: {
-      ...route.query,
-      category: catSlug || undefined,
-    },
-  })
-}
-
-function clearAllFilters() {
-  selectedCategory.value = null
-  searchQuery.value = ''
-  minPrice.value = null
-  maxPrice.value = null
-  router.push({ path: '/shop' })
-}
-
 watch(
   () => route.query,
   (newQuery) => {
-    selectedCategory.value = newQuery.category || null
-    searchQuery.value = newQuery.search || ''
+    syncFromQuery(newQuery)
     fetchData()
   }
 )

@@ -1,10 +1,8 @@
 <template>
   <div class="py-12 bg-base-100 min-h-screen">
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
-      <!-- Breadcrumbs -->
       <Breadcrumbs :items="[{ label: 'Home', to: '/' }, { label: 'My Account' }]" />
 
-      <!-- Account Header Banner -->
       <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div class="flex items-center gap-4">
           <div class="avatar">
@@ -36,7 +34,6 @@
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
       <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 mb-8">
         <button
           v-for="tab in tabs"
@@ -52,100 +49,21 @@
         </button>
       </div>
 
-      <!-- Tab 1: Orders -->
-      <div v-if="activeTab === 'orders'" class="space-y-4">
-        <div v-if="loadingOrders" class="space-y-3">
-          <div v-for="n in 3" :key="n" class="skeleton h-24 w-full rounded-2xl"></div>
-        </div>
+      <OrderHistoryList
+        v-if="activeTab === 'orders'"
+        :orders="orders"
+        :loading="loadingOrders"
+      />
 
-        <div v-else-if="orders.length === 0" class="text-center py-16 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-3">
-          <Package class="w-10 h-10 text-base-content/30 mx-auto" />
-          <h3 class="font-extrabold text-base text-base-content">No orders placed yet</h3>
-          <p class="text-xs text-base-content/60">When you purchase cards, your order history and receipts will appear here.</p>
-          <router-link to="/shop" class="btn btn-primary btn-sm rounded-xl font-bold mt-2">
-            Start Shopping
-          </router-link>
-        </div>
-
-        <div v-else class="space-y-4">
-          <div
-            v-for="order in orders"
-            :key="order.id"
-            class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4"
-          >
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800 text-xs">
-              <div class="space-y-0.5">
-                <span class="font-mono font-bold text-base-content">Order #{{ order.id }}</span>
-                <span class="text-base-content/50 block">{{ formatDate(order.created) }}</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="badge badge-info badge-outline font-bold text-[10px] uppercase">
-                  {{ order.status || 'Pending' }}
-                </span>
-                <span class="font-black text-sm text-base-content">
-                  {{ formatPrice(order.total_amount) }}
-                </span>
-              </div>
-            </div>
-
-            <div class="text-xs text-base-content/70">
-              <span class="font-bold text-base-content">Shipping to:</span> {{ order.shipping_address }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab 2: Addresses -->
-      <div v-if="activeTab === 'addresses'" class="space-y-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h3 class="font-extrabold text-lg text-base-content">Saved Shipping Addresses</h3>
-            <p class="text-xs text-base-content/60">Manage your delivery destinations for quick checkout.</p>
-          </div>
-          <button
-            type="button"
-            @click="showAddressModal = true"
-            class="btn btn-primary btn-sm rounded-xl font-bold text-xs"
-          >
-            + Add New Address
-          </button>
-        </div>
-
-        <div v-if="loadingAddresses" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="n in 2" :key="n" class="skeleton h-32 w-full rounded-2xl"></div>
-        </div>
-
-        <div v-else-if="addresses.length === 0" class="text-center py-12 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-3">
-          <MapPin class="w-10 h-10 text-base-content/30 mx-auto" />
-          <h4 class="font-bold text-sm text-base-content">No saved addresses</h4>
-          <p class="text-xs text-base-content/60">Save an address for faster checkout on future orders.</p>
-        </div>
-
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
-            v-for="addr in addresses"
-            :key="addr.id"
-            class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex justify-between items-start"
-          >
-            <div class="space-y-1 text-xs text-base-content/80">
-              <h4 class="font-bold text-sm text-base-content">{{ addr.name }}</h4>
-              <p>{{ addr.street }}</p>
-              <p>{{ addr.city }}, {{ addr.state }} {{ addr.zip }}</p>
-            </div>
-            <button
-              type="button"
-              @click="handleDeleteAddress(addr.id)"
-              class="btn btn-ghost btn-circle btn-xs text-error"
-              aria-label="Delete address"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      </div>
+      <SavedAddressesPanel
+        v-if="activeTab === 'addresses'"
+        :addresses="addresses"
+        :loading="loadingAddresses"
+        @open-modal="showAddressModal = true"
+        @delete="handleDeleteAddress"
+      />
     </div>
 
-    <!-- Reusable Add Address Modal -->
     <Modal
       :is-open="showAddressModal"
       title="Add Shipping Address"
@@ -232,14 +150,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Package, MapPin } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
-import { formatPrice, formatDate } from '../utils/formatters'
 import { getUserOrders } from '../services/orderService'
-import { getUserAddresses, createAddress, deleteAddress } from '../services/addressService'
+import { useAddresses } from '../composables/useAddresses'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 import Modal from '../components/ui/Modal.vue'
+import OrderHistoryList from '../components/account/OrderHistoryList.vue'
+import SavedAddressesPanel from '../components/account/SavedAddressesPanel.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -247,9 +165,16 @@ const toastStore = useToastStore()
 
 const activeTab = ref('orders')
 const loadingOrders = ref(true)
-const loadingAddresses = ref(true)
 const orders = ref([])
-const addresses = ref([])
+
+const {
+  addresses,
+  loadingAddresses,
+  savingAddress,
+  loadAddresses,
+  addAddress,
+  removeAddress,
+} = useAddresses()
 
 const tabs = computed(() => [
   { id: 'orders', label: 'Order History', count: orders.value.length },
@@ -257,7 +182,6 @@ const tabs = computed(() => [
 ])
 
 const showAddressModal = ref(false)
-const savingAddress = ref(false)
 const newAddr = ref({
   name: '',
   street: '',
@@ -268,40 +192,33 @@ const newAddr = ref({
 
 async function loadData() {
   try {
-    const [ordersRes, addressesRes] = await Promise.all([
+    const [ordersRes] = await Promise.all([
       getUserOrders(),
-      getUserAddresses(),
+      loadAddresses(),
     ])
     orders.value = ordersRes
-    addresses.value = addressesRes
   } catch (err) {
     console.error('Account data error:', err)
   } finally {
     loadingOrders.value = false
-    loadingAddresses.value = false
   }
 }
 
 async function saveNewAddress() {
-  savingAddress.value = true
   try {
-    await createAddress(newAddr.value)
+    await addAddress(newAddr.value)
     toastStore.success('Address saved!')
     showAddressModal.value = false
     newAddr.value = { name: '', street: '', city: '', state: '', zip: '' }
-    addresses.value = await getUserAddresses()
   } catch (e) {
     console.error('Error saving address:', e)
     toastStore.error('Could not save address.')
-  } finally {
-    savingAddress.value = false
   }
 }
 
 async function handleDeleteAddress(id) {
   try {
-    await deleteAddress(id)
-    addresses.value = addresses.value.filter((a) => a.id !== id)
+    await removeAddress(id)
     toastStore.success('Address deleted.')
   } catch (e) {
     console.error('Error deleting address:', e)
