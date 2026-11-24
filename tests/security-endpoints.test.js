@@ -31,6 +31,9 @@ function loadStripeRoutes({ env = {}, records = {}, httpResponse = null } = {}) 
     routes[`${method.toUpperCase()} ${routePath}`] = handler
   }
 
+  global.__hooks = path.resolve(process.cwd(), 'pb_hooks')
+  global.require = require
+
   global.$os = {
     getenv: vi.fn((k) => env[k] || ''),
   }
