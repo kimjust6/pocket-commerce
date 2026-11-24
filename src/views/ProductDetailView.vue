@@ -269,7 +269,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Mail, Leaf, Ruler } from 'lucide-vue-next'
-import { getProduct, createReview } from '../services/pocketbase'
+import { getProduct, createReview } from '../services/catalogService'
 import { useCartStore } from '../stores/cart'
 import { useToastStore } from '../stores/toast'
 import { formatPrice } from '../utils/formatters'

@@ -101,7 +101,7 @@ routerAdd("GET", "/{$}", (e) => {
         `</main>` +
         `</div>`;
 
-    const html = seo.renderSeoHtml(e, __hooks, {
+    const html = seo.renderSeoHtml(origin, __hooks, {
         title: "Handcrafted Greeting Cards",
         description: seo.DEFAULT_DESCRIPTION,
         canonicalPath: "/",
@@ -163,7 +163,8 @@ routerAdd("GET", "/shop", (e) => {
         `</main>` +
         `</div>`;
 
-    const html = seo.renderSeoHtml(e, __hooks, { title, description, canonicalPath, bodyHtml });
+    const origin = seo.getOrigin(e);
+    const html = seo.renderSeoHtml(origin, __hooks, { title, description, canonicalPath, bodyHtml });
     return e.html(200, html);
 });
 
@@ -237,7 +238,7 @@ routerAdd("GET", "/shop/card/{slug}", (e) => {
                 `</main>` +
                 `</div>`;
 
-            const html = seo.renderSeoHtml(e, __hooks, {
+            const html = seo.renderSeoHtml(origin, __hooks, {
                 title: name,
                 description,
                 image: primaryImage,
@@ -250,7 +251,7 @@ routerAdd("GET", "/shop/card/{slug}", (e) => {
         }
     } catch (_) {}
 
-    const fallbackHtml = seo.renderSeoHtml(e, __hooks, {
+    const fallbackHtml = seo.renderSeoHtml(origin, __hooks, {
         title: "Card Not Found",
         description: seo.DEFAULT_DESCRIPTION,
         robots: "noindex, nofollow",
@@ -264,8 +265,9 @@ const NO_INDEX_PATHS = ["/cart", "/checkout", "/checkout/success", "/account", "
 for (let i = 0; i < NO_INDEX_PATHS.length; i++) {
     routerAdd("GET", NO_INDEX_PATHS[i], (e) => {
         const seo = require(__hooks + "/lib/seo.js");
+        const origin = seo.getOrigin(e);
         const path = e.request.url.path;
-        const html = seo.renderSeoHtml(e, __hooks, {
+        const html = seo.renderSeoHtml(origin, __hooks, {
             title: seo.NO_INDEX_TITLES[path] || "Pocket Commerce",
             robots: "noindex, nofollow",
             canonicalPath: path,

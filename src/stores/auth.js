@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { pb, getFileUrl } from '../services/pbClient'
 import {
-  pb,
-  getFileUrl,
   loginWithPassword,
   loginWithOAuth2,
   registerUser,
   updateUserRecord,
-} from '../services/pocketbase'
+} from '../services/authService'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(pb.authStore.model)

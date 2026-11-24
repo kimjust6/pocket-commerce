@@ -64,12 +64,7 @@ describe('pb_hooks/lib/seo.js', () => {
   })
 
   it('injects SEO tags, escapes JSON-LD script breakouts, and populates #app bodyHtml', () => {
-    const mockEvent = {
-      requestInfo: () => ({ headers: { host: 'store.example.com' } }),
-      request: { tls: true },
-    }
-
-    const html = seo.renderSeoHtml(mockEvent, '/hooks', {
+    const html = seo.renderSeoHtml('https://store.example.com', '/hooks', {
       title: 'Birthday Cat',
       description: 'Cute card',
       canonicalPath: '/shop/card/birthday-cat',

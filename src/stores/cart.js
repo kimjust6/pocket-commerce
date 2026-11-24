@@ -1,70 +1,45 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { createStorageAdapter } from '../utils/storage'
+import {
+  validateCoupon,
+  calculateSubtotal,
+  calculateDiscount,
+  calculateShipping,
+  calculateTax,
+  calculateTotal,
+} from '../utils/pricing'
 
 const CART_STORAGE_KEY = 'pocket_commerce_cart'
 
 export const useCartStore = defineStore('cart', () => {
-  // Load initial items from localStorage
-  let initialItems = []
-  if (typeof localStorage !== 'undefined') {
-    const savedCart = localStorage.getItem(CART_STORAGE_KEY)
-    if (savedCart) {
-      try {
-        const parsed = JSON.parse(savedCart)
-        if (Array.isArray(parsed)) {
-          initialItems = parsed
-        }
-      } catch {
-        localStorage.removeItem(CART_STORAGE_KEY)
-      }
-    }
-  }
-  const items = ref(initialItems)
+  const storage = createStorageAdapter()
+  const saved = storage.getJson(CART_STORAGE_KEY, [])
+  const items = ref(Array.isArray(saved) ? saved : [])
   const isDrawerOpen = ref(false)
   const coupon = ref(null)
 
   function saveCart() {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items.value))
-    }
+    storage.setJson(CART_STORAGE_KEY, items.value)
   }
 
   const totalItems = computed(() => {
     return items.value.reduce((total, item) => total + (item.quantity || 1), 0)
   })
 
-  const subtotal = computed(() => {
-    return items.value.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
-  })
-
-  const discountAmount = computed(() => {
-    if (!coupon.value) return 0
-    return (subtotal.value * coupon.value.discount) / 100
-  })
-
-  const shippingAmount = computed(() => {
-    if (subtotal.value === 0) return 0
-    if (coupon.value?.freeShipping) return 0
-    // Free shipping on orders over $35
-    return subtotal.value >= 35 ? 0 : 4.99
-  })
-
-  const taxAmount = computed(() => {
-    const taxableAmount = Math.max(0, subtotal.value - discountAmount.value)
-    return taxableAmount * 0.08 // 8% sales tax
-  })
-
-  const total = computed(() => {
-    if (subtotal.value === 0) return 0
-    return Math.max(0, subtotal.value - discountAmount.value + shippingAmount.value + taxAmount.value)
-  })
+  const subtotal = computed(() => calculateSubtotal(items.value))
+  const discountAmount = computed(() => calculateDiscount(subtotal.value, coupon.value))
+  const shippingAmount = computed(() => calculateShipping(subtotal.value, coupon.value))
+  const taxAmount = computed(() => calculateTax(subtotal.value, discountAmount.value))
+  const total = computed(() =>
+    calculateTotal(subtotal.value, discountAmount.value, shippingAmount.value, taxAmount.value)
+  )
 
   function addToCart(product, variant = null, quantity = 1) {
     const variantId = variant?.id || 'default'
     const price = variant?.price ?? product.price ?? 4.99
     const format = variant?.attributes?.Format || 'Single Card'
 
-    // Look for existing item
     const existingIndex = items.value.findIndex(
       (item) => item.productId === product.id && item.variantId === variantId
     )
@@ -113,18 +88,11 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function applyCoupon(code) {
-    const cleanCode = (code || '').trim().toUpperCase()
-    if (cleanCode === 'POCKET10') {
-      coupon.value = { code: cleanCode, discount: 10 }
-      return { success: true, message: '10% discount applied!' }
-    } else if (cleanCode === 'FREESHIP') {
-      coupon.value = { code: cleanCode, discount: 0, freeShipping: true }
-      return { success: true, message: 'Free shipping promo activated!' }
-    } else if (cleanCode === 'WELCOME20') {
-      coupon.value = { code: cleanCode, discount: 20 }
-      return { success: true, message: '20% Welcome discount applied!' }
+    const result = validateCoupon(code)
+    if (result.success) {
+      coupon.value = result.coupon
     }
-    return { success: false, message: 'Invalid promo code.' }
+    return { success: result.success, message: result.message }
   }
 
   function removeCoupon() {

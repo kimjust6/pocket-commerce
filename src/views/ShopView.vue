@@ -149,7 +149,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Search } from 'lucide-vue-next'
-import { getProducts, getCategories } from '../services/pocketbase'
+import { getProducts, getCategories } from '../services/catalogService'
 import ProductCard from '../components/products/ProductCard.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 import Breadcrumbs from '../components/ui/Breadcrumbs.vue'

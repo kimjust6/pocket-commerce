@@ -56,7 +56,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { CheckCircle2 } from 'lucide-vue-next'
 import { useCartStore } from '../stores/cart'
-import { verifyStripeSession } from '../services/pocketbase'
+import { verifyStripeSession } from '../services/paymentService'
 
 const route = useRoute()
 const cartStore = useCartStore()

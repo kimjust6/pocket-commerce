@@ -21,6 +21,7 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
         });
     }
 
+    const stripeLib = require(__hooks + "/lib/stripe.js");
     const info = e.requestInfo();
     const body = info.body || {};
     const orderId = body.orderId;
@@ -38,8 +39,7 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
         return e.json(404, { error: "Order not found." });
     }
 
-    const isAdmin = e.auth.getString("role") === "admin";
-    if (!isAdmin && order.getString("user") !== e.auth.id) {
+    if (!stripeLib.authorizeOrderAccess(e.auth, order)) {
         return e.json(403, { error: "Forbidden." });
     }
 
@@ -47,7 +47,6 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
         return e.json(400, { error: "Order is already paid." });
     }
 
-    // Load authoritative order items and variant prices from PocketBase
     let orderItems = [];
     try {
         orderItems = $app.findRecordsByFilter("order_items", "order = {:orderId}", "", 100, 0, { orderId });
@@ -90,25 +89,10 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
         items.push({ name, format, price: unitPrice, quantity: qty });
     }
 
-    // Server-side coupon, shipping, and tax calculation
-    const rawSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    let discountPercent = 0;
-    let freeShipping = false;
-    if (couponCode === "POCKET10") discountPercent = 10;
-    else if (couponCode === "WELCOME20") discountPercent = 20;
-    else if (couponCode === "FREESHIP") freeShipping = true;
-
-    const discountAmount = (rawSubtotal * discountPercent) / 100;
-    const shippingAmount = rawSubtotal === 0 || rawSubtotal >= 35 || freeShipping ? 0 : 4.99;
-    const taxableAmount = Math.max(0, rawSubtotal - discountAmount);
-    const taxAmount = taxableAmount * 0.08;
-    const computedTotal = Math.max(0, taxableAmount + shippingAmount + taxAmount);
-
-    // Sync authoritative total to the order record
-    order.set("total_amount", Number(computedTotal.toFixed(2)));
+    const totals = stripeLib.calculateOrderTotals(items, couponCode);
+    order.set("total_amount", Number(totals.computedTotal.toFixed(2)));
     $app.save(order);
 
-    // Determine origin for success/cancel redirects
     const originHeader = info.headers["origin"] || info.headers["Origin"];
     const appUrl = $os.getenv("APP_URL") || originHeader || "http://localhost:5173";
     const baseUrl = appUrl.replace(/\/+$/, "");
@@ -116,64 +100,17 @@ routerAdd("POST", "/api/stripe/create-checkout-session", (e) => {
     const successUrl = `${baseUrl}/checkout/success?order_id=${encodeURIComponent(orderId)}&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/checkout?canceled=true`;
 
-    // Build URL-encoded form parameters for Stripe API
-    const params = [];
-    const addParam = (k, v) => {
-        params.push(encodeURIComponent(k) + "=" + encodeURIComponent(String(v)));
-    };
-
-    addParam("mode", "payment");
-    addParam("success_url", successUrl);
-    addParam("cancel_url", cancelUrl);
-    addParam("client_reference_id", orderId);
-    addParam("metadata[order_id]", orderId);
-    if (email) {
-        addParam("customer_email", email);
-    }
-
-    // Calculate discount ratio if promo code was applied
-    const discountRatio = rawSubtotal > 0 && discountAmount > 0 ? Math.max(0, (rawSubtotal - discountAmount) / rawSubtotal) : 1;
-
-    let lineIdx = 0;
-    items.forEach((item) => {
-        const unitPriceCents = Math.max(50, Math.round(Number(item.price || 0) * discountRatio * 100));
-        const qty = Math.max(1, parseInt(item.quantity || 1, 10));
-        const name = item.format ? `${item.name} (${item.format})` : (item.name || "Greeting Card");
-
-        addParam(`line_items[${lineIdx}][price_data][currency]`, "usd");
-        addParam(`line_items[${lineIdx}][price_data][unit_amount]`, unitPriceCents);
-        addParam(`line_items[${lineIdx}][price_data][product_data][name]`, name);
-        addParam(`line_items[${lineIdx}][quantity]`, qty);
-        lineIdx++;
+    const formBody = stripeLib.buildStripeCheckoutParams({
+        orderId,
+        email,
+        items,
+        totals,
+        successUrl,
+        cancelUrl,
     });
 
-    if (shippingAmount > 0) {
-        addParam(`line_items[${lineIdx}][price_data][currency]`, "usd");
-        addParam(`line_items[${lineIdx}][price_data][unit_amount]`, Math.round(shippingAmount * 100));
-        addParam(`line_items[${lineIdx}][price_data][product_data][name]`, "Standard Shipping");
-        addParam(`line_items[${lineIdx}][quantity]`, 1);
-        lineIdx++;
-    }
-
-    if (taxAmount > 0) {
-        addParam(`line_items[${lineIdx}][price_data][currency]`, "usd");
-        addParam(`line_items[${lineIdx}][price_data][unit_amount]`, Math.round(taxAmount * 100));
-        addParam(`line_items[${lineIdx}][price_data][product_data][name]`, "Estimated Sales Tax");
-        addParam(`line_items[${lineIdx}][quantity]`, 1);
-        lineIdx++;
-    }
-
     try {
-        const res = $http.send({
-            url: "https://api.stripe.com/v1/checkout/sessions",
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${stripeKey}`,
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: params.join("&"),
-        });
-
+        const res = stripeLib.createCheckoutSession(stripeKey, formBody);
         if (res.statusCode < 200 || res.statusCode >= 300) {
             const errMsg = (res.json && res.json.error && res.json.error.message) || "Stripe Checkout creation failed.";
             return e.json(res.statusCode || 500, { error: errMsg });
@@ -206,15 +143,10 @@ routerAdd("GET", "/api/stripe/verify-session", (e) => {
         return e.json(400, { error: "Missing session_id parameter." });
     }
 
-    try {
-        const res = $http.send({
-            url: `https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`,
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${stripeKey}`,
-            },
-        });
+    const stripeLib = require(__hooks + "/lib/stripe.js");
 
+    try {
+        const res = stripeLib.fetchCheckoutSession(stripeKey, sessionId);
         if (res.statusCode < 200 || res.statusCode >= 300) {
             return e.json(res.statusCode || 500, { error: "Could not verify Stripe session." });
         }
@@ -233,19 +165,13 @@ routerAdd("GET", "/api/stripe/verify-session", (e) => {
                 return e.json(404, { error: "Order not found." });
             }
 
-            const isAdmin = e.auth.getString("role") === "admin";
-            if (!isAdmin && order.getString("user") !== e.auth.id) {
+            if (!stripeLib.authorizeOrderAccess(e.auth, order)) {
                 return e.json(403, { error: "Forbidden." });
             }
 
             if (isPaid) {
                 try {
-                    const expectedCents = Math.round(Number(order.get("total_amount") || 0) * 100);
-                    const paidCents = Number(session.amount_total || 0);
-                    if (paidCents >= expectedCents - 5 && order.getString("status") !== "paid") {
-                        order.set("status", "paid");
-                        $app.save(order);
-                    }
+                    stripeLib.markOrderPaid(order, session.amount_total);
                 } catch (dbErr) {
                     console.error("Failed to update order status:", dbErr);
                 }
@@ -278,30 +204,10 @@ routerAdd("POST", "/api/stripe/webhook", (e) => {
         return e.json(400, { error: "Missing Stripe-Signature header." });
     }
 
-    // Parse t=... and v1=... from Stripe-Signature header
-    let timestamp = "";
-    const signatures = [];
-    sigHeader.split(",").forEach((part) => {
-        const idx = part.indexOf("=");
-        if (idx === -1) return;
-        const k = part.slice(0, idx).trim();
-        const v = part.slice(idx + 1).trim();
-        if (k === "t") timestamp = v;
-        if (k === "v1") signatures.push(v);
-    });
-
-    const tsNum = parseInt(timestamp, 10);
-    const nowSec = Math.floor(Date.now() / 1000);
-    if (!tsNum || Math.abs(nowSec - tsNum) > 300 || signatures.length === 0) {
-        return e.json(400, { error: "Invalid or expired Stripe-Signature header." });
-    }
-
-    const signedPayload = `${timestamp}.${rawBody}`;
-    const expectedSig = $security.hs256(signedPayload, webhookSecret);
-
-    const isValid = signatures.some((sig) => $security.equal(sig, expectedSig));
-    if (!isValid) {
-        return e.json(400, { error: "Invalid Stripe webhook signature." });
+    const stripeLib = require(__hooks + "/lib/stripe.js");
+    const sigCheck = stripeLib.verifyWebhookSignature(rawBody, sigHeader, webhookSecret);
+    if (!sigCheck.valid) {
+        return e.json(400, { error: sigCheck.reason });
     }
 
     let event;
@@ -318,12 +224,7 @@ routerAdd("POST", "/api/stripe/webhook", (e) => {
         if (orderId && session.payment_status === "paid") {
             try {
                 const order = $app.findRecordById("orders", orderId);
-                const expectedCents = Math.round(Number(order.get("total_amount") || 0) * 100);
-                const paidCents = Number(session.amount_total || 0);
-                if (order && paidCents >= expectedCents - 5 && order.getString("status") !== "paid") {
-                    order.set("status", "paid");
-                    $app.save(order);
-                }
+                stripeLib.markOrderPaid(order, session.amount_total);
             } catch (dbErr) {
                 console.error("Webhook order update error:", dbErr);
             }
@@ -332,4 +233,3 @@ routerAdd("POST", "/api/stripe/webhook", (e) => {
 
     return e.json(200, { received: true });
 });
-

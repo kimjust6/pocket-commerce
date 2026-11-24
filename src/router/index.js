@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { pb } from '../services/pocketbase'
+import { pb } from '../services/pbClient'
 import { updateSeoMeta, buildWebsiteJsonLd } from '../utils/seo'
 
 const routes = [

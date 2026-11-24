@@ -43,8 +43,8 @@ function stripDefaultSeoTags(html) {
         .replace(/<link\s+rel=["']canonical["'][^>]*\/?>/gi, "");
 }
 
-function renderSeoHtml(e, hooksDir, opts) {
-    const origin = getOrigin(e);
+function renderSeoHtml(originOrEvent, hooksDir, opts) {
+    const origin = typeof originOrEvent === "string" ? originOrEvent : getOrigin(originOrEvent);
     const fullTitle = opts.title
         ? `${opts.title} | ${SITE_NAME}`
         : `${SITE_NAME} | Handcrafted Stationery & Greeting Cards`;

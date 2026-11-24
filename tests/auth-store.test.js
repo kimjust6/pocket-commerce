@@ -17,9 +17,12 @@ const mockLoginWithOAuth2 = vi.fn()
 const mockRegisterUser = vi.fn()
 const mockUpdateUserRecord = vi.fn()
 
-vi.mock('../src/services/pocketbase', () => ({
+vi.mock('../src/services/pbClient', () => ({
   pb: mockPb,
   getFileUrl: (...args) => mockGetFileUrl(...args),
+}))
+
+vi.mock('../src/services/authService', () => ({
   loginWithPassword: (...args) => mockLoginWithPassword(...args),
   loginWithOAuth2: (...args) => mockLoginWithOAuth2(...args),
   registerUser: (...args) => mockRegisterUser(...args),

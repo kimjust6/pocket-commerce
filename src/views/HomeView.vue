@@ -147,7 +147,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Leaf, Palette, Truck } from 'lucide-vue-next'
-import { getProducts, getCategories } from '../services/pocketbase'
+import { getProducts, getCategories } from '../services/catalogService'
 import ProductCard from '../components/products/ProductCard.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 

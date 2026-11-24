@@ -7,7 +7,7 @@ const mockPb = {
   },
 }
 
-vi.mock('../src/services/pocketbase', () => ({
+vi.mock('../src/services/pbClient', () => ({
   pb: mockPb,
 }))
 
