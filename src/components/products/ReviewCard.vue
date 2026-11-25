@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-3">
+  <div class="bg-base-100 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 shadow-xs space-y-3">
     <div class="flex items-center justify-between">
       <RatingStars :value="review.rating || 5" size="sm" />
       <span
@@ -15,7 +15,7 @@
       <p class="text-xs text-base-content/70 mt-1 leading-relaxed">{{ review.body }}</p>
     </div>
 
-    <div class="flex items-center justify-between text-[11px] text-base-content/50 pt-2 border-t border-slate-100 dark:border-slate-800">
+    <div class="flex items-center justify-between text-[11px] text-base-content/50 pt-2 border-t border-stone-100 dark:border-stone-800">
       <span class="font-semibold">{{ review.expand?.user?.username || review.expand?.user?.name || 'Verified Customer' }}</span>
       <span>{{ formatDate(review.created) }}</span>
     </div>

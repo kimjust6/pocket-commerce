@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-base-200/70 border-t border-slate-200/80 dark:border-slate-800 mt-auto transition-colors">
+  <footer class="bg-base-200/70 border-t border-stone-200/80 dark:border-stone-800 mt-auto transition-colors">
     <div class="container mx-auto px-4 md:px-8 max-w-7xl py-12 lg:py-16">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
         <!-- Brand Summary -->
@@ -76,7 +76,7 @@
       </div>
 
       <!-- Bottom Bar -->
-      <div class="border-t border-slate-200/80 dark:border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-base-content/60 font-medium">
+      <div class="border-t border-stone-200/80 dark:border-stone-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-base-content/60 font-medium">
         <p>© {{ new Date().getFullYear() }} Pocket Commerce. All rights reserved. Self-hosted on PocketBase.</p>
         <div class="flex items-center gap-6">
           <router-link to="/shop" class="hover:underline">Catalog</router-link>

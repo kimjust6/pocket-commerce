@@ -24,7 +24,7 @@
       <div v-else class="space-y-16">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div class="lg:col-span-6 space-y-4">
-            <div class="border border-slate-200/80 dark:border-slate-800 rounded-3xl overflow-hidden bg-base-200/40 aspect-square shadow-sm">
+            <div class="border border-stone-200/80 dark:border-stone-800 rounded-3xl overflow-hidden bg-base-200/40 aspect-square shadow-sm">
               <img
                 :src="selectedImage || product.primaryImage"
                 :alt="product.name"
@@ -67,7 +67,7 @@
               </div>
             </div>
 
-            <div class="flex items-baseline gap-3 py-2 border-y border-slate-100 dark:border-slate-800">
+            <div class="flex items-baseline gap-3 py-2 border-y border-stone-100 dark:border-stone-800">
               <span class="text-3xl font-black text-base-content">
                 {{ formatPrice(currentPrice) }}
               </span>
@@ -136,7 +136,7 @@
               </div>
             </div>
 
-            <div class="p-5 bg-base-200/50 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3 text-xs">
+            <div class="p-5 bg-base-200/50 rounded-2xl border border-stone-200/80 dark:border-stone-800 space-y-3 text-xs">
               <div class="flex items-center gap-3">
                 <Leaf class="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 <div>
@@ -162,7 +162,7 @@
           </div>
         </div>
 
-        <section class="border-t border-slate-200/80 dark:border-slate-800 pt-12 space-y-8">
+        <section class="border-t border-stone-200/80 dark:border-stone-800 pt-12 space-y-8">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 class="text-2xl font-extrabold text-base-content tracking-tight">Customer Reviews</h3>

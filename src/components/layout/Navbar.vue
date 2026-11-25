@@ -15,7 +15,7 @@
             </button>
             <ul
               v-if="isMobileMenuOpen"
-              class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-xl bg-base-100 rounded-box w-56 border border-slate-200/80 dark:border-slate-800 space-y-1"
+              class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-xl bg-base-100 rounded-box w-56 border border-stone-200/80 dark:border-stone-800 space-y-1"
             >
               <li><router-link to="/" @click="isMobileMenuOpen = false">Home</router-link></li>
               <li><router-link to="/shop" @click="isMobileMenuOpen = false">All Cards</router-link></li>
@@ -48,7 +48,7 @@
               Categories
               <ChevronDown class="h-4 w-4" />
             </div>
-            <ul tabindex="0" class="dropdown-content z-50 menu p-2 shadow-xl bg-base-100 rounded-box w-52 border border-slate-200/80 dark:border-slate-800">
+            <ul tabindex="0" class="dropdown-content z-50 menu p-2 shadow-xl bg-base-100 rounded-box w-52 border border-stone-200/80 dark:border-stone-800">
               <li v-for="cat in CATEGORY_LINKS" :key="cat.slug">
                 <router-link :to="`/shop?category=${cat.slug}`">{{ cat.label }}</router-link>
               </li>
@@ -105,14 +105,14 @@
             </button>
             <ul
               tabindex="0"
-              class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-xl bg-base-100 rounded-box w-52 border border-slate-200/80 dark:border-slate-800"
+              class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-xl bg-base-100 rounded-box w-52 border border-stone-200/80 dark:border-stone-800"
             >
-              <li class="px-3 py-1 font-bold text-xs text-base-content/60 border-b border-slate-100 dark:border-slate-800">
+              <li class="px-3 py-1 font-bold text-xs text-base-content/60 border-b border-stone-100 dark:border-stone-800">
                 Signed in as {{ authStore.user?.username || authStore.user?.email }}
               </li>
               <li><router-link to="/account">My Orders</router-link></li>
               <li><router-link to="/profile">Profile Settings</router-link></li>
-              <li class="border-t border-slate-100 dark:border-slate-800">
+              <li class="border-t border-stone-100 dark:border-stone-800">
                 <button @click="handleLogout" class="text-error font-semibold">Logout</button>
               </li>
             </ul>

@@ -5,8 +5,8 @@
     :icon="Mail"
     :error-message="errorMessage"
     google-label="Continue with Google"
-    @google-success="onGoogleSuccess"
-    @google-error="onGoogleError"
+    @google-success="onOAuthSuccess"
+    @google-error="onOAuthError"
   >
     <form @submit.prevent="handleLogin" class="space-y-4">
       <div>
@@ -54,46 +54,27 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { Mail } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
-import { useToastStore } from '../stores/toast'
+import { useAuthForm } from '../composables/useAuthForm'
 import AuthCardLayout from '../components/auth/AuthCardLayout.vue'
 
-const router = useRouter()
-const route = useRoute()
 const authStore = useAuthStore()
-const toastStore = useToastStore()
+const { loading, errorMessage, submitAuth, onOAuthSuccess, onOAuthError } = useAuthForm({
+  useQueryRedirect: true,
+  oauthSuccessMessage: 'Signed in with Google!',
+})
 
 const email = ref('')
 const password = ref('')
-const loading = ref(false)
-const errorMessage = ref('')
 
 async function handleLogin() {
-  errorMessage.value = ''
-  loading.value = true
-  try {
-    await authStore.login(email.value, password.value)
-    toastStore.success('Signed in successfully!')
-    const redirect = route.query.redirect || '/account'
-    router.push(redirect)
-  } catch (err) {
-    console.error('Login error:', err)
-    errorMessage.value = 'Invalid email/username or password.'
-  } finally {
-    loading.value = false
-  }
-}
-
-function onGoogleSuccess() {
-  toastStore.success('Signed in with Google!')
-  const redirect = route.query.redirect || '/account'
-  router.push(redirect)
-}
-
-function onGoogleError(msg) {
-  errorMessage.value = msg
+  await submitAuth(
+    () => authStore.login(email.value, password.value),
+    {
+      successMessage: 'Signed in successfully!',
+      fallbackError: 'Invalid email/username or password.',
+    }
+  )
 }
 </script>
-

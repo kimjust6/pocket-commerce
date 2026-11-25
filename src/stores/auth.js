@@ -35,11 +35,15 @@ export const useAuthStore = defineStore('auth', () => {
     return authData
   }
 
-  async function loginWithGoogle() {
-    const authData = await loginWithOAuth2('google')
+  async function loginWithProvider(provider = 'google') {
+    const authData = await loginWithOAuth2(provider)
     user.value = authData.record
     token.value = authData.token
     return authData
+  }
+
+  function loginWithGoogle() {
+    return loginWithProvider('google')
   }
 
   async function register(payload) {
@@ -66,6 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     avatarUrl,
     login,
+    loginWithProvider,
     loginWithGoogle,
     register,
     logout,

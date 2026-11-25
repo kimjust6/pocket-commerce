@@ -91,32 +91,19 @@ routerAdd("GET", "/{$}", (e) => {
         products = $app.findRecordsByFilter("products", "status = 'active'", "-created", 8, 0);
     } catch (_) {}
 
-    const bodyHtml =
-        `<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">` +
-        seo.renderNavHtml(categories) +
-        `<main>` +
-        `<h1>Handcrafted Greeting Cards</h1>` +
-        `<p>${seo.escapeHtml(seo.DEFAULT_DESCRIPTION)}</p>` +
-        seo.renderProductListHtml(products) +
-        `</main>` +
-        `</div>`;
+    const bodyHtml = seo.buildCatalogBodyHtml({
+        categories,
+        title: "Handcrafted Greeting Cards",
+        description: seo.DEFAULT_DESCRIPTION,
+        products,
+    });
 
     const html = seo.renderSeoHtml(origin, __hooks, {
         title: "Handcrafted Greeting Cards",
         description: seo.DEFAULT_DESCRIPTION,
         canonicalPath: "/",
         bodyHtml,
-        jsonLd: {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: seo.SITE_NAME,
-            url: `${origin}/`,
-            potentialAction: {
-                "@type": "SearchAction",
-                target: `${origin}/shop?search={search_term_string}`,
-                "query-input": "required name=search_term_string",
-            },
-        },
+        jsonLd: seo.buildWebsiteSchema(origin),
     });
     return e.html(200, html);
 });
@@ -129,6 +116,7 @@ routerAdd("GET", "/shop", (e) => {
         "Browse handcrafted greeting cards for birthdays, thank you notes, love, foodies, and animal lovers.";
     let canonicalPath = "/shop";
     let filter = "status = 'active'";
+    let filterParams = null;
     let categories = [];
     let products = [];
 
@@ -144,24 +132,19 @@ routerAdd("GET", "/shop", (e) => {
                 title = `${catName} Greeting Cards`;
                 description = `Shop handcrafted ${catName.toLowerCase()} greeting cards printed locally on 100% recycled paper stock.`;
                 canonicalPath = `/shop?category=${encodeURIComponent(categorySlug)}`;
-                filter = `status = 'active' && category = '${cat.id}'`;
+                filter = "status = 'active' && category = {:catId}";
+                filterParams = { catId: cat.id };
             }
         } catch (_) {}
     }
 
     try {
-        products = $app.findRecordsByFilter("products", filter, "-created", 60, 0);
+        products = filterParams
+            ? $app.findRecordsByFilter("products", filter, "-created", 60, 0, filterParams)
+            : $app.findRecordsByFilter("products", filter, "-created", 60, 0);
     } catch (_) {}
 
-    const bodyHtml =
-        `<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">` +
-        seo.renderNavHtml(categories) +
-        `<main>` +
-        `<h1>${seo.escapeHtml(title)}</h1>` +
-        `<p>${seo.escapeHtml(description)}</p>` +
-        seo.renderProductListHtml(products) +
-        `</main>` +
-        `</div>`;
+    const bodyHtml = seo.buildCatalogBodyHtml({ categories, title, description, products });
 
     const origin = seo.getOrigin(e);
     const html = seo.renderSeoHtml(origin, __hooks, { title, description, canonicalPath, bodyHtml });
@@ -193,50 +176,30 @@ routerAdd("GET", "/shop/card/{slug}", (e) => {
 
             let reviews = [];
             try {
-                reviews = $app.findRecordsByFilter("reviews", `product = '${product.id}'`, "", 200, 0);
+                reviews = $app.findRecordsByFilter("reviews", "product = {:productId}", "", 200, 0, {
+                    productId: product.id,
+                });
             } catch (_) {}
 
             const productSlug = product.getString("slug") || slug;
             const canonicalPath = `/shop/card/${productSlug}`;
-            const productSchema = {
-                "@context": "https://schema.org",
-                "@type": "Product",
+            const productSchema = seo.buildProductSchema({
+                product,
                 name,
                 description,
-                image: [seo.resolveUrl(primaryImage, origin)],
-                sku: product.id,
-                brand: { "@type": "Brand", name: seo.SITE_NAME },
-                offers: {
-                    "@type": "Offer",
-                    url: seo.resolveUrl(canonicalPath, origin),
-                    priceCurrency: "USD",
-                    price: Number(minPrice !== null ? minPrice : 4.99).toFixed(2),
-                    availability: "https://schema.org/InStock",
-                },
-            };
+                primaryImage,
+                minPrice,
+                canonicalPath,
+                reviews,
+                origin,
+            });
 
-            if (reviews.length > 0) {
-                let sum = 0;
-                for (let i = 0; i < reviews.length; i++) {
-                    sum += Number(reviews[i].get("rating") || 5);
-                }
-                productSchema.aggregateRating = {
-                    "@type": "AggregateRating",
-                    ratingValue: (sum / reviews.length).toFixed(1),
-                    reviewCount: reviews.length,
-                };
-            }
-
-            const bodyHtml =
-                `<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">` +
-                `<nav aria-label="Breadcrumb"><a href="/">Home</a> <a href="/shop">Shop</a></nav>` +
-                `<main>` +
-                `<h1>${seo.escapeHtml(name)}</h1>` +
-                `<img src="${seo.escapeHtml(primaryImage)}" alt="${seo.escapeHtml(name)}" />` +
-                `<p>$${Number(minPrice !== null ? minPrice : 4.99).toFixed(2)}</p>` +
-                `<p>${seo.escapeHtml(description)}</p>` +
-                `</main>` +
-                `</div>`;
+            const bodyHtml = seo.buildProductBodyHtml({
+                name,
+                primaryImage,
+                minPrice,
+                description,
+            });
 
             const html = seo.renderSeoHtml(origin, __hooks, {
                 title: name,

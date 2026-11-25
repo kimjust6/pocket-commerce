@@ -1,5 +1,5 @@
 <template>
-  <div class="store-card bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden flex flex-col">
+  <div class="store-card bg-base-100 border border-stone-200/80 dark:border-stone-800 rounded-2xl shadow-xs overflow-hidden flex flex-col">
     <!-- Image placeholder -->
     <div class="skeleton aspect-4/3 w-full rounded-none"></div>
 
@@ -13,7 +13,7 @@
       </div>
 
       <!-- Price & Button placeholder -->
-      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+      <div class="pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between gap-2">
         <div class="skeleton h-5 w-16 rounded-md"></div>
         <div class="skeleton h-8 w-16 rounded-xl"></div>
       </div>

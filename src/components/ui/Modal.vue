@@ -2,7 +2,7 @@
   <teleport to="body">
     <div v-if="isOpen" class="modal modal-open z-50">
       <div
-        class="modal-box rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-base-100 shadow-2xl relative"
+        class="modal-box rounded-3xl border border-stone-200/80 dark:border-stone-800 bg-base-100 shadow-2xl relative"
         :class="maxWidthClass"
         role="dialog"
         aria-modal="true"
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Actions / Footer -->
-        <div v-if="$slots.actions" class="modal-action mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
+        <div v-if="$slots.actions" class="modal-action mt-6 pt-4 border-t border-stone-100 dark:border-stone-800 flex justify-end gap-2">
           <slot name="actions"></slot>
         </div>
       </div>

@@ -34,15 +34,10 @@ vi.mock('pocketbase', () => ({
   }),
 }))
 
-const {
-  getFileUrl,
-  getCategories,
-  getProducts,
-  getProduct,
-  createOrder,
-  getUserOrders,
-  getUserAddresses,
-} = await import('../src/services/pocketbase.js')
+const { getFileUrl } = await import('../src/services/pbClient.js')
+const { getCategories, getProducts, getProduct } = await import('../src/services/catalogService.js')
+const { createOrder, getUserOrders } = await import('../src/services/orderService.js')
+const { getUserAddresses } = await import('../src/services/addressService.js')
 
 describe('PocketBase Service', () => {
   beforeEach(() => {
@@ -75,12 +70,12 @@ describe('PocketBase Service', () => {
   })
 
   describe('getCategories', () => {
-    it('returns sorted categories and falls back to [] on error', async () => {
+    it('returns sorted categories and propagates errors', async () => {
       mockPb.collection('categories').getFullList.mockResolvedValue([{ id: 'c1', name: 'Birthday' }])
       expect(await getCategories()).toEqual([{ id: 'c1', name: 'Birthday' }])
 
       mockPb.collection('categories').getFullList.mockRejectedValue(new Error('network'))
-      expect(await getCategories()).toEqual([])
+      await expect(getCategories()).rejects.toThrow('network')
     })
   })
 
@@ -128,10 +123,9 @@ describe('PocketBase Service', () => {
       expect(res.items[0].primaryImage).toBe('/img1.webp')
     })
 
-    it('returns empty pagination object on error', async () => {
+    it('propagates errors from product list query', async () => {
       mockPb.collection('products').getList.mockRejectedValue(new Error('db fail'))
-      const res = await getProducts({ perPage: 12 })
-      expect(res).toEqual({ items: [], totalItems: 0, totalPages: 0, page: 1, perPage: 12 })
+      await expect(getProducts({ perPage: 12 })).rejects.toThrow('db fail')
     })
   })
 

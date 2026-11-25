@@ -1,12 +1,12 @@
 <template>
   <div class="py-16 bg-base-100 min-h-screen flex items-center justify-center">
     <div class="container mx-auto px-4 max-w-md">
-      <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-md space-y-6">
+      <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-8 shadow-md space-y-6">
         <div class="text-center space-y-2">
           <div class="inline-flex p-3 rounded-2xl bg-primary/10 text-primary">
             <component :is="icon" class="w-7 h-7" />
           </div>
-          <h1 class="text-2xl font-black text-base-content tracking-tight">{{ title }}</h1>
+          <h1 class="font-serif text-2xl font-bold text-base-content tracking-tight">{{ title }}</h1>
           <p class="text-xs text-base-content/60">{{ subtitle }}</p>
         </div>
 
@@ -14,8 +14,11 @@
           {{ errorMessage }}
         </div>
 
-        <GoogleAuthButton
+        <OAuthButton
+          :provider="oauthProvider"
+          :provider-name="oauthProviderName"
           :label="googleLabel"
+          :icon-src="oauthIconSrc"
           @success="$emit('googleSuccess')"
           @error="(msg) => $emit('googleError', msg)"
         />
@@ -24,7 +27,7 @@
 
         <slot />
 
-        <div class="border-t border-slate-200 dark:border-slate-800 pt-4 text-center text-xs text-base-content/60">
+        <div class="border-t border-stone-200 dark:border-stone-800 pt-4 text-center text-xs text-base-content/60">
           <slot name="footer" />
         </div>
       </div>
@@ -33,7 +36,7 @@
 </template>
 
 <script setup>
-import GoogleAuthButton from './GoogleAuthButton.vue'
+import OAuthButton from './OAuthButton.vue'
 
 defineProps({
   title: { type: String, required: true },
@@ -41,8 +44,10 @@ defineProps({
   icon: { type: [Object, Function], required: true },
   errorMessage: { type: String, default: '' },
   googleLabel: { type: String, required: true },
+  oauthProvider: { type: String, default: 'google' },
+  oauthProviderName: { type: String, default: 'Google' },
+  oauthIconSrc: { type: String, default: '/svg/google.svg' },
 })
 
 defineEmits(['googleSuccess', 'googleError'])
 </script>
-

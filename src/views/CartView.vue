@@ -11,7 +11,7 @@
       <!-- Empty State -->
       <div
         v-if="cartStore.items.length === 0"
-        class="text-center py-20 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-4 max-w-lg mx-auto"
+        class="text-center py-20 bg-base-200/40 rounded-3xl border border-stone-200/80 dark:border-stone-800 p-8 space-y-4 max-w-lg mx-auto"
       >
         <ShoppingBag class="w-12 h-12 text-base-content/30 mx-auto" />
         <h2 class="text-xl font-extrabold text-base-content">Your cart is empty</h2>

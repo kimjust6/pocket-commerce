@@ -2,15 +2,10 @@ import { pb } from './pbClient'
 
 export async function getUserAddresses() {
   if (!pb.authStore.isValid || !pb.authStore.model) return []
-  try {
-    return await pb.collection('addresses').getFullList({
-      filter: `user = '${pb.authStore.model.id}'`,
-      sort: '-created',
-    })
-  } catch (err) {
-    console.error('Error fetching addresses:', err)
-    return []
-  }
+  return await pb.collection('addresses').getFullList({
+    filter: pb.filter('user = {:userId}', { userId: pb.authStore.model.id }),
+    sort: '-created',
+  })
 }
 
 export async function createAddress(addressData) {

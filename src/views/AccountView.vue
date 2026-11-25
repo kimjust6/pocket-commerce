@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 md:px-8 max-w-7xl">
       <Breadcrumbs :items="[{ label: 'Home', to: '/' }, { label: 'My Account' }]" />
 
-      <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div class="flex items-center gap-4">
           <div class="avatar">
             <div class="w-16 rounded-full ring-2 ring-primary/40 bg-base-100">
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 mb-8">
+      <div class="flex gap-2 border-b border-stone-200 dark:border-stone-800 mb-8">
         <button
           v-for="tab in tabs"
           :key="tab.id"

@@ -86,7 +86,14 @@ function renderSeoHtml(originOrEvent, hooksDir, opts) {
 
 function getMinVariantPrice(productId) {
     try {
-        const variants = $app.findRecordsByFilter("product_variants", `product = '${productId}'`, "", 50, 0);
+        const variants = $app.findRecordsByFilter(
+            "product_variants",
+            "product = {:productId}",
+            "",
+            50,
+            0,
+            { productId }
+        );
         let minPrice = null;
         for (let i = 0; i < variants.length; i++) {
             const p = Number(variants[i].get("price"));
@@ -100,6 +107,36 @@ function getMinVariantPrice(productId) {
     }
 }
 
+function getMinVariantPricesByProduct(products) {
+    const map = {};
+    if (!products || products.length === 0) return map;
+    try {
+        const params = {};
+        const clauses = [];
+        for (let i = 0; i < products.length; i++) {
+            const key = `p${i}`;
+            params[key] = products[i].id;
+            clauses.push(`product = {:${key}}`);
+        }
+        const variants = $app.findRecordsByFilter(
+            "product_variants",
+            clauses.join(" || "),
+            "",
+            500,
+            0,
+            params
+        );
+        for (let i = 0; i < variants.length; i++) {
+            const prodId = variants[i].getString("product");
+            const p = Number(variants[i].get("price"));
+            if (!isNaN(p) && (map[prodId] === undefined || p < map[prodId])) {
+                map[prodId] = p;
+            }
+        }
+    } catch (_) {}
+    return map;
+}
+
 function renderNavHtml(categories) {
     const catLinks = (categories || [])
         .map((c) => {
@@ -111,8 +148,9 @@ function renderNavHtml(categories) {
     return `<header><nav aria-label="Primary"><a href="/">Pocket Commerce</a> <a href="/shop">Shop All</a> ${catLinks}</nav></header>`;
 }
 
-function renderProductListHtml(products) {
+function renderProductListHtml(products, minPricesByProduct) {
     if (!products || products.length === 0) return "";
+    const priceMap = minPricesByProduct || getMinVariantPricesByProduct(products);
     const items = products
         .map((p) => {
             const slug = p.getString("slug");
@@ -120,7 +158,8 @@ function renderProductListHtml(products) {
             const desc = p.getString("description") || "";
             const images = parseProductImages(p.get("images"));
             const img = images[0] || DEFAULT_IMAGE;
-            const price = getMinVariantPrice(p.id).toFixed(2);
+            const rawPrice = priceMap[p.id] !== undefined ? priceMap[p.id] : 4.99;
+            const price = Number(rawPrice).toFixed(2);
             return (
                 `<article>` +
                 `<a href="/shop/card/${encodeURIComponent(slug)}">` +
@@ -159,6 +198,80 @@ const NO_INDEX_TITLES = {
     "/register": "Create Account",
 };
 
+function buildWebsiteSchema(origin) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: `${origin}/`,
+        potentialAction: {
+            "@type": "SearchAction",
+            target: `${origin}/shop?search={search_term_string}`,
+            "query-input": "required name=search_term_string",
+        },
+    };
+}
+
+function buildProductSchema({ product, name, description, primaryImage, minPrice, canonicalPath, reviews, origin }) {
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name,
+        description,
+        image: [resolveUrl(primaryImage, origin)],
+        sku: product.id,
+        brand: { "@type": "Brand", name: SITE_NAME },
+        offers: {
+            "@type": "Offer",
+            url: resolveUrl(canonicalPath, origin),
+            priceCurrency: "USD",
+            price: Number(minPrice !== null ? minPrice : 4.99).toFixed(2),
+            availability: "https://schema.org/InStock",
+        },
+    };
+
+    if (reviews && reviews.length > 0) {
+        let sum = 0;
+        for (let i = 0; i < reviews.length; i++) {
+            sum += Number(reviews[i].get("rating") || 5);
+        }
+        schema.aggregateRating = {
+            "@type": "AggregateRating",
+            ratingValue: (sum / reviews.length).toFixed(1),
+            reviewCount: reviews.length,
+        };
+    }
+
+    return schema;
+}
+
+function buildCatalogBodyHtml({ categories, title, description, products }) {
+    return (
+        `<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">` +
+        renderNavHtml(categories) +
+        `<main>` +
+        `<h1>${escapeHtml(title)}</h1>` +
+        `<p>${escapeHtml(description)}</p>` +
+        renderProductListHtml(products) +
+        `</main>` +
+        `</div>`
+    );
+}
+
+function buildProductBodyHtml({ name, primaryImage, minPrice, description }) {
+    return (
+        `<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">` +
+        `<nav aria-label="Breadcrumb"><a href="/">Home</a> <a href="/shop">Shop</a></nav>` +
+        `<main>` +
+        `<h1>${escapeHtml(name)}</h1>` +
+        `<img src="${escapeHtml(primaryImage)}" alt="${escapeHtml(name)}" />` +
+        `<p>$${Number(minPrice !== null ? minPrice : 4.99).toFixed(2)}</p>` +
+        `<p>${escapeHtml(description)}</p>` +
+        `</main>` +
+        `</div>`
+    );
+}
+
 module.exports = {
     SITE_NAME,
     DEFAULT_DESCRIPTION,
@@ -170,6 +283,11 @@ module.exports = {
     renderSeoHtml,
     parseProductImages,
     getMinVariantPrice,
+    getMinVariantPricesByProduct,
     renderNavHtml,
     renderProductListHtml,
+    buildWebsiteSchema,
+    buildProductSchema,
+    buildCatalogBodyHtml,
+    buildProductBodyHtml,
 };

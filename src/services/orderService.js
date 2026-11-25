@@ -34,13 +34,8 @@ export async function createOrder(orderPayload, items) {
 
 export async function getUserOrders() {
   if (!pb.authStore.isValid || !pb.authStore.model) return []
-  try {
-    return await pb.collection('orders').getFullList({
-      filter: `user = '${pb.authStore.model.id}'`,
-      sort: '-created',
-    })
-  } catch (err) {
-    console.error('Error fetching user orders:', err)
-    return []
-  }
+  return await pb.collection('orders').getFullList({
+    filter: pb.filter('user = {:userId}', { userId: pb.authStore.model.id }),
+    sort: '-created',
+  })
 }

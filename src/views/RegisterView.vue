@@ -5,8 +5,8 @@
     :icon="UserPlus"
     :error-message="errorMessage"
     google-label="Sign up with Google"
-    @google-success="onGoogleSuccess"
-    @google-error="onGoogleError"
+    @google-success="onOAuthSuccess"
+    @google-error="onOAuthError"
   >
     <form @submit.prevent="handleRegister" class="space-y-4">
       <div v-for="field in registerFields" :key="field.key">
@@ -42,15 +42,15 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { UserPlus } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
-import { useToastStore } from '../stores/toast'
+import { useAuthForm } from '../composables/useAuthForm'
 import AuthCardLayout from '../components/auth/AuthCardLayout.vue'
 
-const router = useRouter()
 const authStore = useAuthStore()
-const toastStore = useToastStore()
+const { loading, errorMessage, submitAuth, onOAuthSuccess, onOAuthError } = useAuthForm({
+  oauthSuccessMessage: 'Welcome to Pocket Commerce!',
+})
 
 const form = ref({
   name: '',
@@ -59,8 +59,6 @@ const form = ref({
   password: '',
   passwordConfirm: '',
 })
-const loading = ref(false)
-const errorMessage = ref('')
 
 const registerFields = [
   { key: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your Name' },
@@ -71,32 +69,17 @@ const registerFields = [
 ]
 
 async function handleRegister() {
-  errorMessage.value = ''
   if (form.value.password !== form.value.passwordConfirm) {
     errorMessage.value = 'Passwords do not match.'
     return
   }
 
-  loading.value = true
-  try {
-    await authStore.register(form.value)
-    toastStore.success('Welcome to Pocket Commerce!')
-    router.push('/account')
-  } catch (err) {
-    console.error('Registration error:', err)
-    errorMessage.value = err.message || 'Could not register account. Please try another email or username.'
-  } finally {
-    loading.value = false
-  }
-}
-
-function onGoogleSuccess() {
-  toastStore.success('Welcome to Pocket Commerce!')
-  router.push('/account')
-}
-
-function onGoogleError(msg) {
-  errorMessage.value = msg
+  await submitAuth(
+    () => authStore.register(form.value),
+    {
+      successMessage: 'Welcome to Pocket Commerce!',
+      fallbackError: (err) => err?.message || 'Could not register account. Please try another email or username.',
+    }
+  )
 }
 </script>
-

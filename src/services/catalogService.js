@@ -65,14 +65,9 @@ export function normalizeProduct(product, variants = [], reviews = undefined) {
 }
 
 export async function getCategories() {
-  try {
-    return await pb.collection('categories').getFullList({
-      sort: 'name',
-    })
-  } catch (err) {
-    console.error('Error fetching categories:', err)
-    return []
-  }
+  return await pb.collection('categories').getFullList({
+    sort: 'name',
+  })
 }
 
 export async function getProducts(options = {}) {
@@ -105,49 +100,46 @@ export async function getProducts(options = {}) {
 
   const filter = filterParts.join(' && ')
 
-  try {
-    const result = await pb.collection('products').getList(page, perPage, {
-      filter,
-      sort,
-      expand: 'category',
-    })
+  const result = await pb.collection('products').getList(page, perPage, {
+    filter,
+    sort,
+    expand: 'category',
+  })
 
-    const productIds = result.items.map((p) => p.id)
-    const variantsByProduct = {}
-    if (productIds.length > 0) {
-      try {
-        const variantsFilter = productIds.map((id) => `product = '${id}'`).join(' || ')
-        const variants = await pb.collection('product_variants').getFullList({
-          filter: variantsFilter,
-        })
-        variants.forEach((v) => {
-          if (!variantsByProduct[v.product]) {
-            variantsByProduct[v.product] = []
-          }
-          variantsByProduct[v.product].push(v)
-        })
-      } catch (vErr) {
-        console.warn('Variants fetch warning:', vErr)
-      }
+  const productIds = result.items.map((p) => p.id)
+  const variantsByProduct = {}
+  if (productIds.length > 0) {
+    try {
+      const variantsFilter = productIds
+        .map((id, i) => pb.filter(`product = {:p${i}}`, { [`p${i}`]: id }))
+        .join(' || ')
+      const variants = await pb.collection('product_variants').getFullList({
+        filter: variantsFilter,
+      })
+      variants.forEach((v) => {
+        if (!variantsByProduct[v.product]) {
+          variantsByProduct[v.product] = []
+        }
+        variantsByProduct[v.product].push(v)
+      })
+    } catch (vErr) {
+      console.warn('Variants fetch warning:', vErr)
     }
+  }
 
-    const processedItems = result.items.map((p) =>
-      normalizeProduct(p, variantsByProduct[p.id] || [])
-    )
+  const processedItems = result.items.map((p) =>
+    normalizeProduct(p, variantsByProduct[p.id] || [])
+  )
 
-    const filteredItems = processedItems.filter((p) => {
-      if (minPrice !== null && minPrice !== '' && p.price < Number(minPrice)) return false
-      if (maxPrice !== null && maxPrice !== '' && p.price > Number(maxPrice)) return false
-      return true
-    })
+  const filteredItems = processedItems.filter((p) => {
+    if (minPrice !== null && minPrice !== '' && p.price < Number(minPrice)) return false
+    if (maxPrice !== null && maxPrice !== '' && p.price > Number(maxPrice)) return false
+    return true
+  })
 
-    return {
-      ...result,
-      items: filteredItems,
-    }
-  } catch (err) {
-    console.error('Error fetching products:', err)
-    return { items: [], totalItems: 0, totalPages: 0, page: 1, perPage }
+  return {
+    ...result,
+    items: filteredItems,
   }
 }
 
@@ -167,13 +159,13 @@ export async function getProduct(slugOrId) {
     if (!product) return null
 
     const variants = await pb.collection('product_variants').getFullList({
-      filter: `product = '${product.id}'`,
+      filter: pb.filter('product = {:productId}', { productId: product.id }),
     })
 
     let reviews = []
     try {
       reviews = await pb.collection('reviews').getFullList({
-        filter: `product = '${product.id}'`,
+        filter: pb.filter('product = {:productId}', { productId: product.id }),
         expand: 'user',
         sort: '-created',
       })

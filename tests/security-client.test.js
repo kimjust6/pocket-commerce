@@ -36,9 +36,9 @@ vi.mock('pocketbase', () => ({
   }),
 }))
 
-const { getUserOrders, getUserAddresses, getProducts, getProduct } = await import(
-  '../src/services/pocketbase.js'
-)
+const { getUserOrders } = await import('../src/services/orderService.js')
+const { getUserAddresses } = await import('../src/services/addressService.js')
+const { getProducts, getProduct } = await import('../src/services/catalogService.js')
 const { router } = await import('../src/router/index.js')
 
 describe('Security: Client Auth Guards & Parameterized Queries', () => {

@@ -29,7 +29,7 @@
         <!-- Checkout Form Column -->
         <div class="lg:col-span-7 space-y-8">
           <!-- Step 1: Contact Information -->
-          <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 space-y-4">
+          <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 space-y-4">
             <div class="flex items-center justify-between">
               <h2 class="text-base font-extrabold text-base-content flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-primary text-primary-content text-xs flex items-center justify-center font-bold">1</span>
@@ -54,7 +54,7 @@
           </div>
 
           <!-- Step 2: Shipping Address -->
-          <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 space-y-4">
+          <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 space-y-4">
             <div class="flex items-center justify-between">
               <h2 class="text-base font-extrabold text-base-content flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-primary text-primary-content text-xs flex items-center justify-center font-bold">2</span>
@@ -141,7 +141,7 @@
           </div>
 
           <!-- Step 3: Payment Method -->
-          <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 space-y-4">
+          <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 space-y-4">
             <h2 class="text-base font-extrabold text-base-content flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-primary text-primary-content text-xs flex items-center justify-center font-bold">3</span>
               Payment Method
@@ -153,7 +153,7 @@
                 :key="option.value"
                 :class="[
                   'cursor-pointer border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all',
-                  paymentMethod === option.value ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-slate-200 dark:border-slate-800'
+                  paymentMethod === option.value ? 'border-primary bg-primary/5 shadow-xs font-bold' : 'border-stone-200 dark:border-stone-800'
                 ]"
               >
                 <input type="radio" :value="option.value" v-model="paymentMethod" class="hidden" />
@@ -184,7 +184,7 @@
 
         <!-- Order Summary Column -->
         <div class="lg:col-span-5 space-y-6">
-          <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-xs space-y-5">
+          <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 shadow-xs space-y-5">
             <h2 class="text-lg font-extrabold text-base-content tracking-tight">In Your Order</h2>
 
             <div class="space-y-1 max-h-72 overflow-y-auto pr-1">

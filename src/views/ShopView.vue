@@ -58,7 +58,7 @@
         <!-- Sidebar Filters -->
         <aside class="space-y-6">
           <!-- Categories Filter -->
-          <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 space-y-3">
             <h3 class="font-extrabold text-sm text-base-content uppercase tracking-wider">Categories</h3>
             <ul class="space-y-1">
               <li>
@@ -87,7 +87,7 @@
           </div>
 
           <!-- Price Range Filter -->
-          <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 space-y-3">
             <h3 class="font-extrabold text-sm text-base-content uppercase tracking-wider">Price Range</h3>
             <div class="grid grid-cols-2 gap-2">
               <div>
@@ -126,7 +126,7 @@
           </div>
 
           <!-- Empty State -->
-          <div v-else-if="products.length === 0" class="text-center py-16 bg-base-200/40 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-8 space-y-3">
+          <div v-else-if="products.length === 0" class="text-center py-16 bg-base-200/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 p-8 space-y-3">
             <Search class="w-10 h-10 text-base-content/30 mx-auto" />
             <h3 class="font-extrabold text-lg text-base-content">No greeting cards found</h3>
             <p class="text-xs text-base-content/60">Try adjusting your filters or search keywords.</p>

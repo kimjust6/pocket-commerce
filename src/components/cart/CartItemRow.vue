@@ -2,12 +2,12 @@
   <!-- 1. Drawer Mode -->
   <div
     v-if="mode === 'drawer'"
-    class="flex items-center gap-3 bg-base-200/40 p-3 rounded-xl border border-slate-200/60 dark:border-slate-800"
+    class="flex items-center gap-3 bg-base-200/40 p-3 rounded-xl border border-stone-200/60 dark:border-stone-800"
   >
     <img
       :src="item.image"
       :alt="item.name"
-      class="w-16 h-16 object-cover rounded-lg bg-base-100 flex-shrink-0 border border-slate-200/60 dark:border-slate-800"
+      class="w-16 h-16 object-cover rounded-lg bg-base-100 flex-shrink-0 border border-stone-200/60 dark:border-stone-800"
       loading="lazy"
     />
     <div class="flex-1 min-w-0">
@@ -40,9 +40,9 @@
   <!-- 2. Review Mode (Used in Checkout) -->
   <div
     v-else-if="mode === 'review'"
-    class="flex items-center gap-3 py-2 border-b border-slate-200/60 dark:border-slate-800"
+    class="flex items-center gap-3 py-2 border-b border-stone-200/60 dark:border-stone-800"
   >
-    <div class="relative w-14 h-14 rounded-lg bg-base-100 overflow-hidden flex-shrink-0 border border-slate-200/60 dark:border-slate-800">
+    <div class="relative w-14 h-14 rounded-lg bg-base-100 overflow-hidden flex-shrink-0 border border-stone-200/60 dark:border-stone-800">
       <img :src="item.image" :alt="item.name" class="w-full h-full object-cover" loading="lazy" />
       <span class="absolute top-0 right-0 badge badge-primary badge-xs font-bold text-[9px]">
         {{ item.quantity }}
@@ -60,13 +60,13 @@
   <!-- 3. Standard Table Mode (Used in Cart View) -->
   <div
     v-else
-    class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+    class="bg-base-100 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
   >
     <div class="flex items-center gap-4 flex-1 min-w-0">
       <img
         :src="item.image"
         :alt="item.name"
-        class="w-20 h-20 object-cover rounded-xl bg-base-200 flex-shrink-0 border border-slate-200/60 dark:border-slate-800"
+        class="w-20 h-20 object-cover rounded-xl bg-base-200 flex-shrink-0 border border-stone-200/60 dark:border-stone-800"
         loading="lazy"
       />
       <div class="min-w-0 flex-1">
@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+    <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-stone-800">
       <!-- Quantity Modifier -->
       <QuantitySelector
         :quantity="item.quantity"

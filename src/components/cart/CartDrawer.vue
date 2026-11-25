@@ -8,7 +8,7 @@
 
     <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
       <div
-        class="w-screen max-w-md bg-base-100 border-l border-slate-200/80 dark:border-slate-800 shadow-2xl flex flex-col"
+        class="w-screen max-w-md bg-base-100 border-l border-stone-200/80 dark:border-stone-800 shadow-2xl flex flex-col"
       >
         <!-- Drawer Header -->
         <div class="p-6 border-b border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
@@ -27,7 +27,7 @@
         </div>
 
         <!-- Free shipping progress bar -->
-        <div class="bg-base-200/60 px-6 py-3 border-b border-slate-100 dark:border-slate-800 text-xs">
+        <div class="bg-base-200/60 px-6 py-3 border-b border-stone-100 dark:border-stone-800 text-xs">
           <div v-if="cartStore.subtotal >= 35" class="text-success font-bold flex items-center gap-1.5">
             <CheckCircle2 class="w-4 h-4" />
             You have unlocked Free Standard Shipping.
@@ -71,7 +71,7 @@
         </div>
 
         <!-- Drawer Footer -->
-        <div v-if="cartStore.items.length > 0" class="p-6 border-t border-slate-100 dark:border-slate-800 bg-base-100 space-y-4">
+        <div v-if="cartStore.items.length > 0" class="p-6 border-t border-stone-100 dark:border-stone-800 bg-base-100 space-y-4">
           <div class="flex justify-between items-center text-sm">
             <span class="text-base-content/70">Subtotal</span>
             <span class="text-lg font-extrabold text-base-content">{{ formatPrice(cartStore.subtotal) }}</span>

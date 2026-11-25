@@ -18,7 +18,7 @@
       <div v-for="n in 2" :key="n" class="skeleton h-32 w-full rounded-2xl"></div>
     </div>
 
-    <div v-else-if="addresses.length === 0" class="text-center py-12 bg-base-200/40 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 space-y-3">
+    <div v-else-if="addresses.length === 0" class="text-center py-12 bg-base-200/40 rounded-3xl border border-stone-200/80 dark:border-stone-800 p-8 space-y-3">
       <MapPin class="w-10 h-10 text-base-content/30 mx-auto" />
       <h4 class="font-bold text-sm text-base-content">No saved addresses</h4>
       <p class="text-xs text-base-content/60">Save an address for faster checkout on future orders.</p>
@@ -28,7 +28,7 @@
       <div
         v-for="addr in addresses"
         :key="addr.id"
-        class="bg-base-100 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex justify-between items-start"
+        class="bg-base-100 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 shadow-xs flex justify-between items-start"
       >
         <div class="space-y-1 text-xs text-base-content/80">
           <h4 class="font-bold text-sm text-base-content">{{ addr.name }}</h4>

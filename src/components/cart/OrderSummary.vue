@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-xs space-y-5">
+  <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 shadow-xs space-y-5">
     <h2 class="text-lg font-extrabold text-base-content tracking-tight">
       {{ title }}
     </h2>
@@ -30,14 +30,14 @@
         <span class="font-bold text-base-content">{{ formatPrice(cartStore.taxAmount) }}</span>
       </div>
 
-      <div class="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between items-baseline">
+      <div class="border-t border-stone-200 dark:border-stone-700 pt-3 flex justify-between items-baseline">
         <span class="text-base font-extrabold text-base-content">Total</span>
         <span class="text-2xl font-black text-primary">{{ formatPrice(cartStore.total) }}</span>
       </div>
     </div>
 
     <!-- Promo Code Input -->
-    <div v-if="showCoupon" class="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-2">
+    <div v-if="showCoupon" class="pt-2 border-t border-stone-200 dark:border-stone-700 space-y-2">
       <label class="text-xs font-bold text-base-content/80 block">Promo Code</label>
       <div class="join w-full">
         <input

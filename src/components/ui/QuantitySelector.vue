@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'join border border-slate-200 dark:border-slate-700 bg-base-100',
+      'join border border-stone-200 dark:border-stone-700 bg-base-100',
       sizeClasses.container,
     ]"
   >

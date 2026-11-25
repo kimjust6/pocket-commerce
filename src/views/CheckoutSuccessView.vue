@@ -6,12 +6,32 @@
         <p class="text-sm text-base-content/70 font-medium">Verifying your Stripe payment...</p>
       </div>
 
+      <div v-else-if="verificationError" class="py-8 space-y-5">
+        <div class="inline-flex p-4 rounded-3xl bg-error/10 text-error">
+          <AlertCircle class="w-12 h-12" />
+        </div>
+        <h1 class="font-serif text-3xl font-bold text-base-content tracking-tight">
+          Payment Verification Pending
+        </h1>
+        <p class="text-sm text-base-content/70 leading-relaxed max-w-md mx-auto">
+          {{ verificationError }}
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+          <router-link to="/account" class="btn btn-primary rounded-xl font-bold px-8">
+            View My Orders
+          </router-link>
+          <router-link to="/shop" class="btn btn-outline rounded-xl font-bold px-6">
+            Return to Shop
+          </router-link>
+        </div>
+      </div>
+
       <template v-else>
         <div class="inline-flex p-4 rounded-3xl bg-success/10 text-success">
           <CheckCircle2 class="w-12 h-12" />
         </div>
 
-        <h1 class="text-3xl sm:text-4xl font-black text-base-content tracking-tight">
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-base-content tracking-tight">
           Order Confirmed
         </h1>
 
@@ -19,10 +39,10 @@
           Thank you for your purchase. We have received your order and are preparing your cards for shipment on 100% recycled paper stock.
         </p>
 
-        <div class="p-6 bg-base-200/50 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-3 text-left">
-          <div class="flex justify-between items-center text-xs">
+        <div class="p-6 bg-base-200/50 rounded-3xl border border-stone-200/80 dark:border-stone-800 space-y-3 text-left">
+          <div v-if="orderId" class="flex justify-between items-center text-xs">
             <span class="text-base-content/60 font-medium">Order Number:</span>
-            <span class="font-mono font-bold text-primary">{{ orderId || 'ORD-' + Math.floor(Math.random() * 900000 + 100000) }}</span>
+            <span class="font-mono font-bold text-primary">{{ orderId }}</span>
           </div>
           <div v-if="paymentStatus" class="flex justify-between items-center text-xs">
             <span class="text-base-content/60 font-medium">Payment Status:</span>
@@ -54,7 +74,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { CheckCircle2 } from 'lucide-vue-next'
+import { CheckCircle2, AlertCircle } from 'lucide-vue-next'
 import { useCartStore } from '../stores/cart'
 import { verifyStripeSession } from '../services/paymentService'
 
@@ -64,6 +84,7 @@ const cartStore = useCartStore()
 const verifying = ref(false)
 const verifiedOrderId = ref('')
 const paymentStatus = ref('')
+const verificationError = ref('')
 
 const orderId = computed(() => verifiedOrderId.value || route.query.order_id || '')
 
@@ -79,14 +100,18 @@ onMounted(async () => {
       if (res?.paid) {
         paymentStatus.value = 'Paid'
         cartStore.clearCart()
-      } else if (res?.paymentStatus) {
-        paymentStatus.value = res.paymentStatus
+      } else {
+        paymentStatus.value = res?.paymentStatus || 'Unpaid'
+        verificationError.value = 'Your payment has not been confirmed yet. Please check your order history in a moment.'
       }
     } catch (err) {
       console.error('Stripe verification error:', err)
+      verificationError.value = 'We could not verify your Stripe payment right now. Please check your order history.'
     } finally {
       verifying.value = false
     }
+  } else if (!route.query.order_id) {
+    verificationError.value = 'No order reference was provided.'
   }
 })
 </script>

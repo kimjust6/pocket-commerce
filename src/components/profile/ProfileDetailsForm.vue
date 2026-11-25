@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-base-200/50 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
-    <h2 class="text-base font-extrabold text-base-content border-b border-slate-200/60 dark:border-slate-800 pb-3">
+  <div class="bg-base-200/50 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-6">
+    <h2 class="text-base font-extrabold text-base-content border-b border-stone-200/60 dark:border-stone-800 pb-3">
       Public Profile
     </h2>
 
