@@ -49,6 +49,11 @@
         </button>
       </div>
 
+      <div v-if="loadError" class="alert alert-error text-xs rounded-xl font-bold mb-6 flex justify-between items-center">
+        <span>{{ loadError }}</span>
+        <button type="button" @click="loadData" class="btn btn-xs btn-ghost underline">Retry</button>
+      </div>
+
       <OrderHistoryList
         v-if="activeTab === 'orders'"
         :orders="orders"
@@ -165,6 +170,7 @@ const toastStore = useToastStore()
 
 const activeTab = ref('orders')
 const loadingOrders = ref(true)
+const loadError = ref('')
 const orders = ref([])
 
 const {
@@ -191,6 +197,8 @@ const newAddr = ref({
 })
 
 async function loadData() {
+  loadingOrders.value = true
+  loadError.value = ''
   try {
     const [ordersRes] = await Promise.all([
       getUserOrders(),
@@ -199,6 +207,7 @@ async function loadData() {
     orders.value = ordersRes
   } catch (err) {
     console.error('Account data error:', err)
+    loadError.value = 'Could not load your account details. Please try again.'
   } finally {
     loadingOrders.value = false
   }

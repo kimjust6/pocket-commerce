@@ -1,5 +1,11 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4">
+  <div
+    v-if="isOpen"
+    class="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Search greeting cards"
+  >
     <div class="fixed inset-0 bg-black/50 backdrop-blur-xs" @click="$emit('close')"></div>
 
     <div class="relative z-10 w-full max-w-lg bg-base-100 border border-stone-200/80 dark:border-stone-800 rounded-2xl shadow-2xl overflow-hidden">

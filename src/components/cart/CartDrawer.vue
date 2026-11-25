@@ -1,5 +1,11 @@
 <template>
-  <div v-if="cartStore.isDrawerOpen" class="fixed inset-0 z-50 overflow-hidden">
+  <div
+    v-if="cartStore.isDrawerOpen"
+    class="fixed inset-0 z-50 overflow-hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Shopping cart"
+  >
     <!-- Backdrop -->
     <div
       class="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-300"
@@ -100,10 +106,20 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted } from 'vue'
 import { CheckCircle2, ShoppingBag } from 'lucide-vue-next'
 import { useCartStore } from '../../stores/cart'
 import { formatPrice } from '../../utils/formatters'
 import CartItemRow from './CartItemRow.vue'
 
 const cartStore = useCartStore()
+
+function onKeyDown(e) {
+  if (e.key === 'Escape' && cartStore.isDrawerOpen) {
+    cartStore.isDrawerOpen = false
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', onKeyDown))
+onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 </script>

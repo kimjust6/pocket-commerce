@@ -125,6 +125,14 @@
             <ProductCardSkeleton v-for="n in 6" :key="n" />
           </div>
 
+          <!-- Error State -->
+          <div v-else-if="loadError" class="text-center py-16 bg-base-200/40 rounded-2xl border border-stone-200/80 dark:border-stone-800 p-8 space-y-3">
+            <p class="font-bold text-base text-base-content">{{ loadError }}</p>
+            <button type="button" @click="fetchData" class="btn btn-primary btn-sm rounded-xl font-bold">
+              Try Again
+            </button>
+          </div>
+
           <!-- Empty State -->
           <div v-else-if="products.length === 0" class="text-center py-16 bg-base-200/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 p-8 space-y-3">
             <Search class="w-10 h-10 text-base-content/30 mx-auto" />
@@ -158,6 +166,7 @@ import Breadcrumbs from '../components/ui/Breadcrumbs.vue'
 const route = useRoute()
 
 const loading = ref(true)
+const loadError = ref('')
 const products = ref([])
 const categories = ref([])
 
@@ -181,11 +190,13 @@ const sortOptions = [
 
 async function fetchData() {
   loading.value = true
+  loadError.value = ''
   try {
     const res = await getProducts(toQueryOptions())
     products.value = res.items
   } catch (err) {
     console.error('Error loading shop products:', err)
+    loadError.value = 'Could not load greeting cards. Please try again.'
   } finally {
     loading.value = false
   }

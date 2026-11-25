@@ -110,6 +110,13 @@
           <ProductCardSkeleton v-for="n in 4" :key="n" />
         </div>
 
+        <div v-else-if="loadError" class="text-center py-12 bg-base-200/50 rounded-2xl border border-stone-200/80 dark:border-stone-800 p-6 space-y-3">
+          <p class="text-sm font-semibold text-base-content">{{ loadError }}</p>
+          <button type="button" @click="loadHomeData" class="btn btn-primary btn-sm rounded-xl font-bold">
+            Try Again
+          </button>
+        </div>
+
         <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <ProductCard v-for="card in bestSellers" :key="card.id" :product="card" />
         </div>
@@ -185,6 +192,7 @@ import ProductCard from '../components/products/ProductCard.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 
 const loading = ref(true)
+const loadError = ref('')
 const bestSellers = ref([])
 const categories = ref([])
 
@@ -216,7 +224,9 @@ const features = [
   },
 ]
 
-onMounted(async () => {
+async function loadHomeData() {
+  loading.value = true
+  loadError.value = ''
   try {
     const [productsRes, categoriesRes] = await Promise.all([
       getProducts({ perPage: 8 }),
@@ -226,8 +236,11 @@ onMounted(async () => {
     categories.value = categoriesRes
   } catch (err) {
     console.error('Home data load error:', err)
+    loadError.value = 'Could not load featured cards right now.'
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(loadHomeData)
 </script>

@@ -6,6 +6,7 @@
         :class="maxWidthClass"
         role="dialog"
         aria-modal="true"
+        :aria-labelledby="$slots.title || title ? titleId : undefined"
       >
         <!-- Close Button -->
         <button
@@ -18,7 +19,7 @@
         </button>
 
         <!-- Header / Title -->
-        <div v-if="$slots.title || title" class="mb-4 pr-6">
+        <div v-if="$slots.title || title" :id="titleId" class="mb-4 pr-6">
           <slot name="title">
             <h3 class="font-extrabold text-lg text-base-content tracking-tight">
               {{ title }}
@@ -60,6 +61,8 @@ const props = defineProps({
     default: 'md', // sm, md, lg, xl
   },
 })
+
+const titleId = `modal-title-${Math.random().toString(36).slice(2, 9)}`
 
 const emit = defineEmits(['close'])
 
